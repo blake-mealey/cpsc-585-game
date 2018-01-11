@@ -2,6 +2,8 @@
 #include "Engine\Systems\IO\Mouse.h"
 
 #include <GLFW/glfw3.h>
+#include "Engine/Systems/Graphics.h"
+#include <vector>
 #pragma comment(lib, "opengl32.lib")
 
 using namespace std;
@@ -9,13 +11,18 @@ using namespace std;
 int main() {
 	cout << "Hello, World!" << endl;
 
-	Engine engine;
+	vector<System*> systems;
 
-	engine.Initialize("Game Title");
+	Graphics graphics;
+	graphics.Initialize("Game Title");
+	systems.push_back(&graphics);
 
 	//Game Loop
 	while(true) {
-		engine.Update();
+		Time dt = Time();
+		for(vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
+			(*it)->Update(dt);
+		}
 
 		if (Mouse::ButtonPressed(GLFW_MOUSE_BUTTON_1)) {
 			cout << "Left Button Pressed" << endl;
@@ -26,9 +33,5 @@ int main() {
 		if (Mouse::ButtonReleased(GLFW_MOUSE_BUTTON_1)) {
 			cout << "Left Button Released" << endl;
 		}
-
-		engine.BeginRender();
-		//Draw Stuff in Here
-		engine.EndRender();
 	}
 }

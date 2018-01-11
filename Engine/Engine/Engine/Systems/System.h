@@ -1,6 +1,6 @@
 #pragma once
 
-class Time;
+#include "Time.h"
 
 class System {
 public:
