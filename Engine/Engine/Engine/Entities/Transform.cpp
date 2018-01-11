@@ -63,6 +63,10 @@ void Transform::Scale(float scaleFactor) {
 	SetScale(scale * scaleFactor);
 }
 
+void Transform::Rotate(glm::vec3 axis, float radians) {
+	glm::rotate(rotation, degrees(radians), axis);
+}
+
 
 glm::mat4 Transform::GetTranslationMatrix() {
 	return translationMatrix;
