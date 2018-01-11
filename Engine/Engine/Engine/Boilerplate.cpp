@@ -17,7 +17,16 @@
 #include <iterator>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <GL\glew.h>					// Only necessary on Windows
+//Modification for Windows and Non-Windows
+//Credit to: Sebastian Kopacz, Scott Saunders, and Blake Mealey
+#ifdef _WIN32
+#include <GL/glew.h>
+#else
+#define GLFW_INCLUDE_GLCOREARB
+#define GL_GLEXT_PROTOTYPES
+#endif
+
+//#include <GL\glew.h>					// Only necessary on Windows
 #include <GLFW/glfw3.h>
 #pragma comment(lib, "opengl32.lib")	// TODO: Do this in the project properties?
 
@@ -55,8 +64,8 @@ struct MyShader
 bool InitializeShaders(MyShader *shader)
 {
 	// load shader source from files
-	string vertexSource = LoadSource("vertex.glsl");
-	string fragmentSource = LoadSource("fragment.glsl");
+	string vertexSource = LoadSource("Engine/Shaders/vertex.glsl");
+	string fragmentSource = LoadSource("Engine/Shaders/fragment.glsl");
 	if (vertexSource.empty() || fragmentSource.empty()) return false;
 
 	// compile shader source into shader objects
