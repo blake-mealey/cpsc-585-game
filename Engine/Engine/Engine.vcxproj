@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\Entities\Transform.cpp" />
     <ClCompile Include="Engine\Systems\IO\Mouse.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
   </ItemGroup>
@@ -134,11 +135,14 @@
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
+    <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Events\Event.h" />
     <ClInclude Include="Engine\Systems\IO\Controller.h" />
     <ClInclude Include="Engine\Systems\IO\Keyboard.h" />
     <ClInclude Include="Engine\Systems\IO\Mouse.h" />
-    <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="Engine\Systems\System.h" />
+    <ClInclude Include="Engine\Systems\Time.h" />
+    <ClInclude Include="Engine\Entities\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,8 @@
 #pragma once
-#include "Time.h"
+
+class Time;
 
 class System {
 public:
-	virtual void Update(Time deltaTime);
+	virtual void Update(Time deltaTime) = 0;
 };
