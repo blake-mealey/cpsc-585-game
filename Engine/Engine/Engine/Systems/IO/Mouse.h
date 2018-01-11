@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GLFW/glfw3.h"
-#include "glm\vec3.hpp"
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 class Mouse {
 public:

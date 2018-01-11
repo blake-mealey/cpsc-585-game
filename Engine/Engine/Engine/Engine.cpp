@@ -48,11 +48,12 @@ bool Engine::Initialize(char* windowTitle) {
 	//GL Setup
 	//Viewport
 	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION_MATRIX);
 	glLoadIdentity();
 	glOrtho(0, width, 0, height, -10, 10);
+	glFrustum(-1, 1, -1, 1, 0, 100);
 	glDepthRange(-10, 10);
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW_MATRIX);
 
 	//Alpha Blending
 	glEnable(GL_ALPHA_TEST);

@@ -10,7 +10,6 @@ Transform::Transform(Transform *pParent, vec3 pPosition, vec3 pScale, quat pRota
 	SetRotation(rotation);
 }
 
-
 glm::vec3 Transform::GetPosition() {
 	return position;
 }

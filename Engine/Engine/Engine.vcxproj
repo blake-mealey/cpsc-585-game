@@ -129,6 +129,9 @@
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
     <ClCompile Include="Engine\Systems\Graphics.cpp" />
+    <ClCompile Include="Engine\Systems\IO\Controller.cpp" />
+    <ClCompile Include="Engine\Systems\IO\InputManager.cpp" />
+    <ClCompile Include="Engine\Systems\IO\Keyboard.cpp" />
     <ClCompile Include="Engine\Systems\IO\Mouse.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
   </ItemGroup>
@@ -140,6 +143,7 @@
     <ClInclude Include="Engine\Events\Event.h" />
     <ClInclude Include="Engine\Systems\Graphics.h" />
     <ClInclude Include="Engine\Systems\IO\Controller.h" />
+    <ClInclude Include="Engine\Systems\IO\InputManager.h" />
     <ClInclude Include="Engine\Systems\IO\Keyboard.h" />
     <ClInclude Include="Engine\Systems\IO\Mouse.h" />
     <ClInclude Include="Engine\Systems\System.h" />
