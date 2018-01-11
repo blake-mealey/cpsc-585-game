@@ -22,7 +22,8 @@ public:
 
 	//Game Loop Stuff
 	void Update();
-	void Render();
+	void BeginRender();
+	void EndRender();
 
 private:
 	//Window Variable

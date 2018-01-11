@@ -61,13 +61,13 @@ void Engine::Update() {
 	glfwPollEvents();
 }
 
-void Engine::Render() {
+void Engine::BeginRender() {
 	//Clear Back Buffer Before We Draw
 	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
-	//Draw Stuff In Here
-
+void Engine::EndRender() {
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
 }

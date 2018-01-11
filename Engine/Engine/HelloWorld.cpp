@@ -14,9 +14,10 @@ int main() {
 
 	//Game Loop
 	while(true) {
-	
 		engine.Update();
-		engine.Render();
 
+		engine.BeginRender();
+		//Draw Stuff in Here
+		engine.EndRender();
 	}
 }
