@@ -8,7 +8,24 @@ using namespace std;
 
 class Engine {
 public:
+	//Variables for Window Dimensions
+	static int SCREEN_WIDTH;
+	static int SCREEN_HEIGHT;
+
+	//Constructor
+	Engine();
+	//Deconstructor
+	~Engine();
+
+	//Initialization
+	bool Initialize(char* windowTitle);
+
+	//Game Loop Stuff
+	void Update();
+	void Render();
 
 private:
+	//Window Variable
+	static GLFWwindow* window;
 
 };
