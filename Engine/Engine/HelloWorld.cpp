@@ -1,5 +1,5 @@
 #include "Engine/Engine.h"
-#include "Engine\Systems\IO\Mouse.h"
+#include "Engine/Systems/IO/InputManager.h"
 
 #include <GLFW/glfw3.h>
 #pragma comment(lib, "opengl32.lib")
@@ -11,21 +11,14 @@ int main() {
 
 	Engine engine;
 
+	InputManager inputManager;
+
 	engine.Initialize("Game Title");
 
 	//Game Loop
 	while(true) {
 		engine.Update();
-
-		if (Mouse::ButtonPressed(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Pressed" << endl;
-		}
-		if (Mouse::ButtonDown(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Held" << endl;
-		}
-		if (Mouse::ButtonReleased(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Released" << endl;
-		}
+		inputManager.Update();
 
 		engine.BeginRender();
 		//Draw Stuff in Here

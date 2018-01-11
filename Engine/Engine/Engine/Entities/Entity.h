@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../Transform.h"
+#include "Transform.h"
 #include "../Components/Component.h"
 #include <vector>
 
