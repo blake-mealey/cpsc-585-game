@@ -1,3 +1,9 @@
+// ==========================================================================
+// Vertex program for barebones GLFW boilerplate
+//
+// Author:  Sonny Chan, University of Calgary
+// Date:    December 2015
+// ==========================================================================
 #version 410
 
 in vec2 uv;

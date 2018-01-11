@@ -15,12 +15,26 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\fragment.glsl" />
-    <None Include="Engine\Shaders\vertex.glsl" />
     <None Include="packages.config" />
+    <None Include="Engine\Shaders\vertex.glsl" />
+    <None Include="Engine\Shaders\fragment.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Boilerplate.cpp">
+    <ClInclude Include="Engine\SphericalBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\SphericalCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\SphericalBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\SphericalCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

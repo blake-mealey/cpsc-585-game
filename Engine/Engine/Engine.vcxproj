@@ -122,11 +122,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="Engine\Shaders\fragment.glsl" />
-    <None Include="Engine\Shaders\vertex.glsl" />
     <None Include="packages.config" />
+    <None Include="Engine\Shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Boilerplate.cpp" />
+    <ClInclude Include="Engine\SphericalBody.h" />
+    <ClInclude Include="Engine\SphericalCamera.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine\Main.cpp" />
+    <ClCompile Include="Engine\SphericalBody.cpp" />
+    <ClCompile Include="Engine\SphericalCamera.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
