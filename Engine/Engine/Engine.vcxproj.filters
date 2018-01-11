@@ -20,10 +20,15 @@
     <None Include="Engine\Shaders\fragment.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\HelloWorld.cpp">
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Engine.cpp">
+    <ClCompile Include="HelloWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

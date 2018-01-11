@@ -126,11 +126,11 @@
     <None Include="Engine\Shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Engine.cpp" />
-    <ClCompile Include="Engine\HelloWorld.cpp" />
+    <ClInclude Include="Engine\Engine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Engine.h" />
+    <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="HelloWorld.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
