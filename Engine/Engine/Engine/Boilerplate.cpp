@@ -298,6 +298,14 @@ int main(int argc, char *argv[])
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwMakeContextCurrent(window);
 
+	#ifdef _WIN32
+		glewExperimental = GL_TRUE;
+		if (glewInit() != GLEW_OK) {
+			std::cout << "glew init failed" << std::endl;
+			return -1;
+		}
+	#endif
+
 	// query and print out information about our OpenGL environment
 	QueryGLVersion();
 
