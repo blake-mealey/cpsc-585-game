@@ -25,7 +25,7 @@ int main() {
 	InputManager inputManager;
 
 	//Game Loop
-	while (true) {
+	while (!glfwWindowShouldClose(graphics.getWindow())) {
 		//Calculate Delta Time
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
