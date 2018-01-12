@@ -15,8 +15,8 @@ public:
 	bool Initialize(char* windowTitle);
 	void Update(Time deltaTime) override;
 
+	GLFWwindow* getWindow();
+
 private:
 	static GLFWwindow* window;
-
-	
 };

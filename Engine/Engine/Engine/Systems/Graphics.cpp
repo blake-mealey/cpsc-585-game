@@ -16,10 +16,12 @@ bool Graphics::Initialize(char* windowTitle) {
 		return false;
 	}
 
+	//version check for openGL
+
 	//Create Window
 	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, windowTitle, NULL, NULL);
 	if (window == NULL) {
-		std::cout << "Error Creating Window" << std::endl;
+		std::cout << "Error Creating Window terminate" << std::endl;
 		return false;
 	}
 
@@ -29,7 +31,8 @@ bool Graphics::Initialize(char* windowTitle) {
 	glfwGetFramebufferSize(window, &width, &height);
 	glfwSwapInterval(1);	//Swap Buffer Every Frame (Double Buffering)
 
-							//Input Callbacks
+	//Input Callbacks
+	//make a setInput() make it easier to implement new inputs?
 	glfwSetCursorPosCallback(window, Mouse::MousePositionCallback);
 	glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
 
@@ -39,8 +42,13 @@ bool Graphics::Initialize(char* windowTitle) {
 	int yPos = (mode->height - SCREEN_HEIGHT) / 2;
 	glfwSetWindowPos(window, xPos, yPos);
 
+	//clear the screen to grey
+	glClearColor(.1f, .1f, .1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	//GL Setup
 	//Viewport
+	glfwGetWindowSize(window, &width, &height); //check resize
 	glViewport(0, 0, width, height);
 	/*glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -61,11 +69,15 @@ void Graphics::Update(Time deltaTime) {
 	glfwPollEvents();
 
 	//Clear Back Buffer Before We Draw
-	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+	glClearColor(.1f, .1f, .1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// TODO: Render
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
+}
+
+GLFWwindow* Graphics::getWindow() {
+	return window;
 }

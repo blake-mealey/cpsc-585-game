@@ -20,7 +20,7 @@ int main() {
 	InputManager inputManager;
 
 	//Game Loop
-	while (true) {
+	while (!glfwWindowShouldClose(graphics.getWindow())) {
 		Time dt = Time();
 		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->Update(dt);
