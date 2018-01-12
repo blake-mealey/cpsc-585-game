@@ -16,5 +16,5 @@ private:
 	static const float* axes;
 
 	static int buttonsCount;
-	static const unsigned char* buttons;
+	static const unsigned char* buttons;	
 };

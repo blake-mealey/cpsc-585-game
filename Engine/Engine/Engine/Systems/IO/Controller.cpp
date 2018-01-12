@@ -23,6 +23,19 @@ void Controller::Update() {
 			axes = glfwGetJoystickAxes(i, &axesCount);				//Get Array of Axes and Number of Axes
 			buttons = glfwGetJoystickButtons(i, &buttonsCount);		//Get Array of Buttons and Number of Buttons
 
+			/* this is to detect when new controllers are plugged in or removed
+			if (numberOfControllers >= NumControllersActive()) {
+				numberOfControllers = NumControllersActive();
+				cout << "controller removed" << endl;
+				//send events
+			}
+
+			if (numberOfControllers <= NumControllersActive()) {
+				numberOfControllers = NumControllersActive();
+				cout << "controller added" << endl;
+			}
+			*/
+
 			//Handles Input
 			HandleAxes(i);
 			HandleButtons(i);
@@ -30,6 +43,7 @@ void Controller::Update() {
 	};
 }
 
+//TODO: send events
 void Controller::HandleAxes(int controllerNumber) {
 	//Axes
 	/*
@@ -89,7 +103,46 @@ void Controller::HandleButtons(int controllerNumber) {
 	12: D-Pad Down
 	13: D-Pad Left
 	*/
-	if (buttons[14] == GLFW_PRESS) {
-		cout << "Pressed" << endl;
+	if (buttons[0] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed A" << endl;
+	}
+	if (buttons[1] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed B" << endl;
+	}
+	if (buttons[2] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed X" << endl;
+	}
+	if (buttons[3] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed Y" << endl;
+	}
+	if (buttons[4] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed LB" << endl;
+	}
+	if (buttons[5] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed RB" << endl;
+	}
+	if (buttons[6] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed Back" << endl;
+	}
+	if (buttons[7] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed Start" << endl;
+	}
+	if (buttons[8] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed Left stick" << endl;
+	}
+	if (buttons[9] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed Right stick" << endl;
+	}
+	if (buttons[10] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed D-Up" << endl;
+	}
+	if (buttons[11] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed D-Right" << endl;
+	}
+	if (buttons[12] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed D-Down" << endl;
+	}
+	if (buttons[13] == GLFW_PRESS) {
+		cout << "Controller " << (controllerNumber + 1) << " Pressed D-Left" << endl;
 	}
 }
