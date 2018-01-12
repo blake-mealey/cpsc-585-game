@@ -11,6 +11,11 @@ using namespace std;
 int main() {
 	cout << "Hello, World!" << endl;
 
+	//Delta Time Variables
+	Time currentFrame;
+	Time lastFrame(0);
+	Time deltaTime(0);
+
 	vector<System*> systems;
 
 	Graphics graphics;
@@ -21,9 +26,14 @@ int main() {
 
 	//Game Loop
 	while (true) {
-		Time dt = Time();
+		//Calculate Delta Time
+		currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		//Iterate Through Each System and Call Their Update Methods
 		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
-			(*it)->Update(dt);
+			(*it)->Update(deltaTime);
 		}
 
 		inputManager.Update();

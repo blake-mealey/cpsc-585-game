@@ -9,6 +9,7 @@
     <ClCompile Include="Engine\Systems\IO\Mouse.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
     <ClCompile Include="Engine\Components\InputManager.cpp" />
+    <ClCompile Include="Engine\Systems\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
