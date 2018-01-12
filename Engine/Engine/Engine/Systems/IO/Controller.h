@@ -6,8 +6,11 @@ using namespace std;
 
 class Controller {
 public:
-	static bool IsControllerActive();
+	static int NumControllersActive();
 	static void Update();
+
+	static void HandleAxes(int controllerNumber);
+	static void HandleButtons(int controllerNumber);
 private:
 	static int axesCount;
 	static const float* axes;

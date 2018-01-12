@@ -6,7 +6,7 @@ InputManager::InputManager() {
 
 void InputManager::Update() {
 	//Check for a Controller - If Controller Then Ignore Keyboard/Mouse Inputs
-	if (!Controller::IsControllerActive()) {
+	if (Controller::NumControllersActive() == 0) {
 		//Mouse Inputs
 		if (Mouse::ButtonPressed(GLFW_MOUSE_BUTTON_1)) {
 			cout << "Left Button Pressed" << endl;
@@ -32,5 +32,6 @@ void InputManager::Update() {
 	else {
 		//Controller Inputs
 		Controller::Update();
+		cout << "Number of Controllers Active: " << Controller::NumControllersActive() << endl;
 	}
 }
