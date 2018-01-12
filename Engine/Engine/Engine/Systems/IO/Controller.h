@@ -7,9 +7,11 @@ using namespace std;
 class Controller {
 public:
 	static bool IsControllerActive();
-
 	static void Update();
 private:
 	static int axesCount;
-	static const float *axes;
+	static const float* axes;
+
+	static int buttonsCount;
+	static const unsigned char* buttons;
 };
