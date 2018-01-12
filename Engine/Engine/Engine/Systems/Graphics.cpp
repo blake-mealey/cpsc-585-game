@@ -1,6 +1,9 @@
 #include "Graphics.h"
-#include <iostream>
 #include "IO/Mouse.h"
+#include "IO/Keyboard.h"
+#include "IO/Controller.h"
+
+#include <iostream>
 
 //Screen Dimensions Values
 int Graphics::SCREEN_WIDTH = 1024;
@@ -31,10 +34,11 @@ bool Graphics::Initialize(char* windowTitle) {
 	glfwGetFramebufferSize(window, &width, &height);
 	glfwSwapInterval(1);	//Swap Buffer Every Frame (Double Buffering)
 
-	//Input Callbacks
-	//make a setInput() make it easier to implement new inputs?
+							//Input Callbacks
 	glfwSetCursorPosCallback(window, Mouse::MousePositionCallback);
 	glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
+	glfwSetKeyCallback(window, Keyboard::KeyboardCallback);
+	//glfwSetJoystickCallback(Controller::ControllerCallback);
 
 	// Centers window
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());

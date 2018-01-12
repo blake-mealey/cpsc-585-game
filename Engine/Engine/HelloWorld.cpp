@@ -1,5 +1,5 @@
 #include "Engine/Engine.h"
-#include "Engine/Systems/IO/InputManager.h"
+#include "Engine/Components/InputManager.h"
 
 #include <GLFW/glfw3.h>
 #include "Engine/Systems/Graphics.h"
@@ -11,6 +11,11 @@ using namespace std;
 int main() {
 	cout << "Hello, World!" << endl;
 
+	//Delta Time Variables
+	Time currentFrame;
+	Time lastFrame(0);
+	Time deltaTime(0);
+
 	vector<System*> systems;
 
 	Graphics graphics;
@@ -20,21 +25,17 @@ int main() {
 	InputManager inputManager;
 
 	//Game Loop
-	while (!glfwWindowShouldClose(graphics.getWindow())) {
-		Time dt = Time();
-		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
-			(*it)->Update(dt);
-		}
-		inputManager.Update();
+	while (true) {
+		//Calculate Delta Time
+		currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 
-		if (Mouse::ButtonPressed(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Pressed" << endl;
+		//Iterate Through Each System and Call Their Update Methods
+		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
+			(*it)->Update(deltaTime);
 		}
-		if (Mouse::ButtonDown(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Held" << endl;
-		}
-		if (Mouse::ButtonReleased(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Released" << endl;
-		}
+
+		inputManager.Update();
 	}
 }
