@@ -1,6 +1,9 @@
 #include "Graphics.h"
-#include <iostream>
 #include "IO/Mouse.h"
+#include "IO/Keyboard.h"
+#include "IO/Controller.h"
+
+#include <iostream>
 
 //Screen Dimensions Values
 int Graphics::SCREEN_WIDTH = 1024;
@@ -32,6 +35,8 @@ bool Graphics::Initialize(char* windowTitle) {
 							//Input Callbacks
 	glfwSetCursorPosCallback(window, Mouse::MousePositionCallback);
 	glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
+	glfwSetKeyCallback(window, Keyboard::KeyboardCallback);
+	//glfwSetJoystickCallback(Controller::ControllerCallback);
 
 	// Centers window
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());

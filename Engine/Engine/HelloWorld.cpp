@@ -1,5 +1,5 @@
 #include "Engine/Engine.h"
-#include "Engine/Systems/IO/InputManager.h"
+#include "Engine/Components/InputManager.h"
 
 #include <GLFW/glfw3.h>
 #include "Engine/Systems/Graphics.h"
@@ -25,16 +25,7 @@ int main() {
 		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->Update(dt);
 		}
-		inputManager.Update();
 
-		if (Mouse::ButtonPressed(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Pressed" << endl;
-		}
-		if (Mouse::ButtonDown(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Held" << endl;
-		}
-		if (Mouse::ButtonReleased(GLFW_MOUSE_BUTTON_1)) {
-			cout << "Left Button Released" << endl;
-		}
+		inputManager.Update();
 	}
 }

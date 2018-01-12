@@ -12,6 +12,7 @@ public:
 
 	Component GetComponent(ComponentType type);
 	void HandleEvent(Event *event);
+	void AddComponent(Component component);
 
 	int GetId();
 	std::string GetTag();
