@@ -38,7 +38,6 @@ bool Graphics::Initialize(char* windowTitle) {
 	glfwSetCursorPosCallback(window, Mouse::MousePositionCallback);
 	glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
 	glfwSetKeyCallback(window, Keyboard::KeyboardCallback);
-	//glfwSetJoystickCallback(Controller::ControllerCallback);
 
 	// Centers window
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());

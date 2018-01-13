@@ -11,6 +11,9 @@ class InputManager {
 public:
 	InputManager();
 
+	void HandleMouse();
+	void HandleKeyboard();
+
 	void Update();
 private:
 
