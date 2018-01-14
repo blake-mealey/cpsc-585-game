@@ -1,13 +1,16 @@
 #include "Transform.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
-using namespace glm;
+Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f, 1.f, 1.f), glm::quat()) {}
 
-Transform::Transform() : Transform(nullptr, vec3(), vec3(), quat()) {}
-
-Transform::Transform(Transform *pParent, vec3 pPosition, vec3 pScale, quat pRotation) : parent(pParent) {
-	SetPosition(position);
-	SetScale(scale);
-	SetRotation(rotation);
+Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation) : parent(pParent) {
+	SetPosition(pPosition);
+	SetScale(pScale);
+	SetRotation(pRotation);
 }
 
 glm::vec3 Transform::GetPosition() {
@@ -24,33 +27,33 @@ glm::quat Transform::GetRotation() {
 
 
 void Transform::UpdateTransformationMatrix() {
-	transformationMatrix = scalingMatrix * translationMatrix * rotationMatrix;
+	transformationMatrix = translationMatrix * rotationMatrix * scalingMatrix;
 }
 
-void Transform::SetPosition(vec3 pPosition) {
+void Transform::SetPosition(glm::vec3 pPosition) {
 	position = pPosition;
-	translationMatrix = glm::translate(mat4(), position);
+	translationMatrix = glm::translate(glm::mat4(), position);
 	UpdateTransformationMatrix();
 }
 
-void Transform::SetScale(vec3 pScale) {
+void Transform::SetScale(glm::vec3 pScale) {
 	scale = pScale;
-	scalingMatrix = glm::scale(mat4(), scale);
+	scalingMatrix = glm::scale(scale);
 	UpdateTransformationMatrix();
 }
 
-void Transform::SetRotation(quat pRotation) {
+void Transform::SetRotation(glm::quat pRotation) {
 	rotation = pRotation;
 	rotationMatrix = glm::toMat4(rotation);
 	UpdateTransformationMatrix();
 }
 
 void Transform::SetRotationEulerAngles(glm::vec3 eulerAngles) {
-	SetRotation(quat(eulerAngles));
+	SetRotation(glm::quat(eulerAngles));
 }
 
 void Transform::SetRotationAxisAngles(glm::vec3 axis, float radians) {
-	SetRotation(glm::angleAxis(degrees(radians), axis));
+	SetRotation(glm::angleAxis(glm::degrees(radians), axis));
 }
 
 
@@ -63,7 +66,7 @@ void Transform::Scale(float scaleFactor) {
 }
 
 void Transform::Rotate(glm::vec3 axis, float radians) {
-	glm::rotate(rotation, degrees(radians), axis);
+	SetRotation(glm::rotate(rotation, glm::degrees(radians), axis));
 }
 
 
@@ -84,7 +87,7 @@ glm::mat4 Transform::GetLocalTransformationMatrix() {
 }
 
 glm::mat4 Transform::GetTransformationMatrix() {
-	mat4 matrix(1.f);
+	glm::mat4 matrix(1.f);
 	Transform* transform = this;
 	do {
 		matrix = transform->GetLocalTransformationMatrix() * matrix;

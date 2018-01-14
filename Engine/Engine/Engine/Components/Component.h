@@ -3,13 +3,14 @@
 class Event;
 
 enum ComponentType {
-	
+	ComponentType_MeshComponent,
+	ComponentType_CameraComponent
 };
 
 class Component {
 public:
-	static ComponentType type;
 	bool enabled;
-
-	void HandleEvent(Event *event);
+	
+	virtual ComponentType GetType() = 0;
+	virtual void HandleEvent(Event *event) = 0;
 };

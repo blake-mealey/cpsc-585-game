@@ -1,50 +1,31 @@
-// ==========================================================================
-// Vertex program for barebones GLFW boilerplate
-//
-// Author:  Sonny Chan, University of Calgary
-// Date:    December 2015
-// ==========================================================================
 #version 410
 
-in vec2 uv;
-flat in vec4 centerPosition;
-in vec4 position;
-flat in vec3 lightPos;
+uniform vec3 lightColor;
+uniform float lightPower;
+
+in vec3 surfaceNormal_camera;
+in vec3 lightDirection_camera;
+in vec3 eyeDirection_camera;
+
+out vec3 fragmentColor;
 
 
-// interpolated colour received from vertex stage
+void main(){
+	vec3 materialDiffuseColor = vec3(.5, 0, 0);
+	vec3 materialAmbientColor = vec3(0.1, 0.1, 0.1) * materialDiffuseColor;
+	vec3 materialSpecularColor = vec3(1, 1, 1);
 
-// first output is mapped to the framebuffer's colour index by default
-out vec4 fragmentColor;
+	vec3 n = normalize(surfaceNormal_camera);
+	vec3 l = normalize(lightDirection_camera);
+	vec3 E = normalize(eyeDirection_camera);
+	vec3 R = reflect(-l, n);
 
-uniform sampler2D tex;
-uniform sampler2D normalMap;
-uniform int normalMapEnabled;
-uniform int diffuseEnabled;
-
-uniform vec3 cameraPosition;
-
-void main(void) {
-	vec3 color = texture(tex, uv).rgb;
-	if(diffuseEnabled != 0) {
-		vec3 normal;
-		// if(normalMapEnabled != 0) {
-			// normal = normalize((position + ((2*texture(normalMap, uv)) - 1)) - centerPosition).xyz;
-		// } else {
-			normal = normalize(position - centerPosition).xyz;
-		// }
-		vec3 d = normalize(lightPos - position.xyz);
-
-		vec3 cl = vec3(1);
-		vec3 cp = vec3(1);
-		vec3 diffuse = cl*max(0, dot(normal, d));
-		vec3 specular = vec3(0);
-		// vec3 direction = (position.xyz - cameraPosition);
-		// specular = cl*texture(specularMap, uv).xyz*max(0, pow(dot(normalize(-direction + d), normal), 64));
-		vec3 ambient = vec3(0.1);
-
-		color = (color*(ambient + diffuse)) + specular;
-	}
+	float cosTheta = clamp(dot(n, l), 0, 1);
+	float cosAlpha = clamp(dot(E, R), 0, 1);
 	
-	fragmentColor = vec4(color,0);
+	float distanceToLight = length(lightDirection_camera);
+	float distanceSquaredInverse = 1.f/(distanceToLight*distanceToLight);
+	fragmentColor = materialAmbientColor +																// Ambient
+		(materialDiffuseColor * lightColor * lightPower * cosTheta * distanceSquaredInverse) +			// Diffuse
+		(materialSpecularColor * lightColor * lightPower * pow(cosAlpha, 50) * distanceSquaredInverse);	// Specular
 }

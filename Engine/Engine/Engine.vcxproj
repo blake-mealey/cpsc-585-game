@@ -122,14 +122,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="Engine\Shaders\fragment.glsl" />
+    <None Include="Engine\Shaders\fragment_a5.glsl" />
+    <None Include="Engine\Shaders\vertex.glsl" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Engine\Shaders\vertex.glsl" />
+    <None Include="Engine\Shaders\vertex_a5.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
+    <ClCompile Include="Engine\Systems\Content\ContentManager.cpp" />
+    <ClCompile Include="Engine\Systems\Content\Mesh.cpp" />
     <ClCompile Include="Engine\Systems\Graphics.cpp" />
     <ClCompile Include="Engine\Systems\IO\Controller.cpp" />
     <ClCompile Include="Engine\Components\InputManager.cpp" />
@@ -139,11 +145,17 @@
     <ClCompile Include="HelloWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
+    <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Events\Event.h" />
+    <ClInclude Include="Engine\Systems\Content\ContentManager.h" />
+    <ClInclude Include="Engine\Systems\Content\Material.h" />
+    <ClInclude Include="Engine\Systems\Content\Mesh.h" />
+    <ClInclude Include="Engine\Systems\Content\Texture.h" />
     <ClInclude Include="Engine\Systems\Graphics.h" />
     <ClInclude Include="Engine\Systems\IO\Controller.h" />
     <ClInclude Include="Engine\Components\InputManager.h" />

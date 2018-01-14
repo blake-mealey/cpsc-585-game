@@ -1,34 +1,30 @@
-// ==========================================================================
-// Vertex program for barebones GLFW boilerplate
-//
-// Author:  Sonny Chan, University of Calgary
-// Date:    December 2015
-// ==========================================================================
 #version 410
 
-// location indices for these attributes correspond to those specified in the
-// InitializeGeometry() function of the main program
-layout(location = 0) in vec3 vertexPosition;
-layout(location = 1) in vec2 vertexUV;
+layout(location = 0) in vec3 vertexPosition_model;
+layout(location = 1) in vec2 vertexUv;
+layout(location = 2) in vec3 vertexNormal_model;
 
-out vec2 uv;
-flat out vec4 centerPosition;
-out vec4 position;
-flat out vec3 lightPos;
+uniform vec3 lightPosition_world;
 
-// uniform vec4 shapeCenter;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelViewProjectionMatrix;
 
-uniform mat4 cameraMatrix;
-uniform mat4 perspectiveMatrix;
-uniform mat4 modelviewMatrix;
-// output to be interpolated between vertices and passed to the fragment stage
+out vec3 surfaceNormal_camera;
+out vec3 lightDirection_camera;
+out vec3 eyeDirection_camera;
+
 
 void main() {
-    // assign vertex position without modification
-	gl_Position = perspectiveMatrix*cameraMatrix*modelviewMatrix*vec4(vertexPosition, 1.0);
-	uv = vertexUV;
-	// normal = (modelviewMatrix*vec4(surfaceNormal, 0.0)).xyz;
-	centerPosition = perspectiveMatrix*cameraMatrix*modelviewMatrix*vec4(0, 0, 0, 1);
-	position = gl_Position;
-	lightPos = (perspectiveMatrix*cameraMatrix*vec4(0, 0, 0, 1)).xyz;
+	gl_Position = modelViewProjectionMatrix * vec4(vertexPosition_model, 1);
+
+	vec3 vertexPosition_camera = (viewMatrix * modelMatrix * vec4(vertexPosition_model, 1)).xyz;
+	eyeDirection_camera = vec3(0, 0, 0) - vertexPosition_camera;
+
+	vec3 lightPosition_camera = (viewMatrix * vec4(lightPosition_world, 1)).xyz;
+	lightDirection_camera = lightPosition_camera - vertexPosition_camera;
+	lightDirection_camera = lightPosition_camera + eyeDirection_camera;
+	
+	// TODO: Only correct if ModelMatrix does not scale the model!!! Use its inverse transpose if not!!!
+	surfaceNormal_camera = (viewMatrix * modelMatrix * vec4(vertexNormal_model, 0)).xyz;
 }
