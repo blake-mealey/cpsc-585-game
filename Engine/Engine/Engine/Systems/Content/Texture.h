@@ -1,9 +1,8 @@
 #pragma once
 
-#include <GL/glew.h>
 
 struct Texture {
-	GLuint textureId;
+	unsigned int textureId;
 	int width;
 	int height;
 };

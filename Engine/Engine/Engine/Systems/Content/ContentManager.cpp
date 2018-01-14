@@ -4,6 +4,7 @@
 #include <iostream>
 #include <GL/glew.h>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
 std::map<std::string, Mesh*> ContentManager::meshes = std::map<std::string, Mesh*>();
@@ -83,16 +84,16 @@ Mesh* ContentManager::GetMesh(const std::string filePath) {
 }
 
 Texture* ContentManager::GetTexture(const std::string filePath) {
-	Texture* texture = textures[filePath];
-	if (texture != nullptr) {
-		return texture;
-	}
+//	Texture* texture = textures[filePath];
+//	if (texture != nullptr) {
+//		return texture;
+//	}
 
 	int components;
 	GLuint texId;
 	int tWidth, tHeight;
 
-	unsigned char* data = stbi_load((TEXTURE_DIR_PATH + filePath).c_str(), &tWidth, &tHeight, &components, 0);
+	const auto data = stbi_load((TEXTURE_DIR_PATH + filePath).c_str(), &tWidth, &tHeight, &components, 0);
 
 	if (data != nullptr) {
 		glGenTextures(1, &texId);
@@ -112,14 +113,14 @@ Texture* ContentManager::GetTexture(const std::string filePath) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		stbi_image_free(data);
 
-		texture = new Texture();
-		texture->textureId = texId;
-		texture->width = tWidth;
-		texture->height = tHeight;
-		textures[filePath] = texture;
+//		texture = new Texture;
+//		texture->textureId = texId;
+//		texture->width = tWidth;
+//		texture->height = tHeight;
+//		textures[filePath] = texture;
 	}
 
-	return texture;
+	return nullptr;
 }
 
 std::string ContentManager::LoadShader(std::string filePath) {
