@@ -126,8 +126,23 @@ void Graphics::Update(Time deltaTime) {
 			GLuint mvpMatrixId = glGetUniformLocation(shaderIds[Shaders::Program], "modelViewProjectionMatrix");
 			glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
 
+            Material *mat = meshComponent->material;
+            
+			GLuint diffuseId = glGetUniformLocation(shaderIds[Shaders::Program], "materialDiffuseColor");
+			glUniform3f(diffuseId, mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
+
+            GLuint ambientId = glGetUniformLocation(shaderIds[Shaders::Program], "materialAmbientColorMultiplier");
+			glUniform3f(ambientId, mat->ambientColor.r, mat->ambientColor.g, mat->ambientColor.b);
+
+            GLuint specularId = glGetUniformLocation(shaderIds[Shaders::Program], "materialSpecularColor");
+			glUniform3f(specularId, mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
+
+            GLuint specularityId = glGetUniformLocation(shaderIds[Shaders::Program], "materialSpecularity");
+			glUniform1f(specularityId, mat->specularity);
+
 			Mesh* mesh = meshComponent->GetMesh();
 			LoadBuffer(mesh);
+            LoadTexture(meshComponent->texture, "diffuseTexture");
 			glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
 		}
 	}
@@ -153,6 +168,18 @@ void Graphics::UnregisterCamera(CameraComponent* camera) {
 	auto it = find(cameras.begin(), cameras.end(), camera);
 	if (it != cameras.end())
 		cameras.erase(it);
+}
+
+void Graphics::LoadTexture(GLuint textureId, const char *uniformName) {
+    glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	
+	GLuint uniformLocation = glGetUniformLocation(shaderIds[Shaders::Program], uniformName);
+	glUniform1i(uniformLocation, 0);
+}
+
+void Graphics::LoadTexture(Texture *texture, std::string uniformName) {
+    LoadTexture(texture->textureId, uniformName.c_str());
 }
 
 void Graphics::LoadBuffer(Mesh* mesh) {

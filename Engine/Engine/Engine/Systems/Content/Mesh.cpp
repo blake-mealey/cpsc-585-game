@@ -15,7 +15,8 @@ void Mesh::GenerateNormals() {
 		_normals[i] = glm::vec3(0, 0, 0);;
 	}
 
-	for (size_t i = 0; i < vertexCount/3; i+=3) {
+	for (size_t i = 0; i <= vertexCount; i+=3) {
+        std::cout << "NORMALS" << std::endl;
 		const glm::vec3 v1 = vertices[i];
 		const glm::vec3 triangleNormal = glm::normalize(glm::cross(vertices[i + 1] - v1, vertices[i + 2] - v1));
 		for (size_t j = i; j < i + 3; j++) {

@@ -10,6 +10,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewProjectionMatrix;
 
+out vec2 fragmentUv;
 out vec3 surfaceNormal_camera;
 out vec3 lightDirection_camera;
 out vec3 eyeDirection_camera;
@@ -27,4 +28,6 @@ void main() {
 	
 	// TODO: Only correct if ModelMatrix does not scale the model!!! Use its inverse transpose if not!!!
 	surfaceNormal_camera = (viewMatrix * modelMatrix * vec4(vertexNormal_model, 0)).xyz;
+
+	fragmentUv = vertexUv;
 }

@@ -24,7 +24,11 @@ int main() {
 	CameraComponent *camera = new CameraComponent();
 	graphics.RegisterCamera(camera);
 
-	MeshComponent *mesh = new MeshComponent("Cube");
+    Transform parent = Transform();
+    Material *material = new Material(glm::vec3(.5f,0.f,0.f), glm::vec3(1.f), glm::vec3(.1f), 50.f);
+	MeshComponent *mesh = new MeshComponent("Cube", material, "picture.JPG");
+    mesh->transform.parent = &parent;
+    mesh->transform.SetPosition(glm::vec3(-1.5f, -1.5f, 0.f));
 	graphics.meshComponents.push_back(mesh);
 
 	InputManager inputManager;
@@ -39,8 +43,8 @@ int main() {
 		lastFrame = currentFrame;
 		globalTime += deltaTime;
 
-		mesh->transform.SetPosition(glm::vec3(0, sin(globalTime.GetTimeMilliSeconds()/500), 0));
-		mesh->transform.Rotate(glm::vec3(0, 1, 1), 0.0005);
+		//parent.SetPosition(glm::vec3(0, sin(globalTime.GetTimeMilliSeconds()/500), 0));
+		parent.Rotate(glm::vec3(1, 0, 0), 0.00005);
 
 //		angle += 0.01;
 //		camera->SetPosition(10.f * glm::vec3(sin(angle), 0, cos(angle)));

@@ -11,7 +11,7 @@ ComponentType CameraComponent::GetType() {
 
 void CameraComponent::HandleEvent(Event* event) {}
 
-CameraComponent::CameraComponent() : CameraComponent(glm::vec3(0, 0, -10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) {}
+CameraComponent::CameraComponent() : CameraComponent(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) {}
 
 CameraComponent::CameraComponent(glm::vec3 _position, glm::vec3 _target, glm::vec3 _upVector) :
 	position(_position), target(_target), upVector(_upVector), fieldOfView(DEFAULT_FIELD_OF_VIEW) {

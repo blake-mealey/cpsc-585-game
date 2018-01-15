@@ -7,8 +7,10 @@ ComponentType MeshComponent::GetType() {
 
 void MeshComponent::HandleEvent(Event* event) {}
 
-MeshComponent::MeshComponent(const std::string meshPath) {
+MeshComponent::MeshComponent(const std::string meshPath, Material *_material, const std::string texturePath) {
 	mesh = ContentManager::GetMesh(meshPath);
+    material = _material;
+    texture = ContentManager::GetTexture(texturePath);
 	transform = Transform();
 }
 

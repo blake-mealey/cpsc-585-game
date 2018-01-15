@@ -5,6 +5,8 @@
 #include <map>
 #include "Texture.h"
 
+struct Texture;
+
 class ContentManager {
 public:
 	static const std::string CONTENT_DIR_PATH;

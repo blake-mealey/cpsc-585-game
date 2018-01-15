@@ -14,11 +14,12 @@ public:
 	ComponentType GetType() override;
 	void HandleEvent(Event* event) override;
 	
-	MeshComponent(std::string meshPath);
+	MeshComponent(std::string meshPath, Material *_material, std::string texturePath);
 
 	Mesh* GetMesh() const;
 private:
 	Mesh *mesh;
+public:
 	Material *material;
 	Texture *texture;
 };

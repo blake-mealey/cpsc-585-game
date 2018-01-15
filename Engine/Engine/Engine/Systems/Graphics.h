@@ -55,6 +55,9 @@ private:
 
 	std::vector<CameraComponent*> cameras;
 
+    void LoadTexture(GLuint textureId, const char *uniformName);
+    void LoadTexture(Texture *texture, std::string uniformName);
+
 	void LoadBuffer(const glm::vec3 *vertices, const glm::vec2 *uvs, const glm::vec3 *normals, const size_t vertexCount);
 	void LoadBuffer(Mesh *mesh);
 

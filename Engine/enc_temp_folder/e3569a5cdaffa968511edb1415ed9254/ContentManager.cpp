@@ -56,44 +56,7 @@ Mesh* GenerateCube(const float sideLength) {
 		sideLength * glm::vec3(-1.0f, 1.0f, 1.0f),
 		sideLength * glm::vec3(1.0f,-1.0f, 1.0f)
 	};
-    glm::vec2 *uvs = new glm::vec2[count]{
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-    };
+	glm::vec2 *uvs = new glm::vec2[count];
 	return new Mesh(vertices, uvs, count);
 }
 
