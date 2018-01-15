@@ -1,10 +1,7 @@
-#include "Engine/Engine.h"
+#include "Engine/Systems/Graphics.h"
 #include "Engine/Components/InputManager.h"
 
-#include <GLFW/glfw3.h>
-#include "Engine/Systems/Graphics.h"
 #include <vector>
-#pragma comment(lib, "opengl32.lib")
 
 using namespace std;
 

@@ -128,7 +128,6 @@
     <None Include="Engine\Shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
     <ClCompile Include="Engine\Systems\Graphics.cpp" />
     <ClCompile Include="Engine\Systems\IO\Controller.cpp" />
@@ -140,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
-    <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Events\Event.h" />

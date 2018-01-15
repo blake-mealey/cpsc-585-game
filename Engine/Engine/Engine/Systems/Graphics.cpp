@@ -1,7 +1,4 @@
 #include "Graphics.h"
-#include "IO/Mouse.h"
-#include "IO/Keyboard.h"
-#include "IO/Controller.h"
 
 #include <iostream>
 

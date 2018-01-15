@@ -22,3 +22,7 @@ double Time::GetTimeMilliSeconds() {
 double Time::operator-(Time _timeValueSeconds) {
 	return timeValueSeconds - _timeValueSeconds.GetTimeSeconds();
 }
+
+double Time::operator+(Time _timeValueSeconds) {
+	return timeValueSeconds + _timeValueSeconds.GetTimeSeconds();
+}

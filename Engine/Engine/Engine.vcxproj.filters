@@ -1,29 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
     <ClCompile Include="Engine\Systems\Graphics.cpp" />
     <ClCompile Include="Engine\Systems\IO\Controller.cpp" />
-    <ClCompile Include="Engine\Systems\IO\InputManager.cpp" />
     <ClCompile Include="Engine\Systems\IO\Keyboard.cpp" />
     <ClCompile Include="Engine\Systems\IO\Mouse.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="Engine\Components\InputManager.cpp" />
+    <ClCompile Include="Engine\Systems\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
-    <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Events\Event.h" />
     <ClInclude Include="Engine\Systems\Graphics.h" />
     <ClInclude Include="Engine\Systems\IO\Controller.h" />
-    <ClInclude Include="Engine\Systems\IO\InputManager.h" />
     <ClInclude Include="Engine\Systems\IO\Keyboard.h" />
     <ClInclude Include="Engine\Systems\IO\Mouse.h" />
     <ClInclude Include="Engine\Systems\System.h" />
     <ClInclude Include="Engine\Systems\Time.h" />
     <ClInclude Include="Engine\Entities\Transform.h" />
+    <ClInclude Include="Engine\Components\InputManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Shaders\fragment.glsl" />

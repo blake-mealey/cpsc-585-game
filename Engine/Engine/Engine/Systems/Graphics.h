@@ -1,9 +1,12 @@
 #pragma once
 
 #include "System.h"
+#include "IO/Mouse.h"
+#include "IO/Keyboard.h"
+#include "IO/Controller.h"
 
 #pragma comment(lib, "opengl32.lib")	// TODO: Do this in the project properties?
-#include <GL/glew.h>					// Only necessary on Windows
+//#include <GL/glew.h>					// Only necessary on Windows
 #include <GLFW/glfw3.h>
 
 class Graphics : public System {
