@@ -102,11 +102,14 @@ void Graphics::Update(Time deltaTime) {
 		CameraComponent* camera = cameras[i];
 		const glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
 		const glm::mat4 viewMatrix = camera->GetViewMatrix();
+
 		for (size_t j = 0; j < meshComponents.size(); j++) {
 			MeshComponent* meshComponent = meshComponents[j];
 			glm::mat4 modelMatrix = meshComponent->transform.GetTransformationMatrix();
 			glm::mat4 modelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
+			//passing information into shaders
+			//Loading one light
 			GLuint lightColorId = glGetUniformLocation(shaderIds[Shaders::Program], "lightColor");
 			glUniform3f(lightColorId, 1.f, 1.f, 1.f);
 
@@ -116,6 +119,7 @@ void Graphics::Update(Time deltaTime) {
 			GLuint lightPositionId = glGetUniformLocation(shaderIds[Shaders::Program], "lightPosition_world");
 			glUniform3f(lightPositionId, 0.f, 0.f, -5);
 
+			// load MVP to the shader
 			GLuint modelMatrixId = glGetUniformLocation(shaderIds[Shaders::Program], "modelMatrix");
 			glUniformMatrix4fv(modelMatrixId, 1, GL_FALSE, &modelMatrix[0][0]);
 
@@ -125,6 +129,8 @@ void Graphics::Update(Time deltaTime) {
 			GLuint mvpMatrixId = glGetUniformLocation(shaderIds[Shaders::Program], "modelViewProjectionMatrix");
 			glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
 
+
+			//Load material
             Material *mat = meshComponent->material;
             
 			GLuint diffuseId = glGetUniformLocation(shaderIds[Shaders::Program], "materialDiffuseColor");
@@ -139,6 +145,7 @@ void Graphics::Update(Time deltaTime) {
             GLuint specularityId = glGetUniformLocation(shaderIds[Shaders::Program], "materialSpecularity");
 			glUniform1f(specularityId, mat->specularity);
 			
+
 			Mesh* mesh = meshComponent->GetMesh();
 			LoadBuffer(mesh);
             LoadTexture(meshComponent->texture, "diffuseTexture");
@@ -155,7 +162,7 @@ GLFWwindow* Graphics::GetWindow() const {
 }
 
 bool Graphics::RegisterCamera(CameraComponent* camera) {
-	if (cameras.size() > MAX_CAMERAS) {
+	if (cameras.size() >= MAX_CAMERAS) {
 		return false;
 	}
 	cameras.push_back(camera);
