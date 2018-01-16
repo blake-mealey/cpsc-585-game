@@ -1,6 +1,6 @@
 #pragma once
 
-class Time {
+class Time{
 public:
 	Time();
 	Time(double _timeValueSeconds);
@@ -10,6 +10,7 @@ public:
 
 	double operator-(Time _timeValueSeconds);
 	double operator+(Time _timeValueSeconds);
+
 private:
 	double timeValueSeconds;
 };

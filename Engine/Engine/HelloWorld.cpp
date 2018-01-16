@@ -1,4 +1,5 @@
 #include "Engine/Systems/Graphics.h"
+#include "Engine/Systems/Physics.h"
 #include "Engine/Components/InputManager.h"
 
 #include <vector>
@@ -15,14 +16,17 @@ int main() {
 
 	vector<System*> systems;
 
-	Graphics graphics;
-	graphics.Initialize("Game Title");
-	systems.push_back(&graphics);
+	Graphics graphicsManager;
+	graphicsManager.Initialize("Game Title");
+	systems.push_back(&graphicsManager);
+
+	Physics physicsManager;
+	systems.push_back(&physicsManager);
 
 	InputManager inputManager;
 
 	//Game Loop
-	while (!glfwWindowShouldClose(graphics.getWindow())) {
+	while (!glfwWindowShouldClose(graphicsManager.getWindow())) {
 		//Calculate Delta Time
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;

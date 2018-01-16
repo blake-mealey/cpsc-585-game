@@ -4,7 +4,7 @@
 using namespace std;
 
 Time::Time() {
-
+	timeValueSeconds = 0;
 }
 
 Time::Time(double _timeValueSeconds) {
