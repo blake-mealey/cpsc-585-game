@@ -17,9 +17,12 @@ out vec3 eyeDirection_camera;
 
 
 void main() {
-	gl_Position = modelViewProjectionMatrix * vec4(vertexPosition_model, 1);
 
-	vec3 vertexPosition_camera = (viewMatrix * modelMatrix * vec4(vertexPosition_model, 1)).xyz;
+	vec3 flipVertexPosition_model = vertexPosition_model * vec3(-1,1,1);
+	vec3 flipVertexNormal_model = vertexNormal_model * vec3(-1,1,1);
+	gl_Position = modelViewProjectionMatrix * vec4(flipVertexPosition_model, 1);
+
+	vec3 vertexPosition_camera = (viewMatrix * modelMatrix * vec4(flipVertexPosition_model, 1)).xyz;
 	eyeDirection_camera = vec3(0, 0, 0) - vertexPosition_camera;
 
 	vec3 lightPosition_camera = (viewMatrix * vec4(lightPosition_world, 1)).xyz;
@@ -27,7 +30,7 @@ void main() {
 	lightDirection_camera = lightPosition_camera + eyeDirection_camera;
 	
 	// TODO: Only correct if ModelMatrix does not scale the model!!! Use its inverse transpose if not!!!
-	surfaceNormal_camera = (viewMatrix * modelMatrix * vec4(vertexNormal_model, 0)).xyz;
+	surfaceNormal_camera = (viewMatrix * modelMatrix * vec4(flipVertexNormal_model, 0)).xyz;
 
 	fragmentUv = vertexUv;
 }
