@@ -139,7 +139,7 @@ void Graphics::Update(Time deltaTime) {
 
             GLuint specularityId = glGetUniformLocation(shaderIds[Shaders::Program], "materialSpecularity");
 			glUniform1f(specularityId, mat->specularity);
-
+			
 			Mesh* mesh = meshComponent->GetMesh();
 			LoadBuffer(mesh);
             LoadTexture(meshComponent->texture, "diffuseTexture");
@@ -266,38 +266,10 @@ void Graphics::InitializeVao() {
 	);
 }
 
-GLuint CompileShader(GLenum shaderType, const std::string& source) {
-	// Create a shader and get it's ID
-	const GLuint shaderId = glCreateShader(shaderType);
-
-	// Compile the shader
-	const GLchar *sourcePointer = source.c_str();
-	glShaderSource(shaderId, 1, &sourcePointer, nullptr);
-	glCompileShader(shaderId);
-
-	// Check compile status and print compilation errors
-	GLint status;
-	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
-	if (status == GL_FALSE) {
-		GLint length;
-		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &length);
-		std::string info(length, ' ');
-		glGetShaderInfoLog(shaderId, info.length(), &length, &info[0]);
-		std::cout << "ERROR Compiling Shader:" << std::endl << std::endl << source << std::endl << info << std::endl;
-	}
-
-	// Return the shader's ID
-	return shaderId;
-}
-
 GLuint Graphics::LoadShaderProgram() {
-	// Load source from shader files
-	std::string vertexSource = ContentManager::LoadShader(VERTEX_SHADER_FILE_NAME);
-	std::string fragmentSource = ContentManager::LoadShader(FRAGMENT_SHADER_FILE_NAME);
-
-	// Compile the shaders
-	GLuint vertexId = CompileShader(GL_VERTEX_SHADER, vertexSource);
-	GLuint fragmentId = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+	// Load and compile shaders from source
+	GLuint vertexId = ContentManager::LoadShader(VERTEX_SHADER_FILE_NAME, GL_VERTEX_SHADER);
+	GLuint fragmentId = ContentManager::LoadShader(FRAGMENT_SHADER_FILE_NAME, GL_FRAGMENT_SHADER);
 
 	// Link the shaders into a program
 	GLuint programId = glCreateProgram();

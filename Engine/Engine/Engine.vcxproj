@@ -121,6 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Content\Materials\Basic.json" />
     <None Include="Engine\Shaders\fragment.glsl" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
     <None Include="Engine\Shaders\vertex.glsl" />
