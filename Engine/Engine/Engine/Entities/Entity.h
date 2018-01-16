@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include "Transform.h"
 #include "../Components/Component.h"
@@ -10,9 +11,9 @@ class Entity {
 public:
 	Transform transform;
 
-	Component GetComponent(ComponentType type);
+	Component *GetComponent(ComponentType type);
 	void HandleEvent(Event *event);
-	void AddComponent(Component component);
+	void AddComponent(Component *component);
 
 	int GetId();
 	std::string GetTag();
@@ -20,5 +21,5 @@ public:
 private:
 	int id;
 	std::string tag;
-	std::vector<Component> components;
+	std::vector<Component*> components;
 };

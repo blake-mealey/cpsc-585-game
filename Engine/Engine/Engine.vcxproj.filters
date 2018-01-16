@@ -10,6 +10,10 @@
     <ClCompile Include="Engine\Components\InputManager.cpp" />
     <ClCompile Include="Engine\Systems\Time.cpp" />
     <ClCompile Include="Engine\Systems\Physics.cpp" />
+    <ClCompile Include="Engine\Systems\Content\ContentManager.cpp" />
+    <ClCompile Include="Engine\Systems\Content\Mesh.cpp" />
+    <ClCompile Include="Engine\Components\MeshComponent.cpp" />
+    <ClCompile Include="Engine\Components\CameraComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -25,10 +29,19 @@
     <ClInclude Include="Engine\Entities\Transform.h" />
     <ClInclude Include="Engine\Components\InputManager.h" />
     <ClInclude Include="Engine\Systems\Physics.h" />
+    <ClInclude Include="Engine\Components\MeshComponent.h" />
+    <ClInclude Include="Engine\Systems\Content\Mesh.h" />
+    <ClInclude Include="Engine\Systems\Content\ContentManager.h" />
+    <ClInclude Include="Engine\Components\CameraComponent.h" />
+    <ClInclude Include="Engine\Systems\Content\Material.h" />
+    <ClInclude Include="Engine\Systems\Content\Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\fragment.glsl" />
     <None Include="packages.config" />
+    <None Include="Engine\Shaders\fragment_a5.glsl" />
+    <None Include="Engine\Shaders\fragment.glsl" />
+    <None Include="Engine\Shaders\vertex_a5.glsl" />
     <None Include="Engine\Shaders\vertex.glsl" />
+    <None Include="Content\Materials\Basic.json" />
   </ItemGroup>
 </Project>

@@ -35,3 +35,7 @@ Overloaded operator to allow for addition between Time data types
 double Time::operator+(Time _timeValueSeconds) {
 	return timeValueSeconds + _timeValueSeconds.GetTimeSeconds();
 }
+
+void Time::operator+=(Time _timeValueSeconds) {
+	timeValueSeconds += _timeValueSeconds.GetTimeSeconds();
+}
