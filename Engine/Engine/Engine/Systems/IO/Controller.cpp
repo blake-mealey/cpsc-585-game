@@ -16,6 +16,9 @@ bool Controller::buttonsDown[NUMBER_BUTTONS] = { false };
 bool Controller::buttonsPressed[NUMBER_BUTTONS] = { false };
 bool Controller::buttonsReleased[NUMBER_BUTTONS] = { false };
 
+/*
+Dictionary to map axis numbers to axis names
+*/
 map<int, string> axisLookup = { 
 								{0, "Left Stick X Axis"}, 
 								{1, "Left Stick Y Axis"}, 
@@ -23,6 +26,9 @@ map<int, string> axisLookup = {
 								{3, "Right Stick Y Axis"}, 
 								{4, "Right Stick X Axis"} };
 
+/*
+Dictionary to map button numbers to button names
+*/
 map<int, string> buttonLookup = {	
 								{0, "A"},
 								{1, "B" },
@@ -39,6 +45,9 @@ map<int, string> buttonLookup = {
 								{12, "D-Pad Down" },
 								{13, "D-Pad Left" } };
 
+/*
+Update loop to check for controller inputs (there are no callbacks for controllers)
+*/
 void Controller::Update() {
 	for (int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_LAST; i++) {
 		if (glfwJoystickPresent(i)) {
@@ -54,7 +63,10 @@ void Controller::Update() {
 	};
 }
 
-int Controller::NumControllersActive() {
+/*
+Return the number of controllers currently connected
+*/
+int Controller::NumControllersConnected() {
 	int tmp = 0;
 	for (int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
 		if (glfwJoystickPresent(i)) {
@@ -64,20 +76,24 @@ int Controller::NumControllersActive() {
 	return tmp;
 }
 
-//TODO: Send Events
+/*
+Detects when controllers are connected or disconnected
+*/
 void Controller::DetectControllers() {
-	if (numConnectedControllers > NumControllersActive()) {
-		numConnectedControllers = NumControllersActive();
+	if (numConnectedControllers > NumControllersConnected()) {
+		numConnectedControllers = NumControllersConnected();
 		cout << "Controller Disconnected, " << numConnectedControllers << " Controllers Connected" << endl;
 	}
 
-	if (numConnectedControllers < NumControllersActive()) {
-		numConnectedControllers = NumControllersActive();
+	if (numConnectedControllers < NumControllersConnected()) {
+		numConnectedControllers = NumControllersConnected();
 		cout << "Controller Connected, " << numConnectedControllers << " Controllers Connected" << endl;
 	}
 }
 
-//TODO: Send Events
+/*
+Handles the input of a specific controllers axes
+*/
 void Controller::HandleAxes(int controllerNumber) {
 	//Axes
 	/*
@@ -110,7 +126,9 @@ void Controller::HandleAxes(int controllerNumber) {
 	}
 }
 
-//TODO: Send Events
+/*
+Handles the input of a specific controllers buttons
+*/
 void Controller::HandleButtons(int controllerNumber) {
 	//Buttons
 	/*
@@ -152,32 +170,50 @@ void Controller::HandleButtons(int controllerNumber) {
 	}
 }
 
+/*
+Check whether a specific axis is held down
+*/
 bool Controller::AxesDown(int axis) {
 	return axesDown[axis];
 }
 
+/*
+Check whether a specific axis was pressed in the most recent frame
+*/
 bool Controller::AxesPressed(int axis) {
 	bool tmp = axesPressed[axis];
 	axesPressed[axis] = false;
 	return tmp;
 }
 
+/*
+Check whether a specific axis was released in the most recent frame
+*/
 bool Controller::AxesReleased(int axis) {
 	bool tmp = axesReleased[axis];
 	axesReleased[axis] = false;
 	return tmp;
 }
 
+/*
+Check whether a specific button is currently held down
+*/
 bool Controller::ButtonsDown(int button) {
 	return buttonsDown[button];
 }
 
+/*
+Check whether a specific button was pressed in the most recent frame
+*/
 bool Controller::ButtonsPressed(int button) {
 	bool tmp = buttonsPressed[button];
 	buttonsPressed[button] = false;
 	return tmp;
 }
 
+/*
+Check whether a specific button was released in the most recent frame
+*/
 bool Controller::ButtonsReleased(int button) {
 	bool tmp = buttonsReleased[button];
 	buttonsReleased[button] = false;

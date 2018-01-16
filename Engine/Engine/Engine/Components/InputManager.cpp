@@ -4,6 +4,9 @@ InputManager::InputManager() {
 
 }
 
+/*
+Check for current status of given buttons of the mouse, as well as cursor positions and handle their input
+*/
 void InputManager::HandleMouse() {
 	//Mouse Inputs
 	if (Mouse::ButtonPressed(GLFW_MOUSE_BUTTON_1)) {
@@ -17,6 +20,9 @@ void InputManager::HandleMouse() {
 	}
 }
 
+/*
+Check for current status of keyboard buttons and handle their input
+*/
 void InputManager::HandleKeyboard() {
 	//Keyboard Inputs
 	if (Keyboard::KeyPressed(GLFW_KEY_W)) {
@@ -32,7 +38,7 @@ void InputManager::HandleKeyboard() {
 
 void InputManager::Update() {
 	//Check for a Controller - If Controller Then Ignore Keyboard/Mouse Inputs
-	if (Controller::NumControllersActive() < 1) {
+	if (Controller::NumControllersConnected() < 1) {
 		//Mouse and Keyboard Inputs
 		HandleMouse();
 		HandleKeyboard();

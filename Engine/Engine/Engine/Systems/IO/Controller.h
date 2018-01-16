@@ -10,7 +10,7 @@ class Controller {
 public:
 	static void Update();
 
-	static int NumControllersActive();
+	static int NumControllersConnected();
 	static void DetectControllers();
 
 	static void HandleAxes(int controllerNumber);
