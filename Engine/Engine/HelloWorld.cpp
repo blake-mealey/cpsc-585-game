@@ -31,7 +31,7 @@ int main() {
     Transform parent = Transform();
 	Material *material = ContentManager::GetMaterial("Basic.json");
     //Material *material = new Material(glm::vec3(.5f,0.f,0.f), glm::vec3(1.f), glm::vec3(.1f), 50.f);
-	MeshComponent *mesh = new MeshComponent("Cube.obj", material, "CubeNumbers.png");
+	MeshComponent *mesh = new MeshComponent("Cube.objm", material, "CubeNumbers.png");
     mesh->transform.parent = &parent;
 //    mesh->transform.SetPosition(glm::vec3(-.5f, -.5f, 0.f));
 	graphicsManager.meshComponents.push_back(mesh);
