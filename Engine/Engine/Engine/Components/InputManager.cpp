@@ -1,6 +1,4 @@
 #include "InputManager.h"
-#include "../Systems/IO/Controller.h"
-#include "../Systems/IO/Mouse.h"
 
 InputManager::InputManager() {
 

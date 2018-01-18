@@ -1,9 +1,9 @@
 #include "Engine/Systems/Graphics.h"
 #include "Engine/Systems/Physics.h"
 #include "Engine/Components/InputManager.h"
+#include "Engine/Systems/Content/ContentManager.h"
 
 #include <vector>
-#include "Engine/Systems/Content/ContentManager.h"
 #include <iostream>
 #pragma comment(lib, "opengl32.lib")
 

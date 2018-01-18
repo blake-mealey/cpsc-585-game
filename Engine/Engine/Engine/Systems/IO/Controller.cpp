@@ -17,33 +17,35 @@ bool Controller::buttonsPressed[NUMBER_BUTTONS] = { false };
 bool Controller::buttonsReleased[NUMBER_BUTTONS] = { false };
 
 /*
-Dictionary to map axis numbers to axis names
+Array to map axis numbers to axis names
 */
-map<int, string> axisLookup = { 
-								{0, "Left Stick X Axis"}, 
-								{1, "Left Stick Y Axis"}, 
-								{2, "Triggers"}, 
-								{3, "Right Stick Y Axis"}, 
-								{4, "Right Stick X Axis"} };
+string axisLookup[] = {
+	"Left Stick X Axis",
+	"Left Stick Y Axis",
+	"Triggers",
+	"Right Stick Y Axis",
+	"Right Stick X Axis"
+};
 
 /*
-Dictionary to map button numbers to button names
+Array to map button numbers to button names
 */
-map<int, string> buttonLookup = {	
-								{0, "A"},
-								{1, "B" },
-								{2, "X" },
-								{3, "Y" },
-								{4, "Left Bumper" },
-								{5, "Right Bumper" },
-								{6, "Back Button" },
-								{7, "Start Button" },
-								{8, "Left Stick" },
-								{9, "Right Stick" },
-								{10, "D-Pad Up" },
-								{11, "D-Pad Right" },
-								{12, "D-Pad Down" },
-								{13, "D-Pad Left" } };
+string buttonLookup[] = {
+	"A",
+	"B",
+	"X",
+	"Y",
+	"Left Bumper",
+	"Right Bumper",
+	"Back Button",
+	"Start Button",
+	"Left Stick",
+	"Right Stick",
+	"D-Pad Up",
+	"D-Pad Right",
+	"D-Pad Down",
+	"D-Pad Left"
+};
 
 /*
 Update loop to check for controller inputs (there are no callbacks for controllers)

@@ -1,8 +1,7 @@
 #pragma once
+#include "../Engine/Systems/Graphics.h"
 
-#include <GLFW\glfw3.h>
 #include <iostream>
-#include <map>
 #include <string>
 using namespace std;
 
