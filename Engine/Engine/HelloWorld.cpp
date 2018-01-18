@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <iostream>
+#include "Engine/Entities/Entity.h"
+#include "Engine/Entities/EntityManager.h"
 #pragma comment(lib, "opengl32.lib")
 
 using namespace std;
@@ -12,49 +14,53 @@ using namespace std;
 int main() {
 	cout << "Hello, World!" << endl;
 
-	Time globalTime(0);
 	Time lastFrame(0);
 	Time deltaTime(0);
 
 	vector<System*> systems;
 
-	Graphics graphicsManager;
-	graphicsManager.Initialize("Game Title");
-	systems.push_back(&graphicsManager);
+	Graphics *graphicsManager = Graphics::Instance();
+	graphicsManager->Initialize("Game Title");
+	systems.push_back(graphicsManager);
 
-	Physics physicsManager;
-	systems.push_back(&physicsManager);
+	Physics *physicsManager = Physics::Instance();
+	systems.push_back(physicsManager);
 
-	CameraComponent *camera = new CameraComponent();
-	graphicsManager.RegisterCamera(camera);
+	CameraComponent camera = CameraComponent();
+	graphicsManager->RegisterCamera(&camera);
+//	graphicsManager->RegisterCamera(&camera);
+//	graphicsManager->RegisterCamera(&camera);
+//	graphicsManager->RegisterCamera(&camera);
 
-    Transform parent = Transform();
+	Transform parent = Transform();
+
 	Material *material = ContentManager::GetMaterial("Basic.json");
-    //Material *material = new Material(glm::vec3(.5f,0.f,0.f), glm::vec3(1.f), glm::vec3(.1f), 50.f);
-	MeshComponent *mesh = new MeshComponent("Cube.objm", material, "CubeNumbers.png");
-    mesh->transform.parent = &parent;
-//    mesh->transform.SetPosition(glm::vec3(-.5f, -.5f, 0.f));
-	graphicsManager.meshComponents.push_back(mesh);
+	MeshComponent mesh = MeshComponent("Boulder.objm", material, "Boulder.jpg");
+	mesh.transform.parent = &parent;
+	mesh.transform.SetRotationAxisAngles(glm::vec3(0,1,0), 3.14*0.5);
+	graphicsManager->meshComponents.push_back(&mesh);
+
+	MeshComponent floor = MeshComponent("Plane.objm", material, "DiamondPlate.jpg");
+	floor.transform.SetPosition(glm::vec3(0, -2, 0));
+	graphicsManager->meshComponents.push_back(&floor);
 
 	InputManager inputManager;
 	
 	float angle = 0;
 
 	//Game Loop
-	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
+	while (!glfwWindowShouldClose(graphicsManager->GetWindow())) {
 		//Calculate Delta Time
-		Time currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-		globalTime += deltaTime;
+		Time currentTime = glfwGetTime();
+		deltaTime = currentTime - lastFrame;
+		lastFrame = currentTime;
 
-		//parent.SetPosition(glm::vec3(0, sin(globalTime.GetTimeMilliSeconds()/500), 0));
-		parent.Rotate(glm::vec3(1, 1, 0), deltaTime.GetTimeMilliSeconds() * 0.00002);
+		// "Game" logic
+		parent.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
+		parent.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
+		camera.SetPosition(5.f * glm::vec3(sin(angle), 0, cos(angle += 0.01)));
 
-//		angle += 0.01;
-//		camera->SetPosition(10.f * glm::vec3(sin(angle), 0, cos(angle)));
-
-		//Iterate Through Each System and Call Their Update Methods
+		// Iterate through each system and call their update methods
 		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->Update(deltaTime);
 		}
