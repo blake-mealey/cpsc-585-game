@@ -19,7 +19,8 @@ const std::string ContentManager::MATERIAL_DIR_PATH = CONTENT_DIR_PATH + "Materi
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
 Mesh* LoadObj(const std::string filePath) {
-	FILE *file = fopen(filePath.c_str(), "r");
+	FILE *file;
+	errno_t err = fopen_s(&file, filePath.c_str(), "r");
 	if (file == NULL) {
 		std::cout << "Failed to load OBJ file." << std::endl;
 		return nullptr;
@@ -35,27 +36,27 @@ Mesh* LoadObj(const std::string filePath) {
 
 	while (true) {
 		char lineHeader[128];
-		int res = fscanf(file, "%s", lineHeader);
+		int res = fscanf_s( file, "%s", lineHeader);
 		if (res == EOF) {
 			break;
 		}
 
 		if (strcmp(lineHeader, "v") == 0) {
 			glm::vec3 vertex;
-			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+			fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			tempVertices.push_back(vertex);
 		} else if (strcmp(lineHeader, "vt") == 0) {
 			glm::vec2 uv;
-			fscanf(file, "%f %f\n", &uv.x, &uv.y);
+			fscanf_s(file, "%f %f\n", &uv.x, &uv.y);
 			tempUvs.push_back(uv);
 		} else if (strcmp(lineHeader, "vn") == 0) {
 			glm::vec3 normal;
-			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+			fscanf_s(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
 			tempNormals.push_back(normal);
 		} else if (strcmp(lineHeader, "f") == 0) {
 			std::string vertex1, vertex2, vertex3;
 			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",
+			int matches = fscanf_s(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",
 				&vertexIndex[0], &uvIndex[0], &normalIndex[0],
 				&vertexIndex[1], &uvIndex[1], &normalIndex[1],
 				&vertexIndex[2], &uvIndex[2], &normalIndex[2]);
