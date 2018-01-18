@@ -14,6 +14,8 @@
 #include "../Components/CameraComponent.h"
 #include "../Components/MeshComponent.h"
 #include "Time.h"
+#include "Content/ShaderProgram.h"
+
 
 struct VAOs {
 	enum { Vertices=0, Count };
@@ -29,32 +31,50 @@ struct Shaders {
 
 class Graphics : public System {
 public:
+	// Access the singleton instance
+	static Graphics *Instance();
+
+	// Constants
 	static const std::string VERTEX_SHADER_FILE_NAME;
 	static const std::string FRAGMENT_SHADER_FILE_NAME;
-	
+
 	static const size_t MAX_CAMERAS;
 
-	//Variables for Window Dimensions
-	static int SCREEN_WIDTH;
-	static int SCREEN_HEIGHT;
+	static const size_t SCREEN_WIDTH;
+	static const size_t SCREEN_HEIGHT;
 
+	static const glm::vec3 SKY_COLOR;
+	static const glm::vec3 AMBIENT_COLOR;
+
+	// System calls
 	bool Initialize(char* windowTitle);
 	void Update(Time deltaTime) override;
 
+	// System accessors
 	GLFWwindow* GetWindow() const;
+
+	static void WindowSizeCallback(GLFWwindow *window, int width, int height);
+	void SetWindowDimensions(size_t width, size_t height);
+	float GetViewportAspectRatio() const;
+	glm::vec2 GetViewportDimensions() const;
+	void UpdateViewports();
 
 	bool RegisterCamera(CameraComponent *camera);
 	void UnregisterCamera(CameraComponent *camera);
 
 	std::vector<MeshComponent*> meshComponents;		// Temporary
 private:
-	static GLFWwindow* window;
-	GLsizei windowWidth;
-	GLsizei windowHeight;
+	// Singleton instance and private constructor
+	static Graphics *singletonInstance;
+	Graphics();
+	
+	GLFWwindow* window;
+	size_t windowWidth;
+	size_t windowHeight;
 	
 	GLuint vboIds[VBOs::Count];		// Points and UVs
 	GLuint vaoIds[VAOs::Count];
-	GLuint shaderIds[Shaders::Count];
+	ShaderProgram* shaders[Shaders::Count];
 
 	std::vector<CameraComponent*> cameras;
 
@@ -68,5 +88,5 @@ private:
 	void GenerateIds();
 
 	void InitializeVao();
-	GLuint LoadShaderProgram();
+	ShaderProgram* LoadShaderProgram();
 };

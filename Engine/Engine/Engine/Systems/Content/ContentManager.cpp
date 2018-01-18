@@ -18,107 +18,6 @@ const std::string ContentManager::MATERIAL_DIR_PATH = CONTENT_DIR_PATH + "Materi
 
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
-Mesh* GenerateCube(const float sideLength) {
-	const int count = 6 * 2 * 3;
-	glm::vec3 *vertices = new glm::vec3[count] {
-		sideLength * glm::vec3(-1.0f,-1.0f,-1.0f), // triangle 1 : begin
-		sideLength * glm::vec3(-1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f, 1.0f), // triangle 1 : end
-		sideLength * glm::vec3(1.0f, 1.0f,-1.0f), // triangle 2 : begin
-		sideLength * glm::vec3(-1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f,-1.0f), // triangle 2 : end
-		sideLength * glm::vec3(1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f,-1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f,-1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(-1.0f, 1.0f, 1.0f),
-		sideLength * glm::vec3(1.0f,-1.0f, 1.0f)
-	};
-    glm::vec2 *uvs = new glm::vec2[count]{
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f),
-    };
-	return new Mesh(vertices, uvs, count);
-}
-
-Mesh* GenerateTriangle() {
-	glm::vec3 *vertices = new glm::vec3[6] {
-		3.f * glm::vec3(0.0f, 0.0f, 0.0f), // triangle 1 : begin
-		3.f * glm::vec3(1.0f, 0.0f, 0.0f),
-		3.f * glm::vec3(1.0f, 1.0f, 0.0f), // triangle 1 : end
-        3.f * glm::vec3(0.0f, 0.0f, 0.0f), // triangle 2 : begin
-		3.f * glm::vec3(0.0f, 1.0f, 0.0f),
-		3.f * glm::vec3(1.0f, 1.0f, 0.0f), // triangle 2 : end
-	};
-    glm::vec2 *uvs = new glm::vec2[6]{
-        glm::vec2(0.f, 0.f),
-        glm::vec2(1.f, 0.f),
-        glm::vec2(1.f, 1.f),
-        glm::vec2(0.f, 0.f),
-        glm::vec2(0.f, 1.f),
-        glm::vec2(1.f, 1.f)
-    };
-	return new Mesh(vertices, uvs, 6);
-}
-
 Mesh* LoadObj(const std::string filePath) {
 	FILE *file = fopen(filePath.c_str(), "r");
 	if (file == NULL) {
@@ -196,9 +95,7 @@ Mesh* ContentManager::GetMesh(const std::string filePath) {
 		return mesh;
 	}
 
-	// TODO: Replace with loading mesh from path: MESH_DIR_PATH + filePath
-//	mesh = GenerateCube(1.f);
-//	mesh = GenerateTriangle();
+	// TODO: Load meshes using Assimp
 	mesh = LoadObj(MESH_DIR_PATH + filePath);
 
 	meshes[filePath] = mesh;
@@ -257,13 +154,9 @@ Material* ContentManager::GetMaterial(const std::string filePath) {
 		data["specularColor"][0].get<float>(),
 		data["specularColor"][1].get<float>(),
 		data["specularColor"][2].get<float>());
-	const glm::vec3 ambientColor = glm::vec3(
-		data["ambientColor"][0].get<float>(),
-		data["ambientColor"][1].get<float>(),
-		data["ambientColor"][2].get<float>());
 	const float specularity = data["specularity"].get<float>();
 
-	return new Material(diffuseColor, specularColor, ambientColor, specularity);
+	return new Material(diffuseColor, specularColor, specularity);
 }
 
 nlohmann::json ContentManager::LoadJson(const std::string filePath) {

@@ -53,7 +53,7 @@ void Transform::SetRotationEulerAngles(glm::vec3 eulerAngles) {
 }
 
 void Transform::SetRotationAxisAngles(glm::vec3 axis, float radians) {
-	SetRotation(glm::angleAxis(glm::degrees(radians), axis));
+	SetRotation(glm::angleAxis(radians, axis));
 }
 
 

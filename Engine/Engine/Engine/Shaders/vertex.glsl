@@ -26,7 +26,6 @@ void main() {
 	lightDirection_camera = lightPosition_camera - vertexPosition_camera;
 	lightDirection_camera = lightPosition_camera + eyeDirection_camera;
 	
-	// TODO: Only correct if ModelMatrix does not scale the model!!! Use its inverse transpose if not!!!
 	surfaceNormal_camera = (viewMatrix * modelMatrix * vec4(vertexNormal_model, 0)).xyz;
 
 	fragmentUv = vertexUv;

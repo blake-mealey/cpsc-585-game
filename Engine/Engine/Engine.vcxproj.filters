@@ -14,6 +14,7 @@
     <ClCompile Include="Engine\Systems\Content\Mesh.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Systems\Content\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -35,6 +36,7 @@
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Systems\Content\Material.h" />
     <ClInclude Include="Engine\Systems\Content\Texture.h" />
+    <ClInclude Include="Engine\Systems\Content\ShaderProgram.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
