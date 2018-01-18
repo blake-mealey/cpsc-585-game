@@ -59,14 +59,13 @@ public:
 	glm::vec2 GetViewportDimensions() const;
 	void UpdateViewports();
 
-	bool RegisterCamera(CameraComponent *camera);
-	void UnregisterCamera(CameraComponent *camera);
-
-	std::vector<MeshComponent*> meshComponents;		// Temporary
 private:
 	// Singleton instance and private constructor
 	static Graphics *singletonInstance;
 	Graphics();
+
+	size_t cameraCount;
+	std::vector<Component*> cameras;
 	
 	GLFWwindow* window;
 	size_t windowWidth;
@@ -75,8 +74,6 @@ private:
 	GLuint vboIds[VBOs::Count];		// Points and UVs
 	GLuint vaoIds[VAOs::Count];
 	ShaderProgram* shaders[Shaders::Count];
-
-	std::vector<CameraComponent*> cameras;
 
     void LoadTexture(GLuint textureId, const char *uniformName);
     void LoadTexture(Texture *texture, std::string uniformName);

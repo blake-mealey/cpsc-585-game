@@ -1,5 +1,6 @@
 #include "MeshComponent.h"
 #include "../Systems/Content/ContentManager.h"
+#include "../Entities/Entity.h"
 
 ComponentType MeshComponent::GetType() {
 	return ComponentType_MeshComponent;
@@ -16,5 +17,10 @@ MeshComponent::MeshComponent(const std::string meshPath, Material *_material, co
 
 Mesh* MeshComponent::GetMesh() const {
 	return mesh;
+}
+
+void MeshComponent::SetEntity(Entity* _entity) {
+	Component::SetEntity(_entity);
+	transform.parent = &_entity->transform;
 }
 

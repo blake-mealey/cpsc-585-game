@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Content/ContentManager.h"
 #include <glm/gtx/string_cast.hpp>
+#include "../Entities/EntityManager.h"
 
 // Constants
 const size_t Graphics::MAX_CAMERAS = 4;
@@ -114,22 +115,32 @@ void Graphics::Update(Time deltaTime) {
 	glUniform1f(shaderProgram->GetUniformLocation(UniformName::LightPower), 20.f);
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::LightPosition_World), 0.f, 0.f, -5);
 
-	size_t count = cameras.size();
-	for (size_t i = 0; i < cameras.size(); i++) {
+	// Get camera components
+	cameras = EntityManager::GetComponents(ComponentType_CameraComponent);
+	const size_t newCameraCount = std::min(cameras.size(), MAX_CAMERAS);
+	if (cameraCount != newCameraCount) {
+		cameraCount = newCameraCount;
+		UpdateViewports();
+	}
+	
+	// Get mesh components
+	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_MeshComponent);
+
+	for (size_t i = 0; i < cameraCount; i++) {
 		// Set the viewport size for this camera
-		glm::vec2 pos = glm::vec2((i % 2) * 0.5f, i < 2 ? (count < 3 ? 0.f : 0.5f) : 0.f) * glm::vec2(windowWidth, windowHeight);
+		glm::vec2 pos = glm::vec2((i % 2) * 0.5f, i < 2 ? (cameraCount < 3 ? 0.f : 0.5f) : 0.f) * glm::vec2(windowWidth, windowHeight);
 		glm::vec2 dims = GetViewportDimensions();
 		glViewport(pos.x, pos.y, dims.x, dims.y);
 
 		// Get the camera's projection and view matrices
-		CameraComponent* camera = cameras[i];
+		CameraComponent* camera = static_cast<CameraComponent*>(cameras[i]);
 		const glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
 		const glm::mat4 viewMatrix = camera->GetViewMatrix();
 
 		// Draw the scene
-		for (size_t j = 0; j < meshComponents.size(); j++) {
+		for (size_t j = 0; j < meshes.size(); j++) {
 			// Get an enabled mesh
-			MeshComponent* meshComponent = meshComponents[j];
+			MeshComponent* meshComponent = static_cast<MeshComponent*>(meshes[j]);
 			if (!meshComponent->enabled) continue;
 
 			// Get the mesh's model and modelViewProjection matrices
@@ -175,34 +186,18 @@ void Graphics::SetWindowDimensions(size_t width, size_t height) {
 
 void Graphics::UpdateViewports() {
 	const float aspectRatio = GetViewportAspectRatio();
-	for (size_t i = 0; i < cameras.size(); i++) {
-		cameras[i]->SetAspectRatio(aspectRatio);
+	for (size_t i = 0; i < cameraCount; i++) {
+		static_cast<CameraComponent*>(cameras[i])->SetAspectRatio(aspectRatio);
 	}
 }
 
 glm::vec2 Graphics::GetViewportDimensions() const {
-	size_t count = cameras.size();
-	return glm::vec2(count == 1 ? 1 : 0.5, count < 3 ? 1 : 0.5) * glm::vec2(windowWidth, windowHeight);
+	return glm::vec2(cameraCount == 1 ? 1 : 0.5, cameraCount < 3 ? 1 : 0.5) * glm::vec2(windowWidth, windowHeight);
 }
 
 float Graphics::GetViewportAspectRatio() const  {
 	glm::vec2 viewportDims = GetViewportDimensions();
 	return viewportDims.x / viewportDims.y;
-}
-
-bool Graphics::RegisterCamera(CameraComponent* camera) {
-	if (cameras.size() == MAX_CAMERAS) {
-		return false;
-	}
-	cameras.push_back(camera);
-	UpdateViewports();
-	return true;
-}
-
-void Graphics::UnregisterCamera(CameraComponent* camera) {
-	auto it = find(cameras.begin(), cameras.end(), camera);
-	if (it != cameras.end())
-		cameras.erase(it);
 }
 
 void Graphics::LoadTexture(GLuint textureId, const char *uniformName) {

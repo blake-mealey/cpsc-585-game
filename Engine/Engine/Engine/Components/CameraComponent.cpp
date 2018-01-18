@@ -1,5 +1,7 @@
 #include "CameraComponent.h"
 #include <glm/gtc/matrix_transform.inl>
+#include "../Entities/Entity.h"
+#include <iostream>
 
 const float CameraComponent::NEAR_CLIPPING_PLANE = 0.1f;
 const float CameraComponent::FAR_CLIPPING_PLANE = 100.f;
@@ -60,7 +62,7 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const {
 }
 
 void CameraComponent::UpdateViewMatrix() {
-	viewMatrix = glm::lookAt(position, target, upVector);
+	viewMatrix = glm::lookAt(GetPosition(), GetTarget(), upVector);
 }
 
 void CameraComponent::UpdateProjectionMatrix() {

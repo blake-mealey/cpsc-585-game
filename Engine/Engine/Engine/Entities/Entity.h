@@ -5,21 +5,26 @@
 #include "../Components/Component.h"
 #include <vector>
 
+class EntityManager;
 class Event;
 
 class Entity {
+friend class EntityManager;
 public:
 	Transform transform;
 
-	Component *GetComponent(ComponentType type);
 	void HandleEvent(Event *event);
+
+	size_t GetId() const;
+	std::string GetTag() const;
+	bool MatchesTag(std::string _tag) const;
+
+	void SetTag(std::string _tag);
+private:
+	Entity(size_t _id);
 	void AddComponent(Component *component);
 
-	int GetId();
-	std::string GetTag();
-	bool MatchesTag(std::string tag);
-private:
-	int id;
+	size_t id;
 	std::string tag;
 	std::vector<Component*> components;
 };

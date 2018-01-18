@@ -15,6 +15,9 @@
     <ClCompile Include="Engine\Systems\Graphics.cpp" />
     <ClCompile Include="Engine\Systems\Physics.cpp" />
     <ClCompile Include="Engine\Systems\Time.cpp" />
+    <ClCompile Include="Engine\Entities\EntityManager.cpp" />
+    <ClCompile Include="Engine\Entities\Entity.cpp" />
+    <ClCompile Include="Engine\Components\Component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />

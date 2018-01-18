@@ -16,6 +16,8 @@ public:
 	
 	MeshComponent(std::string meshPath, Material *_material, std::string texturePath);
 
+	void SetEntity(Entity* _entity) override;
+
 	Mesh* GetMesh() const;
 private:
 	Mesh *mesh;

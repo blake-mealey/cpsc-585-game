@@ -26,23 +26,21 @@ int main() {
 	Physics *physicsManager = Physics::Instance();
 	systems.push_back(physicsManager);
 
-	CameraComponent camera = CameraComponent();
-	graphicsManager->RegisterCamera(&camera);
-//	graphicsManager->RegisterCamera(&camera);
-//	graphicsManager->RegisterCamera(&camera);
-//	graphicsManager->RegisterCamera(&camera);
-
-	Transform parent = Transform();
+	Entity *camera = EntityManager::CreateDynamicEntity();
+	CameraComponent cameraComponent = CameraComponent();
+	EntityManager::AddComponent(camera, &cameraComponent);
+	EntityManager::AddComponent(camera, &cameraComponent);
 
 	Material *material = ContentManager::GetMaterial("Basic.json");
-	MeshComponent mesh = MeshComponent("Boulder.objm", material, "Boulder.jpg");
-	mesh.transform.parent = &parent;
-	mesh.transform.SetRotationAxisAngles(glm::vec3(0,1,0), 3.14*0.5);
-	graphicsManager->meshComponents.push_back(&mesh);
+	Entity *boulder = EntityManager::CreateDynamicEntity();
+	MeshComponent boulderMesh = MeshComponent("Boulder.objm", material, "Boulder.jpg");
+	boulderMesh.transform.SetRotationAxisAngles(glm::vec3(0, 1, 0), 3.14*0.5);
+	EntityManager::AddComponent(boulder, &boulderMesh);
 
-	MeshComponent floor = MeshComponent("Plane.objm", material, "DiamondPlate.jpg");
-	floor.transform.SetPosition(glm::vec3(0, -2, 0));
-	graphicsManager->meshComponents.push_back(&floor);
+	Entity *floor = EntityManager::CreateStaticEntity();
+	floor->transform.SetPosition(glm::vec3(0, -2, 0));
+	MeshComponent floorMesh = MeshComponent("Plane.objm", material, "DiamondPlate.jpg");
+	EntityManager::AddComponent(floor , &floorMesh);
 
 	InputManager inputManager;
 	
@@ -56,9 +54,9 @@ int main() {
 		lastFrame = currentTime;
 
 		// "Game" logic
-		parent.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
-		parent.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-		camera.SetPosition(5.f * glm::vec3(sin(angle), 0, cos(angle += 0.01)));
+		boulder->transform.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
+		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
+		cameraComponent.SetPosition(5.f * glm::vec3(sin(angle), 0, cos(angle += 0.01)));
 
 		// Iterate through each system and call their update methods
 		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {

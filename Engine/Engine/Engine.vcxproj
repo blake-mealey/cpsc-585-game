@@ -132,7 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
+    <ClCompile Include="Engine\Entities\Entity.cpp" />
+    <ClCompile Include="Engine\Entities\EntityManager.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
     <ClCompile Include="Engine\Systems\Content\ContentManager.cpp" />
     <ClCompile Include="Engine\Systems\Content\Mesh.cpp" />
