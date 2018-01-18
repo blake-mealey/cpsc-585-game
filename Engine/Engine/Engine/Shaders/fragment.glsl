@@ -18,9 +18,8 @@ in vec2 fragmentUv;
 
 out vec3 fragmentColor;
 
-
 void main(){
-	vec3 textureDiffuseColor = texture(diffuseTexture, fragmentUv).rgb;
+	vec3 textureDiffuseColor = texture(diffuseTexture, vec2(1.f - fragmentUv.x, fragmentUv.y)).rgb;
 	vec3 diffuseColor = materialDiffuseColor * textureDiffuseColor;		// TODO: Mix texture and material colors based on transparency?
 	vec3 materialAmbientColor = ambientColor * diffuseColor;
 
