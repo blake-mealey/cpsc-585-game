@@ -20,13 +20,13 @@ int main() {
 	vector<System*> systems;
 
 	// Initialize graphics and add to systems vector
-	Graphics *graphicsManager = Graphics::Instance();
-	graphicsManager->Initialize("Game Title");
-	systems.push_back(graphicsManager);
+	Graphics &graphicsManager = Graphics::Instance();
+	graphicsManager.Initialize("Game Title");
+	systems.push_back(&graphicsManager);
 
 	// Initialize physics and add to systems vector
-	Physics *physicsManager = Physics::Instance();
-	systems.push_back(physicsManager);
+	Physics &physicsManager = Physics::Instance();
+	systems.push_back(&physicsManager);
 
 	// Load the scene and get some entities
 	ContentManager::LoadScene("Level.json");
@@ -36,7 +36,7 @@ int main() {
 	InputManager inputManager;
 	
 	//Game Loop
-	while (!glfwWindowShouldClose(graphicsManager->GetWindow())) {
+	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
 		//Calculate Delta Time
 		Time currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;
@@ -48,7 +48,7 @@ int main() {
 		camera->transform.SetPosition(5.f * glm::vec3(sin(currentTime.GetTimeMilliSeconds() / 1000), 0, cos(currentTime.GetTimeMilliSeconds() / 1000)));
 
 		// Iterate through each system and call their update methods
-		for (vector<System*>::iterator it = systems.begin(); it != systems.end(); ++it) {
+		for (auto it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->Update(deltaTime);
 		}
 

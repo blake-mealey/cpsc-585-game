@@ -6,6 +6,8 @@
 #include "Content/ContentManager.h"
 #include <glm/gtx/string_cast.hpp>
 #include "../Entities/EntityManager.h"
+#include "../Components/CameraComponent.h"
+#include "../Components/MeshComponent.h"
 
 // Constants
 const size_t Graphics::MAX_CAMERAS = 4;
@@ -23,18 +25,14 @@ const glm::vec3 Graphics::SKY_COLOR = glm::vec3(144.f/255.f, 195.f/255.f, 212.f/
 const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.5f);
 
 // Singleton
-Graphics* Graphics::singletonInstance = nullptr;
 Graphics::Graphics() : cameraCount(0) { }
-
-Graphics* Graphics::Instance() {
-	if (!singletonInstance) {
-		singletonInstance = new Graphics();
-	}
-	return singletonInstance;
+Graphics &Graphics::Instance() {
+	static Graphics instance;
+	return instance;
 }
 
 void Graphics::WindowSizeCallback(GLFWwindow *window, int width, int height) {
-	Graphics::Instance()->SetWindowDimensions(width, height);
+	Graphics::Instance().SetWindowDimensions(width, height);
 }
 
 bool Graphics::Initialize(char* windowTitle) {

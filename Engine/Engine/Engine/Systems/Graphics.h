@@ -11,11 +11,10 @@
 #include "glm/glm.hpp"
 
 #include "Content/Mesh.h"
-#include "../Components/CameraComponent.h"
-#include "../Components/MeshComponent.h"
+#include "Content/Texture.h"
+#include "../Components/Component.h"
 #include "Time.h"
 #include "Content/ShaderProgram.h"
-
 
 struct VAOs {
 	enum { Vertices=0, Count };
@@ -32,7 +31,7 @@ struct Shaders {
 class Graphics : public System {
 public:
 	// Access the singleton instance
-	static Graphics *Instance();
+	static Graphics& Instance();
 
 	// Constants
 	static const std::string VERTEX_SHADER_FILE_NAME;
@@ -60,9 +59,10 @@ public:
 	void UpdateViewports();
 
 private:
-	// Singleton instance and private constructor
-	static Graphics *singletonInstance;
+	// No instantiation or copying
 	Graphics();
+	Graphics(const Graphics&) = delete;
+	Graphics& operator= (const Graphics&) = delete;
 
 	void CountCameras();
 	size_t cameraCount;
