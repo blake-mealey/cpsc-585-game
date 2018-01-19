@@ -1,19 +1,27 @@
 #include "CameraComponent.h"
 #include <glm/gtc/matrix_transform.inl>
 #include "../Entities/Entity.h"
-#include <iostream>
+#include "../Systems/Content/ContentManager.h"
 
 const float CameraComponent::NEAR_CLIPPING_PLANE = 0.1f;
 const float CameraComponent::FAR_CLIPPING_PLANE = 100.f;
 const float CameraComponent::DEFAULT_FIELD_OF_VIEW = 60.f;		// In degrees
 
 ComponentType CameraComponent::GetType() {
-	return ComponentType_CameraComponent;
+	return ComponentType_Camera;
 }
 
 void CameraComponent::HandleEvent(Event* event) {}
 
 CameraComponent::CameraComponent() : CameraComponent(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) {}
+
+CameraComponent::CameraComponent(nlohmann::json data) : fieldOfView(DEFAULT_FIELD_OF_VIEW) {
+	position = ContentManager::JsonToVec3(data["Position"]);
+	target = ContentManager::JsonToVec3(data["Target"]);
+	upVector = ContentManager::JsonToVec3(data["UpVector"]);
+
+	UpdateViewMatrix();
+}
 
 CameraComponent::CameraComponent(glm::vec3 _position, glm::vec3 _target, glm::vec3 _upVector) :
 	position(_position), target(_target), upVector(_upVector), fieldOfView(DEFAULT_FIELD_OF_VIEW) {
@@ -22,7 +30,10 @@ CameraComponent::CameraComponent(glm::vec3 _position, glm::vec3 _target, glm::ve
 }
 
 glm::vec3 CameraComponent::GetPosition() const {
-	return position;
+	if (entity == nullptr) {
+		return position;
+	}
+	return position + entity->transform.GetPosition();
 }
 
 glm::vec3 CameraComponent::GetTarget() const {
@@ -53,7 +64,8 @@ void CameraComponent::SetAspectRatio(const float _aspectRatio) {
 	UpdateProjectionMatrix();
 }
 
-glm::mat4 CameraComponent::GetViewMatrix() const {
+glm::mat4 CameraComponent::GetViewMatrix() {
+	UpdateViewMatrix();
 	return viewMatrix;
 }
 

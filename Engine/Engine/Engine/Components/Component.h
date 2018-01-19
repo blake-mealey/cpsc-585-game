@@ -4,8 +4,8 @@ class Event;
 class Entity;
 
 enum ComponentType {
-	ComponentType_MeshComponent,
-	ComponentType_CameraComponent
+	ComponentType_Mesh,
+	ComponentType_Camera
 };
 
 class Component {

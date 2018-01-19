@@ -6,6 +6,7 @@
 #include "../Entities/Transform.h"
 #include "../Systems/Content/Material.h"
 #include "../Systems/Content/Texture.h"
+#include <json/json.hpp>
 
 class MeshComponent : public Component {
 public:
@@ -14,7 +15,8 @@ public:
 	ComponentType GetType() override;
 	void HandleEvent(Event* event) override;
 	
-	MeshComponent(std::string meshPath, Material *_material, std::string texturePath);
+	MeshComponent(nlohmann::json data);
+	MeshComponent(std::string meshPath, std::string materialPath, std::string texturePath);
 
 	void SetEntity(Entity* _entity) override;
 

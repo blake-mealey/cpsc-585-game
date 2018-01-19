@@ -17,12 +17,11 @@ public:
 
 	size_t GetId() const;
 	std::string GetTag() const;
-	bool MatchesTag(std::string _tag) const;
-
-	void SetTag(std::string _tag);
+	bool HasTag(std::string _tag) const;
 private:
 	Entity(size_t _id);
 	void AddComponent(Component *component);
+	void SetTag(std::string _tag);
 
 	size_t id;
 	std::string tag;

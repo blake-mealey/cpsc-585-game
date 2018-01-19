@@ -24,7 +24,8 @@ const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.5f);
 
 // Singleton
 Graphics* Graphics::singletonInstance = nullptr;
-Graphics::Graphics() { }
+Graphics::Graphics() : cameraCount(0) { }
+
 Graphics* Graphics::Instance() {
 	if (!singletonInstance) {
 		singletonInstance = new Graphics();
@@ -108,32 +109,37 @@ void Graphics::Update(Time deltaTime) {
 	glBindVertexArray(vaoIds[VAOs::Vertices]);
 
 	// Load our lights into the GPU
-	// TODO: Multiple lights, loaded from components
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
 
+	// TODO: Multiple lights, loaded from components
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::LightColor), 1.f, 1.f, 1.f);
 	glUniform1f(shaderProgram->GetUniformLocation(UniformName::LightPower), 20.f);
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::LightPosition_World), 0.f, 0.f, -5);
 
 	// Get camera components
-	cameras = EntityManager::GetComponents(ComponentType_CameraComponent);
-	const size_t newCameraCount = std::min(cameras.size(), MAX_CAMERAS);
-	if (cameraCount != newCameraCount) {
-		cameraCount = newCameraCount;
+	cameras = EntityManager::GetComponents(ComponentType_Camera);
+	const size_t oldCameraCount = cameraCount;
+	CountCameras();
+	if (cameraCount != oldCameraCount) {
 		UpdateViewports();
 	}
 	
 	// Get mesh components
-	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_MeshComponent);
+	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
+	 
+	const glm::vec2 dims = GetViewportDimensions();
+	size_t camerasDrawn = 0;
+	for (size_t i = 0; i < cameras.size(); i++) {
+		// Check if this camera is enabled
+		CameraComponent* camera = static_cast<CameraComponent*>(cameras[i]);
+		if (!camera->enabled) continue;
 
-	for (size_t i = 0; i < cameraCount; i++) {
-		// Set the viewport size for this camera
-		glm::vec2 pos = glm::vec2((i % 2) * 0.5f, i < 2 ? (cameraCount < 3 ? 0.f : 0.5f) : 0.f) * glm::vec2(windowWidth, windowHeight);
-		glm::vec2 dims = GetViewportDimensions();
+		// Set the viewport for this camera
+		const glm::vec2 pos = glm::vec2((camerasDrawn % 2) * 0.5f,
+			camerasDrawn < 2 ? (cameraCount < 3 ? 0.f : 0.5f) : 0.f) * glm::vec2(windowWidth, windowHeight);
 		glViewport(pos.x, pos.y, dims.x, dims.y);
 
 		// Get the camera's projection and view matrices
-		CameraComponent* camera = static_cast<CameraComponent*>(cameras[i]);
 		const glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
 		const glm::mat4 viewMatrix = camera->GetViewMatrix();
 
@@ -168,10 +174,23 @@ void Graphics::Update(Time deltaTime) {
 			// Draw the mesh
 			glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
 		}
+
+		// Increment count
+		if (++camerasDrawn == cameraCount) break;
 	}
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
+}
+
+void Graphics::CountCameras() {
+	cameraCount = 0;
+	for (size_t i = 0; i < cameras.size(); i++) {
+		CameraComponent* camera = static_cast<CameraComponent*>(cameras[i]);
+		if (camera->enabled) {
+			if (++cameraCount == MAX_CAMERAS) break;
+		}
+	}
 }
 
 GLFWwindow* Graphics::GetWindow() const {
@@ -186,7 +205,7 @@ void Graphics::SetWindowDimensions(size_t width, size_t height) {
 
 void Graphics::UpdateViewports() {
 	const float aspectRatio = GetViewportAspectRatio();
-	for (size_t i = 0; i < cameraCount; i++) {
+	for (size_t i = 0; i < cameras.size(); i++) {
 		static_cast<CameraComponent*>(cameras[i])->SetAspectRatio(aspectRatio);
 	}
 }

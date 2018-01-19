@@ -8,13 +8,15 @@ public:
 	// Access entities
 	static Entity* FindEntity(size_t id);
 	static std::vector<Entity*> FindEntities(std::string tag);
-	// TODO: Way to iterate through all entities from other systems (return an iterator?)
 
 	// Manage entities
 	static Entity* CreateStaticEntity();
 	static Entity* CreateDynamicEntity();
 	static void DestroyStaticEntity(size_t id);
 	static void DestroyDynamicEntity(size_t id);
+
+	static void SetTag(size_t entityId, std::string tag);
+	static void SetTag(Entity *entity, std::string tag);
 
 	// Manage components
 	static void AddComponent(size_t entityId, Component* component);
@@ -31,11 +33,12 @@ private:
 	static std::vector<Entity*> staticEntities;
 	static std::vector<Entity*> dynamicEntities;
 	static std::map<size_t, Entity*> idToEntity;
+	static std::map<std::string, std::vector<Entity*>> tagToEntities;
 
 	// Store components
 	static std::map<ComponentType, std::vector<Component*>> components;
 
 	static size_t nextEntityId;
 
-	// TODO (if necessary): Object pools
+	// TODO (if necessary): Object pools (under-the-hood, won't change interface of Create/Destroy)
 };

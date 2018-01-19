@@ -6,6 +6,10 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
+#include "../../Entities/EntityManager.h"
+#include "../../Components/MeshComponent.h"
+#include <glm/gtx/string_cast.hpp>
+#include "../../Components/CameraComponent.h"
 
 std::map<std::string, Mesh*> ContentManager::meshes;
 std::map<std::string, Texture*> ContentManager::textures;
@@ -15,6 +19,7 @@ const std::string ContentManager::CONTENT_DIR_PATH = "./Content/";
 const std::string ContentManager::MESH_DIR_PATH = CONTENT_DIR_PATH + "Meshes/";
 const std::string ContentManager::TEXTURE_DIR_PATH = CONTENT_DIR_PATH + "Textures/";
 const std::string ContentManager::MATERIAL_DIR_PATH = CONTENT_DIR_PATH + "Materials/";
+const std::string ContentManager::SCENE_DIR_PATH = CONTENT_DIR_PATH + "Scenes/";
 
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
@@ -146,26 +151,80 @@ Material* ContentManager::GetMaterial(const std::string filePath) {
 		return material;
 	}
 
-	nlohmann::json data = LoadJson(filePath);
-	const glm::vec3 diffuseColor = glm::vec3(
-		data["diffuseColor"][0].get<float>(),
-		data["diffuseColor"][1].get<float>(),
-		data["diffuseColor"][2].get<float>());
-	const glm::vec3 specularColor = glm::vec3(
-		data["specularColor"][0].get<float>(),
-		data["specularColor"][1].get<float>(),
-		data["specularColor"][2].get<float>());
+	nlohmann::json data = LoadJson(MATERIAL_DIR_PATH + filePath);
+	const glm::vec3 diffuseColor = JsonToVec3(data["diffuseColor"]);
+	const glm::vec3 specularColor = JsonToVec3(data["specularColor"]);
 	const float specularity = data["specularity"].get<float>();
 
 	return new Material(diffuseColor, specularColor, specularity);
 }
 
+std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
+	std::vector<Entity*> entities;
+
+	nlohmann::json data = LoadJson(SCENE_DIR_PATH + filePath);
+	for (nlohmann::json entityData : data) {
+		entities.push_back(LoadEntity(entityData));
+	}
+
+	return entities;
+}
+
+Entity* ContentManager::LoadEntity(nlohmann::json data) {
+	Entity *entity = EntityManager::CreateDynamicEntity();		// TODO: Determine whether or not the entity is static
+
+	for (auto it = data.begin(); it != data.end(); ++it) {
+		std::string key = it.key();
+		if (key == "Tag") EntityManager::SetTag(entity, it.value());
+		else if (key == "Position") entity->transform.SetPosition(JsonToVec3(data["Position"]));
+		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(data["Scale"]));
+		else if (key == "Components") {
+			for (auto componentData : it.value()) {
+				Component *component;
+				bool supportedType = true;
+				std::string type = componentData["Type"];
+				if (type == "Mesh") component = new MeshComponent(componentData);
+				else if (type == "Camera") component = new CameraComponent(componentData);
+				else {
+					std::cout << "Unsupported component type: " << key;
+					supportedType = false;
+				}
+				
+				if (supportedType) {
+					component->enabled = GetFromJson<bool>(componentData["Enabled"], true);
+					EntityManager::AddComponent(entity, component);
+				}
+			}
+		} else if (key == "Children") {
+			for (auto childData : it.value()) {
+				Entity *child = LoadEntity(childData);
+				child->transform.parent = &entity->transform;
+			}
+		}
+	}
+
+	return entity;
+}
+
 nlohmann::json ContentManager::LoadJson(const std::string filePath) {
-	std::ifstream file(MATERIAL_DIR_PATH + filePath);		// TODO: Error check?
+	std::ifstream file(filePath);		// TODO: Error check?
 	nlohmann::json object;
 	file >> object;
 	file.close();
 	return object;
+}
+
+glm::vec3 ContentManager::JsonToVec3(nlohmann::json data) {
+	return glm::vec3(
+		data[0].get<float>(),
+		data[1].get<float>(),
+		data[2].get<float>());
+}
+
+glm::vec2 ContentManager::JsonToVec2(nlohmann::json data) {
+	return glm::vec2(
+		data[0].get<float>(),
+		data[1].get<float>());
 }
 
 GLuint ContentManager::LoadShader(std::string filePath, const GLenum shaderType) {

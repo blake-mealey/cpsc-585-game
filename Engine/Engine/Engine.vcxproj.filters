@@ -48,5 +48,6 @@
     <None Include="Engine\Shaders\vertex_a5.glsl" />
     <None Include="Engine\Shaders\vertex.glsl" />
     <None Include="Content\Materials\Basic.json" />
+    <None Include="Content\Scenes\Level.json" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@ std::string Entity::GetTag() const {
 	return tag;
 }
 
-bool Entity::MatchesTag(std::string _tag) const {
+bool Entity::HasTag(std::string _tag) const {
 	return tag.compare(_tag) == 0;
 }
 

@@ -64,6 +64,7 @@ private:
 	static Graphics *singletonInstance;
 	Graphics();
 
+	void CountCameras();
 	size_t cameraCount;
 	std::vector<Component*> cameras;
 	
