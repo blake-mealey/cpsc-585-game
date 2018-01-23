@@ -7,10 +7,9 @@ class XboxController {
 public:
 	XboxController(int _playerNumber);
 
-	void Update();
-
 	XINPUT_STATE GetState();
 	bool IsConnected();
+	int GetControllerNumber();
 
 	void Vibrate(int _leftVal = 0, int _rightVal = 0);
 

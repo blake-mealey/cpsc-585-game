@@ -4,10 +4,6 @@ XboxController::XboxController(int _playerNumber) {
 	controllerNumber = _playerNumber - 1;
 }
 
-void XboxController::Update() {
-
-}
-
 XINPUT_STATE XboxController::GetState() {
 	//Zeroise the state
 	ZeroMemory(&controllerState, sizeof(XINPUT_STATE));
@@ -33,6 +29,10 @@ bool XboxController::IsConnected() {
 	}
 }
 
+int XboxController::GetControllerNumber() {
+	return controllerNumber;
+}
+
 void XboxController::Vibrate(int _leftVal, int _rightVal) {
 	//Create Vibration State
 	XINPUT_VIBRATION vibration;
@@ -41,8 +41,14 @@ void XboxController::Vibrate(int _leftVal, int _rightVal) {
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 
 	//Set Vibration Values from 0 to 65535
-	vibration.wLeftMotorSpeed = _leftVal;
-	vibration.wRightMotorSpeed = _rightVal;
+	if (_leftVal == -1) {
+		vibration.wRightMotorSpeed = _rightVal;
+	} else if (_rightVal == -1) {
+		vibration.wLeftMotorSpeed = _leftVal;
+	} else {
+		vibration.wLeftMotorSpeed = _leftVal;
+		vibration.wRightMotorSpeed = _rightVal;
+	}
 
 	//Vibrate the Controller
 	XInputSetState(controllerNumber, &vibration);

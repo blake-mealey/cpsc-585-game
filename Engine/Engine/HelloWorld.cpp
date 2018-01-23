@@ -1,6 +1,6 @@
 #include "Engine/Systems/Graphics.h"
 #include "Engine/Systems/Physics.h"
-#include "Engine/Components/InputManager.h"
+#include "Engine/Systems/InputManager.h"
 #include "Engine/Systems/Content/ContentManager.h"
 
 #include "Engine/Systems/IO/XboxController.h"
@@ -30,29 +30,17 @@ int main() {
 	Physics &physicsManager = Physics::Instance();
 	systems.push_back(&physicsManager);
 
+	// Initialize inputManager and add to systems vector
+	InputManager &inputManager = InputManager::Instance();
+	systems.push_back(&inputManager);
+
 	// Load the scene and get some entities
 	ContentManager::LoadScene("Level.json");
 	Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
 
-	InputManager inputManager;
-	
-	//New Controller Stuff
-	XboxController* player;
-	//New Controller Stuff
-	player = new XboxController(1);
-
 	//Game Loop
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
-
-		if (player->IsConnected()) {
-			if (player->GetState().Gamepad.bLeftTrigger > 5) {
-				player->Vibrate(30000, 65535);
-			}
-			else {
-				player->Vibrate();
-			}
-		}
 
 		//Calculate Delta Time
 		Time currentTime = glfwGetTime();
@@ -68,7 +56,5 @@ int main() {
 		for (auto it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->Update(deltaTime);
 		}
-
-		inputManager.Update();
 	}
 }
