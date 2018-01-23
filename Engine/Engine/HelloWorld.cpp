@@ -3,6 +3,8 @@
 #include "Engine/Components/InputManager.h"
 #include "Engine/Systems/Content/ContentManager.h"
 
+#include "Engine/Systems/IO/XboxController.h"
+
 #include <vector>
 #include <iostream>
 #include "Engine/Entities/Entity.h"
@@ -35,8 +37,23 @@ int main() {
 
 	InputManager inputManager;
 	
+	//New Controller Stuff
+	XboxController* player;
+	//New Controller Stuff
+	player = new XboxController(1);
+
 	//Game Loop
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
+
+		if (player->IsConnected()) {
+			if (player->GetState().Gamepad.bLeftTrigger > 5) {
+				player->Vibrate(30000, 65535);
+			}
+			else {
+				player->Vibrate();
+			}
+		}
+
 		//Calculate Delta Time
 		Time currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;

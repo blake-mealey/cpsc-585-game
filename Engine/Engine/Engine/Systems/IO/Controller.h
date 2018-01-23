@@ -1,6 +1,11 @@
 #pragma once
 #include "../Engine/Systems/Graphics.h"
 
+/* Stuff for XInput Controller Support
+#include <Windows.h>
+#include <Xinput.h>
+#pragma comment(lib, "XInput.lib")
+*/
 #include <iostream>
 #include <string>
 using namespace std;
