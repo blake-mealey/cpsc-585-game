@@ -16,6 +16,7 @@ using namespace std;
 int main() {
 	cout << "Hello, World!" << endl;
 
+	Time currentTime;
 	Time lastFrame(0);
 	Time deltaTime(0);
 
@@ -43,7 +44,7 @@ int main() {
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
 
 		//Calculate Delta Time
-		Time currentTime = glfwGetTime();
+		currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
