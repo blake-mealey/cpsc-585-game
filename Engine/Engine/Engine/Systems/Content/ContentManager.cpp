@@ -180,7 +180,7 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(data["Scale"]));
 		else if (key == "Components") {
 			for (auto componentData : it.value()) {
-				Component *component;
+				Component *component = nullptr;
 				bool supportedType = true;
 				std::string type = componentData["Type"];
 				if (type == "Mesh") component = new MeshComponent(componentData);
