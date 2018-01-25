@@ -64,6 +64,7 @@ void EntityManager::DestroyEntity(size_t id, std::vector<Entity*> &entities) {
 		auto it = std::find(entities.begin(), entities.end(), entity);
 		entities.erase(it);
 	}
+	delete entity;
 }
 
 void EntityManager::AddComponent(size_t entityId, Component* component) {
@@ -74,6 +75,15 @@ void EntityManager::AddComponent(Entity* entity, Component* component) {
 	entity->AddComponent(component);
 	components[component->GetType()].push_back(component);
 	component->SetEntity(entity);
+}
+
+void EntityManager::DestroyComponent(Component* component) {
+	auto list = components[component->GetType()];
+	auto it = std::find(list.begin(), list.end(), component);
+	if (it != list.end())
+		list.erase(it);
+	component->GetEntity()->RemoveComponent(component);
+	delete component;
 }
 
 std::vector<Component*> EntityManager::GetComponents(ComponentType type) {

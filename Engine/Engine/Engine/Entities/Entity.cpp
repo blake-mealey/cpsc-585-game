@@ -3,6 +3,12 @@
 
 Entity::Entity(size_t _id) : id(_id) {}
 
+Entity::~Entity() {
+	for (size_t i = 0; i < components.size(); i++) {
+		delete components[i];
+	}
+}
+
 void Entity::HandleEvent(Event* event) {
 	for (size_t i = 0; i < components.size(); i++) {
 		components[i]->HandleEvent(event);		// TODO: Not really correct, use Colton's code
@@ -11,6 +17,12 @@ void Entity::HandleEvent(Event* event) {
 
 void Entity::AddComponent(Component* component) {
 	components.push_back(component);
+}
+
+void Entity::RemoveComponent(Component* component) {
+	auto it = std::find(components.begin(), components.end(), component);
+	if (it != components.end())
+		components.erase(it);
 }
 
 size_t Entity::GetId() const {

@@ -1,5 +1,5 @@
 {
-	"diffuseColor": [1, 1, 1],
-	"specularColor": [0.1, 0.1, 0.1],
-	"specularity":  50
+	"diffuseColor": [0.764, 0.565, 0.831],
+	"specularColor": [0.2, 0.2, 0.2],
+	"specularity":  1
 }

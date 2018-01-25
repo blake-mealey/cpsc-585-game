@@ -15,6 +15,19 @@
 #include "../Components/Component.h"
 #include "Time.h"
 #include "Content/ShaderProgram.h"
+#include "../Components/PointLightComponent.h"
+#include "../Components/DirectionLightComponent.h"
+
+class MeshComponent;
+
+struct Camera {
+	Camera(glm::mat4 _viewMatrix, glm::mat4 _projectionMatrix) : viewMatrix(_viewMatrix), projectionMatrix(_projectionMatrix) {}
+	
+	glm::mat4 viewMatrix;
+	glm::mat4 projectionMatrix;
+	glm::vec2 viewportPosition;
+	glm::vec2 viewportSize;
+};
 
 struct VAOs {
 	enum { Vertices=0, Count };
@@ -22,6 +35,10 @@ struct VAOs {
 
 struct VBOs {
 	enum { Vertices=0, UVs, Normals, Count };
+};
+
+struct SSBOs {
+	enum { PointLights=0, DirectionLights, Count };
 };
 
 struct Shaders {
@@ -54,9 +71,8 @@ public:
 
 	static void WindowSizeCallback(GLFWwindow *window, int width, int height);
 	void SetWindowDimensions(size_t width, size_t height);
-	float GetViewportAspectRatio() const;
-	glm::vec2 GetViewportDimensions() const;
-	void UpdateViewports();
+	void UpdateViewports(std::vector<Component*> cameraComponents) const;
+	glm::vec2 GetViewportSize() const;
 
 private:
 	// No instantiation or copying
@@ -64,17 +80,22 @@ private:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator= (const Graphics&) = delete;
 
-	void CountCameras();
-	size_t cameraCount;
-	std::vector<Component*> cameras;
+	void DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent);
+
+	void LoadCameras(std::vector<Component*> cameraComponents);
+	std::vector<Camera> cameras;
 	
 	GLFWwindow* window;
 	size_t windowWidth;
 	size_t windowHeight;
 	
-	GLuint vboIds[VBOs::Count];		// Points and UVs
+	GLuint vboIds[VBOs::Count];		// Vertices and UV coordinates
 	GLuint vaoIds[VAOs::Count];
+	GLuint ssboIds[SSBOs::Count];
 	ShaderProgram* shaders[Shaders::Count];
+
+	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights);
+	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights);
 
     void LoadTexture(GLuint textureId, const char *uniformName);
     void LoadTexture(Texture *texture, std::string uniformName);

@@ -16,6 +16,8 @@ public:
 	void HandleEvent(Event* event) override;
 	
 	MeshComponent(nlohmann::json data);
+	MeshComponent(std::string meshPath, std::string materialPath);
+	MeshComponent(std::string meshPath, Material *_material);
 	MeshComponent(std::string meshPath, std::string materialPath, std::string texturePath);
 
 	void SetEntity(Entity* _entity) override;

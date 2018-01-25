@@ -1,0 +1,117 @@
+[
+	{
+		"Tag": "Floor",
+		"Position": [0, -2.5, 0],
+		"Scale": [3, 1, 3],
+		"Components": [
+			{
+				"Type": "Mesh",
+				"Mesh": "Plane.obj",
+				"Texture": "DiamondPlate.jpg",
+				"Material": "Basic.json"
+			}
+		]
+	},
+	{
+		"Tag":  "Light",
+		"Position": [0, 0, -5],
+		"Scale": [0.1, 0.1, 0.1],
+		"Components":  [
+			{
+				"Type": "PointLight",
+				"Color": [1, 1, 1],
+				"Power": 10,
+				"Enabled":  false
+			},
+			{
+				"Type": "Mesh",
+				"Mesh": "Sphere.obj",
+				"Material": "Basic.json",
+				"Enabled":  false
+			}
+		]
+	},
+	{
+		"Tag":  "Sun",
+		"Components":  [
+			{
+				"Type": "DirectionLight",
+				"Color": [1, 1, 1],
+				"Direction": [0, 0, 1],
+				"Enabled":  false
+			}
+		]
+	},
+	{
+		"Tag": "Boulder",
+		"Components": [
+			{
+				"Type": "Mesh",
+				"Mesh": "Boulder.obj",
+				"Texture": "Boulder.jpg",
+				"Material": "Basic.json"
+			}
+		],
+		"Children": [
+			{
+				"Position": [-0.7, -0.7, 0],
+				"Scale": [0.5, 0.6, 0.7],
+				"Components": [
+					{
+						"Type": "Mesh",
+						"Mesh": "Boulder.obj",
+						"Texture": "Boulder.jpg",
+						"Material": "Basic.json",
+						"Enabled": true
+					}
+				]
+			},
+			{
+				"Position": [0.7, 0, 0.7],
+				"Scale": [0.7, 0.6, 0.5],
+				"Components": [
+					{
+						"Type": "Mesh",
+						"Mesh": "Boulder.obj",
+						"Texture": "Boulder.jpg",
+						"Material": "Basic.json",
+						"Enabled": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"Tag": "Camera",
+		"Components": [
+			{
+				"Type": "Camera",
+				"Position": [0, 0, 0],
+				"Target": [0, 0, 0],
+				"UpVector": [0, 1, 0],
+				"Enabled": true
+			},
+      {
+        "Type": "Camera",
+        "Position": [ 0, 0, 0 ],
+        "Target": [ 0, 0, 0 ],
+        "UpVector": [ 0, 1, 0 ],
+        "Enabled": true
+      },
+      {
+				"Type": "Camera",
+				"Position": [0, 0, 0],
+				"Target": [0, 0, 0],
+				"UpVector": [0, 1, 0],
+				"Enabled": false
+			},
+			{
+				"Type": "Camera",
+				"Position": [0, 0, 0],
+				"Target": [0, 0, 0],
+				"UpVector": [0, 1, 0],
+				"Enabled": false
+			}
+		]
+	}
+]

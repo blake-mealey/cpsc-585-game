@@ -122,7 +122,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="Content\Materials\Basic.json" />
-    <None Include="Content\Scenes\Level.json" />
+    <None Include="Content\Scenes\GraphicsDemo.json" />
     <None Include="Engine\Shaders\fragment.glsl" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
     <None Include="Engine\Shaders\vertex.glsl" />
@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
+    <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Entities\EntityManager.cpp" />
@@ -149,17 +150,21 @@
     <ClCompile Include="Engine\Systems\Physics.cpp" />
     <ClCompile Include="Engine\Systems\Time.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
+    <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Events\Event.h" />
     <ClInclude Include="Engine\Systems\Content\ContentManager.h" />
+    <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
     <ClInclude Include="Engine\Systems\Content\Material.h" />
     <ClInclude Include="Engine\Systems\Content\Mesh.h" />
+    <ClInclude Include="Engine\Systems\Content\PointLight.h" />
     <ClInclude Include="Engine\Systems\Content\ShaderProgram.h" />
     <ClInclude Include="Engine\Systems\Content\Texture.h" />
     <ClInclude Include="Engine\Systems\Graphics.h" />
@@ -171,6 +176,7 @@
     <ClInclude Include="Engine\Systems\System.h" />
     <ClInclude Include="Engine\Systems\Time.h" />
     <ClInclude Include="Engine\Entities\Transform.h" />
+    <ClInclude Include="Engine\Components\PointLightComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

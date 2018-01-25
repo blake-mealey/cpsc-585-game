@@ -3,13 +3,20 @@
 #include "Engine/Systems/InputManager.h"
 #include "Engine/Systems/Content/ContentManager.h"
 
+#include "Engine/Systems/IO/XboxController.h"
+
 #include <vector>
 #include <iostream>
 #include "Engine/Entities/Entity.h"
 #include "Engine/Entities/EntityManager.h"
+#include "Engine/Components/MeshComponent.h"
 #pragma comment(lib, "opengl32.lib")
 
 using namespace std;
+
+float unitRand() {
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
 
 int main() {
 	cout << "Hello, World!" << endl;
@@ -22,7 +29,7 @@ int main() {
 
 	// Initialize graphics and add to systems vector
 	Graphics &graphicsManager = Graphics::Instance();
-	graphicsManager.Initialize("Game Title");
+	graphicsManager.Initialize("Car Wars");
 	systems.push_back(&graphicsManager);
 
 	// Initialize physics and add to systems vector
@@ -34,7 +41,7 @@ int main() {
 	systems.push_back(&inputManager);
 
 	// Load the scene and get some entities
-	ContentManager::LoadScene("Level.json");
+	ContentManager::LoadScene("GraphicsDemo.json");
 	Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
 
@@ -49,7 +56,9 @@ int main() {
 		// "Game" logic
 		boulder->transform.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
 		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-		camera->transform.SetPosition(5.f * glm::vec3(sin(currentTime.GetTimeMilliSeconds() / 1000), 0, cos(currentTime.GetTimeMilliSeconds() / 1000)));
+		camera->transform.SetPosition(10.f * glm::vec3(
+			sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
+			cos(currentTime.GetTimeMilliSeconds() / 1000)));
 
 		// Iterate through each system and call their update methods
 		for (auto it = systems.begin(); it != systems.end(); ++it) {
