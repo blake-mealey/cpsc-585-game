@@ -25,7 +25,7 @@ const glm::vec3 Graphics::SKY_COLOR = glm::vec3(144.f, 195.f, 212.f) / 255.f;
 const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.4f);
 
 // Singleton
-Graphics::Graphics() : cameraCount(0) { }
+Graphics::Graphics() { }
 Graphics &Graphics::Instance() {
 	static Graphics instance;
 	return instance;
@@ -112,86 +112,83 @@ void Graphics::Update(Time deltaTime) {
 	const std::vector<Component*> directionLights = EntityManager::GetComponents(ComponentType_DirectionLight);
 	LoadLights(pointLights, directionLights);
 
-	// Get camera components
-	cameras = EntityManager::GetComponents(ComponentType_Camera);
-	const size_t oldCameraCount = cameraCount;
-	CountCameras();
-	if (cameraCount != oldCameraCount) {
-		UpdateViewports();
-	}
-	
-	// Get mesh components
+	// Get components
+	LoadCameras(EntityManager::GetComponents(ComponentType_Camera));
 	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
 	
-	const glm::vec2 dims = GetViewportDimensions();
-	size_t camerasDrawn = 0;
-	for (size_t i = 0; i < cameras.size(); i++) {
-		// Check if this camera is enabled
-		CameraComponent* camera = static_cast<CameraComponent*>(cameras[i]);
-		if (!camera->enabled) continue;
-
-		// Set the viewport for this camera
-		const glm::vec2 pos = glm::vec2((camerasDrawn % 2) * 0.5f,
-			camerasDrawn < 2 ? (cameraCount < 3 ? 0.f : 0.5f) : 0.f) * glm::vec2(windowWidth, windowHeight);
-		glViewport(pos.x, pos.y, dims.x, dims.y);
-
-		// Get the camera's projection and view matrices
-		const glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
-		const glm::mat4 viewMatrix = camera->GetViewMatrix();
-
-		// Draw the scene
-		for (size_t j = 0; j < meshes.size(); j++) {
-			// Get an enabled mesh
-			MeshComponent* meshComponent = static_cast<MeshComponent*>(meshes[j]);
-			if (!meshComponent->enabled) continue;
-
-			// Get the mesh's model and modelViewProjection matrices
-			glm::mat4 modelMatrix = meshComponent->transform.GetTransformationMatrix();
-			glm::mat4 modelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
-
-			// Load required matrices into the GPU
-			glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
-			glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &viewMatrix[0][0]);
-			glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
-
-			// Get the mesh's material
-            Material *mat = meshComponent->material;
-			
-			// Load the material data into the GPU
-			glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
-			glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularColor), mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
-			glUniform1f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularity), mat->specularity);
-			
-			// Load the mesh and the mesh's texture into the GPU
-			Mesh* mesh = meshComponent->GetMesh();
-			LoadBuffer(mesh);
-
-			if (meshComponent->texture != nullptr) {
-				glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
-				LoadTexture(meshComponent->texture, UniformName::DiffuseTexture);
-			} else {
-				glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
-			}
-
-			// Draw the mesh
-			glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
+	// Draw the scene
+	for (size_t j = 0; j < meshes.size(); j++) {
+		MeshComponent* meshComponent = static_cast<MeshComponent*>(meshes[j]);
+		for (Camera camera : cameras) {
+			glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
+			DrawMesh(shaderProgram, meshComponent, camera);
 		}
-
-		// Increment count
-		if (++camerasDrawn == cameraCount) break;
 	}
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
 }
 
-void Graphics::CountCameras() {
-	cameraCount = 0;
-	for (size_t i = 0; i < cameras.size(); i++) {
-		CameraComponent* camera = static_cast<CameraComponent*>(cameras[i]);
-		if (camera->enabled) {
-			if (++cameraCount == MAX_CAMERAS) break;
+void Graphics::DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent, Camera camera) {
+	if (!meshComponent->enabled) return;
+
+	// Get the mesh's model and modelViewProjection matrices
+	glm::mat4 modelMatrix = meshComponent->transform.GetTransformationMatrix();
+	glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * modelMatrix;
+
+	// Load required matrices into the GPU
+	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
+	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
+	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
+
+	// Get the mesh's material
+	Material *mat = meshComponent->material;
+
+	// Load the material data into the GPU
+	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
+	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularColor), mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
+	glUniform1f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularity), mat->specularity);
+
+	// Load the mesh and the mesh's texture into the GPU
+	Mesh* mesh = meshComponent->GetMesh();
+	LoadBuffer(mesh);
+
+	if (meshComponent->texture != nullptr) {
+		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
+		LoadTexture(meshComponent->texture, UniformName::DiffuseTexture);
+	} else {
+		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
+	}
+
+	// Draw the mesh
+	glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
+}
+
+void Graphics::LoadCameras(std::vector<Component*> cameraComponents) {
+	// Find up to MAX_CAMERAS enabled cameras
+	const size_t lastCount = cameras.size();
+	cameras.clear();
+	for (Component *component: cameraComponents) {
+		if (component->enabled) {
+			CameraComponent *camera = static_cast<CameraComponent*>(component);
+			cameras.push_back(Camera(camera->GetViewMatrix(), camera->GetProjectionMatrix()));
+			if (cameras.size() == MAX_CAMERAS) break;
 		}
+	}
+	const size_t count = cameras.size();
+
+	// Update the camera's viewports based on the number of cameras
+	const glm::vec2 windowSize = glm::vec2(windowWidth, windowHeight);
+	const glm::vec2 viewportSize = GetViewportSize();
+	for (size_t i = 0; i < count; ++i) {
+		cameras[i].viewportPosition = glm::vec2((i % 2) * 0.5f,
+			i < 2 ? (i < 3 ? 0.f : 0.5f) : 0.f) * windowSize;
+		cameras[i].viewportSize = viewportSize;
+	}
+
+	// If camera count changed, update aspect ratios for next frame
+	if (cameras.size() != lastCount) {
+		UpdateViewports(cameraComponents);
 	}
 }
 
@@ -202,23 +199,23 @@ GLFWwindow* Graphics::GetWindow() const {
 void Graphics::SetWindowDimensions(size_t width, size_t height) {
 	windowWidth = width;
 	windowHeight = height;
-	UpdateViewports();
+	UpdateViewports(EntityManager::GetComponents(ComponentType_Camera));
 }
 
-void Graphics::UpdateViewports() {
-	const float aspectRatio = GetViewportAspectRatio();
-	for (size_t i = 0; i < cameras.size(); i++) {
-		static_cast<CameraComponent*>(cameras[i])->SetAspectRatio(aspectRatio);
+void Graphics::UpdateViewports(std::vector<Component*> cameraComponents) const {
+	const glm::vec2 viewportSize = GetViewportSize();
+	const float aspectRatio = viewportSize.x / viewportSize.y;
+	for (Component *component : cameraComponents) {
+		if (component->enabled) {
+			CameraComponent *camera = static_cast<CameraComponent*>(component);
+			camera->SetAspectRatio(aspectRatio);
+		}
 	}
 }
 
-glm::vec2 Graphics::GetViewportDimensions() const {
-	return glm::vec2(cameraCount == 1 ? 1 : 0.5, cameraCount < 3 ? 1 : 0.5) * glm::vec2(windowWidth, windowHeight);
-}
-
-float Graphics::GetViewportAspectRatio() const  {
-	glm::vec2 viewportDims = GetViewportDimensions();
-	return viewportDims.x / viewportDims.y;
+glm::vec2 Graphics::GetViewportSize() const {
+	const glm::vec2 windowSize = glm::vec2(windowWidth, windowHeight);
+	return glm::vec2(cameras.size() == 1 ? 1 : 0.5, cameras.size() < 3 ? 1 : 0.5) * windowSize;
 }
 
 void Graphics::LoadLights(std::vector<Component*> _pointLights,
