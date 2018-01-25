@@ -21,6 +21,8 @@ public:
 	// Manage components
 	static void AddComponent(size_t entityId, Component* component);
 	static void AddComponent(Entity *entity, Component* component);
+	static void DestroyComponent(Component* component);
+
 	static std::vector<Component*> GetComponents(ComponentType type);
 	
 	// Contact entities

@@ -11,13 +11,23 @@ void MeshComponent::HandleEvent(Event* event) {}
 MeshComponent::MeshComponent(nlohmann::json data) : transform(Transform()) {
 	mesh = ContentManager::GetMesh(data["Mesh"]);
 	material = ContentManager::GetMaterial(data["Material"]);
-	texture = ContentManager::GetTexture(data["Texture"]);
+	if (!data["Texture"].is_null()) texture = ContentManager::GetTexture(data["Texture"]);
+	else texture = nullptr;
+}
+
+MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : texture(nullptr) {
+	mesh = ContentManager::GetMesh(meshPath);
+	material = ContentManager::GetMaterial(materialPath);
 }
 
 MeshComponent::MeshComponent(const std::string meshPath, const std::string materialPath, const std::string texturePath) : transform(Transform()) {
 	mesh = ContentManager::GetMesh(meshPath);
     material = ContentManager::GetMaterial(materialPath);
     texture = ContentManager::GetTexture(texturePath);
+}
+
+MeshComponent::MeshComponent(std::string meshPath, Material *_material) : material(_material), texture(nullptr) {
+	mesh = ContentManager::GetMesh(meshPath);
 }
 
 Mesh* MeshComponent::GetMesh() const {

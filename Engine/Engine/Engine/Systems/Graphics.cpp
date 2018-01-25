@@ -21,8 +21,8 @@ const size_t Graphics::SCREEN_WIDTH = 1024;
 const size_t Graphics::SCREEN_HEIGHT = 768;
 
 // Lighting
-const glm::vec3 Graphics::SKY_COLOR = glm::vec3(144.f/255.f, 195.f/255.f, 212.f/255.f);
-const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.5f);
+const glm::vec3 Graphics::SKY_COLOR = glm::vec3(144.f, 195.f, 212.f) / 255.f;
+const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.4f);
 
 // Singleton
 Graphics::Graphics() : cameraCount(0) { }
@@ -32,7 +32,7 @@ Graphics &Graphics::Instance() {
 }
 
 void Graphics::WindowSizeCallback(GLFWwindow *window, int width, int height) {
-	Graphics::Instance().SetWindowDimensions(width, height);
+	Instance().SetWindowDimensions(width, height);
 }
 
 bool Graphics::Initialize(char* windowTitle) {
@@ -108,11 +108,9 @@ void Graphics::Update(Time deltaTime) {
 
 	// Load our lights into the GPU
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
-
-	// TODO: Multiple lights, loaded from components
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::LightColor), 1.f, 1.f, 1.f);
-	glUniform1f(shaderProgram->GetUniformLocation(UniformName::LightPower), 20.f);
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::LightPosition_World), 0.f, 0.f, -5);
+	const std::vector<Component*> pointLights = EntityManager::GetComponents(ComponentType_PointLight);
+	const std::vector<Component*> directionLights = EntityManager::GetComponents(ComponentType_DirectionLight);
+	LoadLights(pointLights, directionLights);
 
 	// Get camera components
 	cameras = EntityManager::GetComponents(ComponentType_Camera);
@@ -124,7 +122,7 @@ void Graphics::Update(Time deltaTime) {
 	
 	// Get mesh components
 	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
-	 
+	
 	const glm::vec2 dims = GetViewportDimensions();
 	size_t camerasDrawn = 0;
 	for (size_t i = 0; i < cameras.size(); i++) {
@@ -167,7 +165,13 @@ void Graphics::Update(Time deltaTime) {
 			// Load the mesh and the mesh's texture into the GPU
 			Mesh* mesh = meshComponent->GetMesh();
 			LoadBuffer(mesh);
-            LoadTexture(meshComponent->texture, UniformName::DiffuseTexture);
+
+			if (meshComponent->texture != nullptr) {
+				glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
+				LoadTexture(meshComponent->texture, UniformName::DiffuseTexture);
+			} else {
+				glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
+			}
 
 			// Draw the mesh
 			glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
@@ -217,6 +221,36 @@ float Graphics::GetViewportAspectRatio() const  {
 	return viewportDims.x / viewportDims.y;
 }
 
+void Graphics::LoadLights(std::vector<Component*> _pointLights,
+	std::vector<Component*> _directionLights) {
+
+	// Get the point light data which can be directly passed to the shader	
+	std::vector<PointLight> pointLights;
+	for (Component *component : _pointLights) {
+		if (component->enabled)
+			pointLights.push_back(static_cast<PointLightComponent*>(component)->GetData());
+	}
+
+	// Get the direction light data which can be directly passed to the shader
+	std::vector<DirectionLight> directionLights;
+	for (Component *component : _directionLights) {
+		if (component->enabled)
+			directionLights.push_back(static_cast<DirectionLightComponent*>(component)->GetData());
+	}
+
+	LoadLights(pointLights, directionLights);
+}
+
+void Graphics::LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights) {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::PointLights]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, pointLights.size() * sizeof(PointLight), pointLights.data(), GL_DYNAMIC_COPY);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::DirectionLights]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, directionLights.size() * sizeof(DirectionLight), directionLights.data(), GL_DYNAMIC_COPY);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
 void Graphics::LoadTexture(GLuint textureId, const char *uniformName) {
     glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
@@ -257,6 +291,8 @@ void Graphics::LoadBuffer(const glm::vec3 *vertices, const glm::vec2 *uvs, const
 		normals,
 		GL_DYNAMIC_DRAW
 	);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Graphics::DestroyIds() {
@@ -271,6 +307,10 @@ void Graphics::GenerateIds() {
 	glGenVertexArrays(VAOs::Count, vaoIds);
 	glGenBuffers(VBOs::Count, vboIds);
 	shaders[Shaders::Program] = LoadShaderProgram();
+	glGenBuffers(SSBOs::Count, ssboIds);
+	for (size_t i = 0; i < SSBOs::Count; i++) {
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, ssboIds[i]);
+	}
 }
 
 void Graphics::InitializeVao() {
@@ -311,6 +351,8 @@ void Graphics::InitializeVao() {
 		0,
 		static_cast<void*>(nullptr)
 	);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 ShaderProgram* Graphics::LoadShaderProgram() {

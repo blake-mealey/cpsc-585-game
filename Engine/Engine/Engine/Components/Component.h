@@ -5,7 +5,9 @@ class Entity;
 
 enum ComponentType {
 	ComponentType_Mesh,
-	ComponentType_Camera
+	ComponentType_Camera,
+	ComponentType_PointLight,
+	ComponentType_DirectionLight
 };
 
 class Component {
@@ -18,6 +20,7 @@ public:
 	virtual void HandleEvent(Event *event) = 0;
 
 	virtual void SetEntity(Entity *_entity);
+	Entity* GetEntity() const;
 protected:
 	Entity *entity;
 };

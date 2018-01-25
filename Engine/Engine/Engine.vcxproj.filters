@@ -19,6 +19,8 @@
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Systems\IO\XboxController.cpp" />
+    <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
+    <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -42,6 +44,10 @@
     <ClInclude Include="Engine\Systems\System.h" />
     <ClInclude Include="Engine\Systems\Time.h" />
     <ClInclude Include="Engine\Systems\IO\XboxController.h" />
+    <ClInclude Include="Engine\Components\PointLightComponent.h" />
+    <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
+    <ClInclude Include="Engine\Systems\Content\PointLight.h" />
+    <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -50,6 +56,6 @@
     <None Include="Engine\Shaders\vertex_a5.glsl" />
     <None Include="Engine\Shaders\vertex.glsl" />
     <None Include="Content\Materials\Basic.json" />
-    <None Include="Content\Scenes\Level.json" />
+    <None Include="Content\Scenes\GraphicsDemo.json" />
   </ItemGroup>
 </Project>

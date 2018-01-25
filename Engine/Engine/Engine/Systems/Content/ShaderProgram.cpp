@@ -1,10 +1,6 @@
 #include "ShaderProgram.h"
 #include <iostream>
 
-const char* UniformName::LightColor = "lightColor";
-const char* UniformName::LightPower = "lightPower";
-const char* UniformName::LightPosition_World = "lightPosition_world";
-
 const char* UniformName::AmbientColor = "ambientColor";
 
 const char* UniformName::ModelMatrix = "modelMatrix";
@@ -16,6 +12,7 @@ const char* UniformName::MaterialSpecularColor = "materialSpecularColor";
 const char* UniformName::MaterialSpecularity = "materialSpecularity";
 
 const char* UniformName::DiffuseTexture = "diffuseTexture";
+const char* UniformName::DiffuseTextureEnabled = "diffuseTextureEnabled";
 
 ShaderProgram::ShaderProgram() {}
 ShaderProgram::ShaderProgram(GLuint id) : programId(id) {}

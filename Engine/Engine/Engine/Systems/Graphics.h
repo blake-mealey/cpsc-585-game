@@ -15,6 +15,8 @@
 #include "../Components/Component.h"
 #include "Time.h"
 #include "Content/ShaderProgram.h"
+#include "../Components/PointLightComponent.h"
+#include "../Components/DirectionLightComponent.h"
 
 struct VAOs {
 	enum { Vertices=0, Count };
@@ -22,6 +24,10 @@ struct VAOs {
 
 struct VBOs {
 	enum { Vertices=0, UVs, Normals, Count };
+};
+
+struct SSBOs {
+	enum { PointLights=0, DirectionLights, Count };
 };
 
 struct Shaders {
@@ -72,9 +78,13 @@ private:
 	size_t windowWidth;
 	size_t windowHeight;
 	
-	GLuint vboIds[VBOs::Count];		// Points and UVs
+	GLuint vboIds[VBOs::Count];		// Vertices and UV coordinates
 	GLuint vaoIds[VAOs::Count];
+	GLuint ssboIds[SSBOs::Count];
 	ShaderProgram* shaders[Shaders::Count];
+
+	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights);
+	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights);
 
     void LoadTexture(GLuint textureId, const char *uniformName);
     void LoadTexture(Texture *texture, std::string uniformName);

@@ -4,10 +4,6 @@
 #include <map>
 
 const struct UniformName {
-	static const char* LightColor;
-	static const char* LightPower;
-	static const char* LightPosition_World;
-
 	static const char* AmbientColor;
 
 	static const char* ModelMatrix;
@@ -19,6 +15,7 @@ const struct UniformName {
 	static const char* MaterialSpecularity;
 
 	static const char* DiffuseTexture;
+	static const char* DiffuseTextureEnabled;
 };
 
 class ShaderProgram {

@@ -10,6 +10,8 @@
 #include "../../Components/MeshComponent.h"
 #include <glm/gtx/string_cast.hpp>
 #include "../../Components/CameraComponent.h"
+#include "../../Components/PointLightComponent.h"
+#include "../../Components/DirectionLightComponent.h"
 
 std::map<std::string, Mesh*> ContentManager::meshes;
 std::map<std::string, Texture*> ContentManager::textures;
@@ -81,6 +83,8 @@ Mesh* LoadObj(const std::string filePath) {
 		}
 	}
 
+	fclose(file);
+
 	const size_t vertexCount = vertexIndices.size();
 	glm::vec3 *vertices = new glm::vec3[vertexCount];
 	glm::vec2 *uvs = new glm::vec2[vertexCount];
@@ -97,9 +101,7 @@ Mesh* LoadObj(const std::string filePath) {
 
 Mesh* ContentManager::GetMesh(const std::string filePath) {
 	Mesh* mesh = meshes[filePath];
-	if (mesh != nullptr) {
-		return mesh;
-	}
+	if (mesh != nullptr) return mesh;
 
 	// TODO: Load meshes using Assimp
 	mesh = LoadObj(MESH_DIR_PATH + filePath);
@@ -110,9 +112,7 @@ Mesh* ContentManager::GetMesh(const std::string filePath) {
 
 Texture* ContentManager::GetTexture(const std::string filePath) {
 	Texture* texture = textures[filePath];
-	if (texture != nullptr) {
-		return texture;
-	}
+	if (texture != nullptr) return texture;
 
 	int components;
 	GLuint texId;
@@ -147,9 +147,7 @@ Texture* ContentManager::GetTexture(const std::string filePath) {
 
 Material* ContentManager::GetMaterial(const std::string filePath) {
 	Material* material = materials[filePath];
-	if (material != nullptr) {
-		return material;
-	}
+	if (material != nullptr) return material;
 
 	nlohmann::json data = LoadJson(MATERIAL_DIR_PATH + filePath);
 	const glm::vec3 diffuseColor = JsonToVec3(data["diffuseColor"]);
@@ -185,8 +183,10 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 				std::string type = componentData["Type"];
 				if (type == "Mesh") component = new MeshComponent(componentData);
 				else if (type == "Camera") component = new CameraComponent(componentData);
+				else if (type == "PointLight") component = new PointLightComponent(componentData);
+				else if (type == "DirectionLight") component = new DirectionLightComponent(componentData);
 				else {
-					std::cout << "Unsupported component type: " << key;
+					std::cout << "Unsupported component type: " << type << std::endl;
 					supportedType = false;
 				}
 				
