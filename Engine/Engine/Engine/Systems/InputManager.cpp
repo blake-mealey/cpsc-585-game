@@ -48,13 +48,30 @@ void InputManager::HandleController() {
 	for (auto controller = xboxControllers.begin(); controller != xboxControllers.end(); controller++) {
 		//If controller is connected
 		if ((*controller)->IsConnected()) {
+			int leftVibrate = 0;
+			int rightVibrate = 0;
+
 			//Manage Trigger States
+			//Left Trigger
 			if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed L Trigger" << endl;
 			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held L Trigger" << endl;
+				leftVibrate = 30000 * (*controller)->GetState().Gamepad.bLeftTrigger / 255;
 			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released L Trigger" << endl;
+			}
+
+			//Right Trigger
+			if ((*controller)->GetPreviousState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed R Trigger" << endl;
+			}
+			else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " held R Trigger" << endl;
+				rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
+			}
+			else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " released R Trigger" << endl;
 			}
 
 			//Manage Button States
@@ -69,6 +86,9 @@ void InputManager::HandleController() {
 			} else if (releasedButtons & XINPUT_GAMEPAD_A) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released A" << endl;
 			}
+
+			//Vibrate Controller
+			(*controller)->Vibrate(leftVibrate, rightVibrate);
 
 			//Update Previous Controller State
 			(*controller)->SetPreviousState((*controller)->GetState());

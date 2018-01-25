@@ -17,9 +17,6 @@ public:
 	void Vibrate(int _leftVal = 0, int _rightVal = 0);
 
 private:
-	static const int NUMBER_CONTROLLER_BUTTONS = 14;
-	static const int NUMBER_CONTROLLER_AXES = 6;
-
 	XINPUT_STATE controllerState;
 	XINPUT_STATE previousControllerState;
 

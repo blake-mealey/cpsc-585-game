@@ -49,6 +49,9 @@ void XboxController::Vibrate(int _leftVal, int _rightVal) {
 	//Zeroise the Vibration
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 
+	vibration.wLeftMotorSpeed = _leftVal;
+	vibration.wRightMotorSpeed = _rightVal;
+
 	//Vibrate the Controller
 	XInputSetState(controllerNumber, &vibration);
 }

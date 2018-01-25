@@ -3,7 +3,6 @@
 #include "IO/Keyboard.h"
 #include "IO/Mouse.h"
 
-#include <map>
 #include <vector>
 #include <iostream>
 using namespace std;
