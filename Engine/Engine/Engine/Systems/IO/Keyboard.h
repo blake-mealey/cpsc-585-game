@@ -13,5 +13,4 @@ private:
 	static bool keyDown[];
 	static bool keyPressed[];
 	static bool keyReleased[];
-
 };

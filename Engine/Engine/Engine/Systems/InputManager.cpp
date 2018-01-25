@@ -44,25 +44,34 @@ void InputManager::HandleKeyboard() {
 }
 
 void InputManager::HandleController() {
+	//Iterate through each controller
+	for (auto controller = xboxControllers.begin(); controller != xboxControllers.end(); controller++) {
+		//If controller is connected
+		if ((*controller)->IsConnected()) {
+			//Manage Trigger States
+			if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed L Trigger" << endl;
+			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " held L Trigger" << endl;
+			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " released L Trigger" << endl;
+			}
 
-	for (auto it = xboxControllers.begin(); it != xboxControllers.end(); it++) {
-		if ((*it)->IsConnected()) {
-			//If Left Trigger - Vibrate Left Side
-			if ((*it)->GetState().Gamepad.bLeftTrigger > 5) {
-				(*it)->Vibrate(65535, -1);
-				cout << "Controller: " << (*it)->GetControllerNumber() << " Left Trigger Down." << endl;
+			//Manage Button States
+			int heldButtons = (*controller)->GetState().Gamepad.wButtons & (*controller)->GetPreviousState().Gamepad.wButtons;
+			int pressedButtons = ((*controller)->GetState().Gamepad.wButtons ^ (*controller)->GetPreviousState().Gamepad.wButtons) & (*controller)->GetState().Gamepad.wButtons;
+			int releasedButtons = ((*controller)->GetState().Gamepad.wButtons ^ (*controller)->GetPreviousState().Gamepad.wButtons) & (*controller)->GetPreviousState().Gamepad.wButtons;
+
+			if (pressedButtons & XINPUT_GAMEPAD_A) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed A" << endl;
+			} else if (heldButtons & XINPUT_GAMEPAD_A) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " held A" << endl;
+			} else if (releasedButtons & XINPUT_GAMEPAD_A) {
+				cout << "Controller: " << (*controller)->GetControllerNumber() << " released A" << endl;
 			}
-			else {
-				(*it)->Vibrate();
-			}
-			//If Right Trigger - Vibrate Right Side
-			if ((*it)->GetState().Gamepad.bRightTrigger > 5) {
-				(*it)->Vibrate(-1, 65535);
-				cout << "Controller: " << (*it)->GetControllerNumber() << " Right Trigger Down." << endl;
-			}
-			else {
-				(*it)->Vibrate();
-			}
+
+			//Update Previous Controller State
+			(*controller)->SetPreviousState((*controller)->GetState());
 		}
 	}
 }
