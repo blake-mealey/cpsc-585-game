@@ -80,7 +80,7 @@ private:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator= (const Graphics&) = delete;
 
-	void DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent, Camera camera);
+	void DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent);
 
 	void LoadCameras(std::vector<Component*> cameraComponents);
 	std::vector<Camera> cameras;

@@ -119,27 +119,19 @@ void Graphics::Update(Time deltaTime) {
 	// Draw the scene
 	for (size_t j = 0; j < meshes.size(); j++) {
 		MeshComponent* meshComponent = static_cast<MeshComponent*>(meshes[j]);
-		for (Camera camera : cameras) {
-			glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
-			DrawMesh(shaderProgram, meshComponent, camera);
-		}
+		DrawMesh(shaderProgram, meshComponent);
 	}
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
 }
 
-void Graphics::DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent, Camera camera) {
+void Graphics::DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent) {
 	if (!meshComponent->enabled) return;
 
-	// Get the mesh's model and modelViewProjection matrices
+	// Load the model matrix into the GPU
 	glm::mat4 modelMatrix = meshComponent->transform.GetTransformationMatrix();
-	glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * modelMatrix;
-
-	// Load required matrices into the GPU
 	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
-	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
-	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
 
 	// Get the mesh's material
 	Material *mat = meshComponent->material;
@@ -160,8 +152,16 @@ void Graphics::DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshCompone
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
 	}
 
-	// Draw the mesh
-	glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
+	for (Camera camera : cameras) {
+		glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
+
+		// Load the model view projection matrix into the GPU
+		glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * modelMatrix;
+		glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
+		glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
+	}
 }
 
 void Graphics::LoadCameras(std::vector<Component*> cameraComponents) {
@@ -182,7 +182,7 @@ void Graphics::LoadCameras(std::vector<Component*> cameraComponents) {
 	const glm::vec2 viewportSize = GetViewportSize();
 	for (size_t i = 0; i < count; ++i) {
 		cameras[i].viewportPosition = glm::vec2((i % 2) * 0.5f,
-			i < 2 ? (i < 3 ? 0.f : 0.5f) : 0.f) * windowSize;
+			i < 2 ? (count < 3 ? 0.f : 0.5f) : 0.f) * windowSize;
 		cameras[i].viewportSize = viewportSize;
 	}
 
