@@ -1,6 +1,10 @@
 #include "InputManager.h"
 
+#include "../Entities/EntityManager.h"
+
 vector<XboxController*> InputManager::xboxControllers;
+
+Time dt;
 
 InputManager &InputManager::Instance() {
 	for (int i = 0; i < XUSER_MAX_COUNT; i++) {
@@ -12,6 +16,7 @@ InputManager &InputManager::Instance() {
 }
 
 void InputManager::Update(Time _deltaTime) {
+	dt = _deltaTime;
 	HandleMouse();
 	HandleKeyboard();
 	HandleController();
@@ -30,7 +35,7 @@ void InputManager::HandleMouse() {
 	}
 
 	//Cursor Position
-	cout << "Mouse Position: " << Mouse::GetCursorPosition().x << ", " << Mouse::GetCursorPosition().y << ", " << Mouse::GetCursorPosition().z << endl;
+	//cout << "Mouse Position: " << Mouse::GetCursorPosition().x << ", " << Mouse::GetCursorPosition().y << ", " << Mouse::GetCursorPosition().z << endl;
 }
 
 void InputManager::HandleKeyboard() {
@@ -68,13 +73,35 @@ void InputManager::HandleController() {
 			//Right Trigger
 			if ((*controller)->GetPreviousState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed R Trigger" << endl;
-			}
-			else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+			} else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held R Trigger" << endl;
 				rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
-			}
-			else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+			} else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released R Trigger" << endl;
+			}
+
+			//Left Joystick X
+			if ((((*controller)->GetPreviousState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))){
+				cout << (*controller)->GetState().Gamepad.sThumbLX << endl;
+				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Translate(glm::vec3(((*controller)->GetState().Gamepad.sThumbLX / 10000) * dt.GetTimeSeconds(), 0, 0));
+			}
+
+			//Left Joystick Y
+			if ((((*controller)->GetPreviousState().Gamepad.sThumbLY >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbLY <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbLY >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbLY <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))) {
+				cout << (*controller)->GetState().Gamepad.sThumbLY << endl;
+				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Translate(glm::vec3(0.0f, 0, -((*controller)->GetState().Gamepad.sThumbLY / 10000) * dt.GetTimeSeconds()));
+			}
+			
+			//Right Joystick X
+			if ((((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
+				cout << (*controller)->GetState().Gamepad.sThumbRX << endl;
+				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), ((float)(*controller)->GetState().Gamepad.sThumbRX / 327670.f) * dt.GetTimeSeconds());
+			}
+
+			//Right Joystick Y
+			if ((((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
+				cout << (*controller)->GetState().Gamepad.sThumbRY << endl;
+				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Rotate(glm::vec3(1.0f, 0.0f, 0.0f), ((float)(*controller)->GetState().Gamepad.sThumbRY / 327670.f) * dt.GetTimeSeconds());
 			}
 
 			//Manage Button States

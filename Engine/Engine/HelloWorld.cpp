@@ -54,11 +54,12 @@ int main() {
 		lastFrame = currentTime;
 
 		// "Game" logic
-		boulder->transform.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
-		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-		camera->transform.SetPosition(10.f * glm::vec3(
-			sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
-			cos(currentTime.GetTimeMilliSeconds() / 1000)));
+		//boulder->transform.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
+		//boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
+		//camera->transform.SetPosition(10.f * glm::vec3(
+		//	sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
+		//	cos(currentTime.GetTimeMilliSeconds() / 1000)));
+		camera->transform.SetPosition(glm::vec3(0.0f, 5.0f, 10.0f));
 
 		// Iterate through each system and call their update methods
 		for (auto it = systems.begin(); it != systems.end(); ++it) {
