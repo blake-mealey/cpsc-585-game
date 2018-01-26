@@ -28,6 +28,9 @@ void InputManager::HandleMouse() {
 	if (Mouse::ButtonReleased(GLFW_MOUSE_BUTTON_1)) {
 		cout << "Left Button Released" << endl;
 	}
+
+	//Cursor Position
+	cout << "Mouse Position: " << Mouse::GetCursorPosition().x << ", " << Mouse::GetCursorPosition().y << ", " << Mouse::GetCursorPosition().z << endl;
 }
 
 void InputManager::HandleKeyboard() {
@@ -79,6 +82,7 @@ void InputManager::HandleController() {
 			int pressedButtons = ((*controller)->GetState().Gamepad.wButtons ^ (*controller)->GetPreviousState().Gamepad.wButtons) & (*controller)->GetState().Gamepad.wButtons;
 			int releasedButtons = ((*controller)->GetState().Gamepad.wButtons ^ (*controller)->GetPreviousState().Gamepad.wButtons) & (*controller)->GetPreviousState().Gamepad.wButtons;
 
+			//A Button
 			if (pressedButtons & XINPUT_GAMEPAD_A) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed A" << endl;
 			} else if (heldButtons & XINPUT_GAMEPAD_A) {
