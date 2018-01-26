@@ -145,8 +145,7 @@
     <ClCompile Include="Engine\Systems\Content\Mesh.cpp" />
     <ClCompile Include="Engine\Systems\Content\ShaderProgram.cpp" />
     <ClCompile Include="Engine\Systems\Graphics.cpp" />
-    <ClCompile Include="Engine\Systems\IO\Controller.cpp" />
-    <ClCompile Include="Engine\Components\InputManager.cpp" />
+    <ClCompile Include="Engine\Systems\InputManager.cpp" />
     <ClCompile Include="Engine\Systems\IO\Keyboard.cpp" />
     <ClCompile Include="Engine\Systems\IO\Mouse.cpp" />
     <ClCompile Include="Engine\Systems\IO\XboxController.cpp" />
@@ -171,8 +170,7 @@
     <ClInclude Include="Engine\Systems\Content\ShaderProgram.h" />
     <ClInclude Include="Engine\Systems\Content\Texture.h" />
     <ClInclude Include="Engine\Systems\Graphics.h" />
-    <ClInclude Include="Engine\Systems\IO\Controller.h" />
-    <ClInclude Include="Engine\Components\InputManager.h" />
+    <ClInclude Include="Engine\Systems\InputManager.h" />
     <ClInclude Include="Engine\Systems\IO\Keyboard.h" />
     <ClInclude Include="Engine\Systems\IO\Mouse.h" />
     <ClInclude Include="Engine\Systems\IO\XboxController.h" />

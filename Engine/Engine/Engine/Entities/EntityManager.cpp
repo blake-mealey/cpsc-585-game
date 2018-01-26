@@ -86,7 +86,6 @@ void EntityManager::DestroyComponent(Component* component) {
 	delete component;
 }
 
-
 std::vector<Component*> EntityManager::GetComponents(ComponentType type) {
 	return components[type];
 }
