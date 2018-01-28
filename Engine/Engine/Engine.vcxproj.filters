@@ -20,6 +20,7 @@
     <ClCompile Include="Engine\Systems\InputManager.cpp" />
     <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
     <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
+    <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -46,6 +47,8 @@
     <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
     <ClInclude Include="Engine\Systems\Content\PointLight.h" />
     <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
+    <ClInclude Include="Engine\Components\SpotLightComponent.h" />
+    <ClInclude Include="Engine\Systems\Content\SpotLight.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

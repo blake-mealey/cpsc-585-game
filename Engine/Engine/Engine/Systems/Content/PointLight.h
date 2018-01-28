@@ -8,7 +8,5 @@ struct PointLight {
 
 	glm::vec3 color;
 	float power;
-	glm::vec3 position;
-
-	float __padding[1];		// Padding required for passing to the fragment shader via SSBO
+	glm::vec3 position;			float __padding0[1];
 };
