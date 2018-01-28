@@ -8,13 +8,18 @@
 #include "../Entities/EntityManager.h"
 #include "../Components/CameraComponent.h"
 #include "../Components/MeshComponent.h"
+#include "../Components/SpotLightComponent.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 // Constants
 const size_t Graphics::MAX_CAMERAS = 4;
 
 // Shader paths
-const std::string Graphics::VERTEX_SHADER_FILE_NAME = "vertex.glsl";
-const std::string Graphics::FRAGMENT_SHADER_FILE_NAME = "fragment.glsl";
+const std::string Graphics::GEOMETRY_VERTEX_SHADER = "ShadowMapping_SimpleVersion.vertexshader";
+const std::string Graphics::GEOMETRY_FRAGMENT_SHADER = "ShadowMapping_SimpleVersion.fragmentshader";
+
+const std::string Graphics::SHADOW_MAP_VERTEX_SHADER = "DepthRTT.vertexshader";
+const std::string Graphics::SHADOW_MAP_FRAGMENT_SHADER = "DepthRTT.fragmentshader";
 
 // Initial Screen Dimensions
 const size_t Graphics::SCREEN_WIDTH = 1024;
@@ -26,6 +31,10 @@ const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.4f);
 
 // Singleton
 Graphics::Graphics() { }
+Graphics::~Graphics() {
+	DestroyIds();
+}
+
 Graphics &Graphics::Instance() {
 	static Graphics instance;
 	return instance;
@@ -91,6 +100,7 @@ bool Graphics::Initialize(char* windowTitle) {
 	glewInit();
 	GenerateIds();
 	InitializeVao();
+	InitializeShadowMapFramebuffer();
 
 	return true;
 }
@@ -98,69 +108,132 @@ bool Graphics::Initialize(char* windowTitle) {
 void Graphics::Update(Time deltaTime) {
 	glfwPollEvents();
 
+	// Get components
+	const std::vector<Component*> pointLights = EntityManager::GetComponents(ComponentType_PointLight);
+	const std::vector<Component*> directionLights = EntityManager::GetComponents(ComponentType_DirectionLight);
+	const std::vector<Component*> spotLights = EntityManager::GetComponents(ComponentType_SpotLight);
+	const std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
+	const std::vector<Component*> cameras = EntityManager::GetComponents(ComponentType_Camera);
+	
+
+	// DEPTH BUFFER
+
+	// Generate the depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::ShadowMap]);
+	glViewport(0, 0, 1024, 1024);
+
+//	glEnable(GL_CULL_FACE);
+//	glCullFace(GL_BACK);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	ShaderProgram *shadowProgram = shaders[Shaders::Geometry];
+	glUseProgram(shadowProgram->GetId());
+//	glBindVertexArray(vaoIds[VAOs::Vertices]);
+
+
+	glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(-5, 5, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, 0.1f, 100.f);
+
+//	glm::vec3 lightInvDir = glm::vec3(-2, -1, 0);		// ?
+//	glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);		// ?
+//	glm::vec3 lightInvDir = glm::vec3(-20, 0, 0);
+
+//	glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(0,0,0), glm::vec3(0,0,0), glm::vec3(0,1,0));
+//	glm::mat4 depthProjectionMatrix = glm::perspective(glm::radians(60.f), 1.f, 0.1f, 100.f);
+
+//	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-20, 20, -20, 20, -20, 100);
+//	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthModelMatrix = glm::mat4(1.f);		// ?
+	glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+	glUniformMatrix4fv(shadowProgram->GetUniformLocation(UniformName::DepthModelViewProjectionMatrix),
+		1, GL_FALSE, &depthModelViewProjectionMatrix[0][0]);
+
+	// Draw the scene
+	for (size_t j = 0; j < meshes.size(); j++) {
+		MeshComponent* model = static_cast<MeshComponent*>(meshes[j]);
+		LoadModel(shadowProgram, model);
+		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
+	}
+
+
+
+/*	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	ShaderProgram *quadProgram = shaders[Shaders::Geometry];
+	glUseProgram(quadProgram->GetId());
+
+	Entity *floor = EntityManager::FindEntities("Quad")[0];
+
+	MeshComponent *model = static_cast<MeshComponent*>(floor->components[0]);
+	LoadModel(quadProgram, model);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Textures::Depth);
+	glUniform1i(quadProgram->GetUniformLocation(UniformName::DiffuseTexture), 0);
+
+	glViewport(0, 0, 512, 512);
+	glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);*/
+
+
+	// GEOMETRY
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+//	glEnable(GL_CULL_FACE);
+//	glCullFace(GL_BACK);
+
 	//Clear Back Buffer Before We Draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set the current shader and VAO
-	ShaderProgram *shaderProgram = shaders[Shaders::Program];
-	glUseProgram(shaderProgram->GetId());
-	glBindVertexArray(vaoIds[VAOs::Vertices]);
+	ShaderProgram *geometryProgram = shaders[Shaders::Geometry];
+	glUseProgram(geometryProgram->GetId());
+//	glBindVertexArray(vaoIds[VAOs::Vertices]);
 
-	// Load our lights into the GPU
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
-	const std::vector<Component*> pointLights = EntityManager::GetComponents(ComponentType_PointLight);
-	const std::vector<Component*> directionLights = EntityManager::GetComponents(ComponentType_DirectionLight);
-	LoadLights(pointLights, directionLights);
+	// Load lights and cameras
+	glUniform3f(geometryProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
+	LoadLights(pointLights, directionLights, spotLights);
+	LoadCameras(cameras);
 
-	// Get components
-	LoadCameras(EntityManager::GetComponents(ComponentType_Camera));
-	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
-	
+	const glm::mat4 biasMatrix(
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+	);
+	glm::mat4 depthBiasModelViewProjectionMatrix = biasMatrix * depthModelViewProjectionMatrix;
+
+	glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::DepthBiasModelViewProjectionMatrix),
+		1, GL_FALSE, &depthBiasModelViewProjectionMatrix[0][0]);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Depth]);
+	glUniform1i(geometryProgram->GetUniformLocation(UniformName::ShadowMap), 1);
+
 	// Draw the scene
 	for (size_t j = 0; j < meshes.size(); j++) {
-		MeshComponent* meshComponent = static_cast<MeshComponent*>(meshes[j]);
-		DrawMesh(shaderProgram, meshComponent);
+		MeshComponent* model = static_cast<MeshComponent*>(meshes[j]);
+		DrawModelWithCameras(geometryProgram, model);
 	}
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
 }
 
-void Graphics::DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent) {
-	if (!meshComponent->enabled) return;
-
-	// Load the model matrix into the GPU
-	glm::mat4 modelMatrix = meshComponent->transform.GetTransformationMatrix();
-	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
-
-	// Get the mesh's material
-	Material *mat = meshComponent->material;
-
-	// Load the material data into the GPU
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularColor), mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
-	glUniform1f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularity), mat->specularity);
-
-	// Load the mesh and the mesh's texture into the GPU
-	Mesh* mesh = meshComponent->GetMesh();
-	LoadBuffer(mesh);
-
-	if (meshComponent->texture != nullptr) {
-		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
-		LoadTexture(meshComponent->texture, UniformName::DiffuseTexture);
-	} else {
-		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
-	}
+void Graphics::DrawModelWithCameras(ShaderProgram *program, MeshComponent* model) {
+	if (!model->enabled) return;
+	LoadModel(program, model);
 
 	for (Camera camera : cameras) {
 		glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
 
 		// Load the model view projection matrix into the GPU
-		glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * modelMatrix;
-		glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
-		glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
+		glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * model->transform.GetTransformationMatrix();
+//		glUniformMatrix4fv(program->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
+		glUniformMatrix4fv(program->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
 
-		glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
+		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
 	}
 }
 
@@ -219,7 +292,7 @@ glm::vec2 Graphics::GetViewportSize() const {
 }
 
 void Graphics::LoadLights(std::vector<Component*> _pointLights,
-	std::vector<Component*> _directionLights) {
+	std::vector<Component*> _directionLights, std::vector<Component*> _spotLights) {
 
 	// Get the point light data which can be directly passed to the shader	
 	std::vector<PointLight> pointLights;
@@ -235,36 +308,46 @@ void Graphics::LoadLights(std::vector<Component*> _pointLights,
 			directionLights.push_back(static_cast<DirectionLightComponent*>(component)->GetData());
 	}
 
-	LoadLights(pointLights, directionLights);
+	// Get the spot light data which can be directly passed to the shader
+	std::vector<SpotLight> spotLights;
+	for (Component *component : _spotLights) {
+		if (component->enabled)
+			spotLights.push_back(static_cast<SpotLightComponent*>(component)->GetData());
+	}
+
+	LoadLights(pointLights, directionLights, spotLights);
 }
 
-void Graphics::LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights) {
+void Graphics::LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights) {
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::PointLights]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, pointLights.size() * sizeof(PointLight), pointLights.data(), GL_DYNAMIC_COPY);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::DirectionLights]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, directionLights.size() * sizeof(DirectionLight), directionLights.data(), GL_DYNAMIC_COPY);
 
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::SpotLights]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, spotLights.size() * sizeof(SpotLight), spotLights.data(), GL_DYNAMIC_COPY);
+
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void Graphics::LoadTexture(GLuint textureId, const char *uniformName) {
+void Graphics::LoadTexture(GLuint programId, GLuint textureId, const char *uniformName) {
     glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	
-	GLuint uniformLocation = glGetUniformLocation(shaders[Shaders::Program]->GetId(), uniformName);
+	GLuint uniformLocation = glGetUniformLocation(programId, uniformName);
 	glUniform1i(uniformLocation, 0);
 }
 
-void Graphics::LoadTexture(Texture *texture, std::string uniformName) {
-    LoadTexture(texture->textureId, uniformName.c_str());
+void Graphics::LoadTexture(ShaderProgram *program, Texture *texture, std::string uniformName) {
+    LoadTexture(program->GetId(), texture->textureId, uniformName.c_str());
 }
 
-void Graphics::LoadBuffer(Mesh* mesh) {
-	LoadBuffer(mesh->vertices, mesh->uvs, mesh->normals, mesh->vertexCount);
+void Graphics::LoadMesh(Mesh* mesh) {
+	LoadMesh(mesh->vertices, mesh->uvs, mesh->normals, mesh->vertexCount);
 }
 
-void Graphics::LoadBuffer(const glm::vec3 *vertices, const glm::vec2 *uvs, const glm::vec3 *normals, const size_t vertexCount) {
+void Graphics::LoadMesh(const glm::vec3 *vertices, const glm::vec2 *uvs, const glm::vec3 *normals, const size_t vertexCount) {
 	glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::Vertices]);
 	glBufferData(
 		GL_ARRAY_BUFFER,					// Which buffer to load into
@@ -292,22 +375,53 @@ void Graphics::LoadBuffer(const glm::vec3 *vertices, const glm::vec2 *uvs, const
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Graphics::DestroyIds() {
+void Graphics::LoadModel(ShaderProgram *program, MeshComponent* model) {
+	if (!model->enabled) return;
+
+	// Load the model matrix into the GPU
+	glm::mat4 modelMatrix = model->transform.GetTransformationMatrix();
+//	glUniformMatrix4fv(program->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
+
+	// Get the mesh's material
+	Material *mat = model->material;
+
+	// Load the material data into the GPU
+//	glUniform3f(program->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
+//	glUniform3f(program->GetUniformLocation(UniformName::MaterialSpecularColor), mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
+//	glUniform1f(program->GetUniformLocation(UniformName::MaterialSpecularity), mat->specularity);
+
+	// Load the mesh and the mesh's texture into the GPU
+	Mesh* mesh = model->GetMesh();
+	LoadMesh(mesh);
+
+//	if (model->texture != nullptr) {
+//		glUniform1ui(program->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
+		LoadTexture(program, model->texture, UniformName::DiffuseTexture);
+//	} else {
+//		glUniform1ui(program->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
+//	}
+}
+
+void Graphics::DestroyIds() const {
 	for (int i = 0; i < Shaders::Count; i++) {
 		glDeleteProgram(shaders[i]->GetId());
 	}
 	glDeleteVertexArrays(VAOs::Count, vaoIds);
 	glDeleteBuffers(VBOs::Count, vboIds);
+	glDeleteBuffers(SSBOs::Count, ssboIds);
+	glDeleteFramebuffers(FBOs::Count, fboIds);
 }
 
 void Graphics::GenerateIds() {
 	glGenVertexArrays(VAOs::Count, vaoIds);
 	glGenBuffers(VBOs::Count, vboIds);
-	shaders[Shaders::Program] = LoadShaderProgram();
 	glGenBuffers(SSBOs::Count, ssboIds);
 	for (size_t i = 0; i < SSBOs::Count; i++) {
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, ssboIds[i]);
 	}
+	glGenFramebuffers(FBOs::Count, fboIds);
+	shaders[Shaders::Geometry] = LoadShaderProgram(GEOMETRY_VERTEX_SHADER, GEOMETRY_FRAGMENT_SHADER);
+	shaders[Shaders::ShadowMap] = LoadShaderProgram(SHADOW_MAP_VERTEX_SHADER, SHADOW_MAP_FRAGMENT_SHADER);
 }
 
 void Graphics::InitializeVao() {
@@ -352,10 +466,35 @@ void Graphics::InitializeVao() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-ShaderProgram* Graphics::LoadShaderProgram() {
+void Graphics::InitializeShadowMapFramebuffer() {
+	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::ShadowMap]);
+
+	glGenTextures(1, &textureIds[Textures::Depth]);
+	glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Depth]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+//	glBindTexture(GL_TEXTURE_2D, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureIds[Textures::Depth], 0);
+
+	glDrawBuffer(GL_NONE);		// Don't write colors to a buffer
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR: Framebuffer incomplete" << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+ShaderProgram* Graphics::LoadShaderProgram(std::string vertexShader, std::string fragmentShader) {
 	// Load and compile shaders from source
-	GLuint vertexId = ContentManager::LoadShader(VERTEX_SHADER_FILE_NAME, GL_VERTEX_SHADER);
-	GLuint fragmentId = ContentManager::LoadShader(FRAGMENT_SHADER_FILE_NAME, GL_FRAGMENT_SHADER);
+	GLuint vertexId = ContentManager::LoadShader(vertexShader, GL_VERTEX_SHADER);
+	GLuint fragmentId = ContentManager::LoadShader(fragmentShader, GL_FRAGMENT_SHADER);
 
 	// Link the shaders into a program
 	GLuint programId = glCreateProgram();
@@ -373,6 +512,12 @@ ShaderProgram* Graphics::LoadShaderProgram() {
 		glGetProgramInfoLog(programId, info.length(), &length, &info[0]);
 		std::cout << "ERROR linking shader program:" << std::endl << info << std::endl;
 	}
+
+	glDetachShader(programId, vertexId);
+	glDetachShader(programId, fragmentId);
+
+	glDeleteShader(vertexId);
+	glDeleteShader(fragmentId);
 
 	// Return the program's ID
 	return new ShaderProgram(programId);

@@ -123,9 +123,18 @@
   <ItemGroup>
     <None Include="Content\Materials\Basic.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
-    <None Include="Engine\Shaders\fragment.glsl" />
+    <None Include="Content\Scenes\Shadows.json" />
+    <None Include="Engine\Shaders\DepthRTT.fragmentshader" />
+    <None Include="Engine\Shaders\DepthRTT.vertexshader" />
+    <None Include="Engine\Shaders\geometry.frag" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
-    <None Include="Engine\Shaders\vertex.glsl" />
+    <None Include="Engine\Shaders\geometry.vert" />
+    <None Include="Engine\Shaders\Passthrough.vertexshader" />
+    <None Include="Engine\Shaders\shadow.frag" />
+    <None Include="Engine\Shaders\shadow.vert" />
+    <None Include="Engine\Shaders\ShadowMapping_SimpleVersion.fragmentshader" />
+    <None Include="Engine\Shaders\ShadowMapping_SimpleVersion.vertexshader" />
+    <None Include="Engine\Shaders\SimpleTexture.fragmentshader" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -136,6 +145,7 @@
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
+    <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Entities\EntityManager.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
@@ -158,6 +168,7 @@
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
+    <ClInclude Include="Engine\Components\SpotLightComponent.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Events\Event.h" />
@@ -167,6 +178,7 @@
     <ClInclude Include="Engine\Systems\Content\Mesh.h" />
     <ClInclude Include="Engine\Systems\Content\PointLight.h" />
     <ClInclude Include="Engine\Systems\Content\ShaderProgram.h" />
+    <ClInclude Include="Engine\Systems\Content\SpotLight.h" />
     <ClInclude Include="Engine\Systems\Content\Texture.h" />
     <ClInclude Include="Engine\Systems\Graphics.h" />
     <ClInclude Include="Engine\Systems\IO\Controller.h" />

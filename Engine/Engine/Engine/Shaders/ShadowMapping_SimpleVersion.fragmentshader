@@ -1,0 +1,26 @@
+#version 330 core
+
+// Interpolated values from the vertex shaders
+in vec2 fragmentUv;
+in vec4 shadowCoord;
+
+// Ouput data
+layout(location = 0) out vec3 fragmentColor;
+
+// Values that stay constant for the whole mesh.
+uniform sampler2D diffuseTexture;
+uniform sampler2DShadow shadowMap;
+
+void main(){
+
+	// Light emission properties
+	vec3 LightColor = vec3(1,1,1);
+	
+	// Material properties
+	vec3 MaterialDiffuseColor = texture( diffuseTexture, fragmentUv ).rgb;
+
+	float visibility = texture( shadowMap, vec3(shadowCoord.xy, (shadowCoord.z)/shadowCoord.w) );
+
+	fragmentColor = visibility * MaterialDiffuseColor * LightColor;
+
+}

@@ -21,6 +21,7 @@
     <ClCompile Include="Engine\Systems\IO\XboxController.cpp" />
     <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
     <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
+    <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -48,14 +49,25 @@
     <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
     <ClInclude Include="Engine\Systems\Content\PointLight.h" />
     <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
+    <ClInclude Include="Engine\Systems\Content\SpotLight.h" />
+    <ClInclude Include="Engine\Components\SpotLightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
-    <None Include="Engine\Shaders\fragment.glsl" />
     <None Include="Engine\Shaders\vertex_a5.glsl" />
-    <None Include="Engine\Shaders\vertex.glsl" />
     <None Include="Content\Materials\Basic.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
+    <None Include="Engine\Shaders\shadow.vert" />
+    <None Include="Engine\Shaders\shadow.frag" />
+    <None Include="Engine\Shaders\geometry.frag" />
+    <None Include="Engine\Shaders\geometry.vert" />
+    <None Include="Engine\Shaders\DepthRTT.fragmentshader" />
+    <None Include="Engine\Shaders\DepthRTT.vertexshader" />
+    <None Include="Engine\Shaders\ShadowMapping_SimpleVersion.fragmentshader" />
+    <None Include="Engine\Shaders\ShadowMapping_SimpleVersion.vertexshader" />
+    <None Include="Content\Scenes\Shadows.json" />
+    <None Include="Engine\Shaders\Passthrough.vertexshader" />
+    <None Include="Engine\Shaders\SimpleTexture.fragmentshader" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,10 @@ const struct UniformName {
 
 	static const char* DiffuseTexture;
 	static const char* DiffuseTextureEnabled;
+
+	static const char* DepthModelViewProjectionMatrix;
+	static const char* DepthBiasModelViewProjectionMatrix;
+	static const char* ShadowMap;
 };
 
 class ShaderProgram {

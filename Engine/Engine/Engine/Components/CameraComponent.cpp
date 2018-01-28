@@ -74,9 +74,12 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const {
 }
 
 void CameraComponent::UpdateViewMatrix() {
+//	viewMatrix = glm::lookAt(glm::vec3(-5, 5, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+//	viewMatrix = glm::lookAt(GetPosition(), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	viewMatrix = glm::lookAt(GetPosition(), GetTarget(), upVector);
 }
 
 void CameraComponent::UpdateProjectionMatrix() {
+//	projectionMatrix = glm::ortho<float>(-5, 5, -5, 5, NEAR_CLIPPING_PLANE, FAR_CLIPPING_PLANE);
 	projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, NEAR_CLIPPING_PLANE, FAR_CLIPPING_PLANE);
 }

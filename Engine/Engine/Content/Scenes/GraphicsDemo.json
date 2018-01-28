@@ -13,6 +13,20 @@
 		]
 	},
 	{
+		"Tag": "Quad",
+		"RotationAxis": [0, 0, 1],
+		"RotationAngle": 90,
+		"Components": [
+			{
+				"Type": "Mesh",
+				"Mesh": "Plane.obj",
+				"Texture": "DiamondPlate.jpg",
+				"Material": "Basic.json",
+				"Enabled": false
+			}
+		]
+	},
+	{
 		"Tag":  "Light",
 		"Position": [0, 0, -5],
 		"Scale": [0.1, 0.1, 0.1],
@@ -32,13 +46,27 @@
 		]
 	},
 	{
+		"Tag":  "SpotLight",
+		"Position": [5, 5, 0],
+		"Components":  [
+			{
+				"Type": "SpotLight",
+				"Color": [1, 1, 1],
+				"Direction": [-5, -5, 0],
+				"Angle": 15,
+				"Power":  40,
+				"Enabled": false
+			}
+		]
+	},
+	{
 		"Tag":  "Sun",
 		"Components":  [
 			{
 				"Type": "DirectionLight",
 				"Color": [1, 1, 1],
-				"Direction": [0, 0, 1],
-				"Enabled":  false
+				"Direction": [-2, -1, 0],
+				"Enabled":  true
 			}
 		]
 	},
@@ -91,26 +119,26 @@
 				"UpVector": [0, 1, 0],
 				"Enabled": true
 			},
-      {
-        "Type": "Camera",
-        "Position": [ 0, 0, 0 ],
-        "Target": [ 0, 0, 0 ],
-        "UpVector": [ 0, 1, 0 ],
-        "Enabled": true
-      },
-      {
+			  {
 				"Type": "Camera",
-				"Position": [0, 0, 0],
-				"Target": [0, 0, 0],
-				"UpVector": [0, 1, 0],
+				"Position": [ 0, 0, 0 ],
+				"Target": [ 0, 0, 0 ],
+				"UpVector": [ 0, 1, 0 ],
 				"Enabled": false
+			  },
+			{
+					"Type": "Camera",
+					"Position": [0, 0, 0],
+					"Target": [0, 0, 0],
+					"UpVector": [0, 1, 0],
+					"Enabled": false
 			},
 			{
 				"Type": "Camera",
-				"Position": [0, 0, 0],
-				"Target": [0, 0, 0],
-				"UpVector": [0, 1, 0],
-				"Enabled": false
+					"Position": [0, 0, 0],
+					"Target": [0, 0, 0],
+					"UpVector": [0, 1, 0],
+					"Enabled": false
 			}
 		]
 	}

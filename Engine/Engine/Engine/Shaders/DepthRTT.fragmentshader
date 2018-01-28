@@ -1,0 +1,12 @@
+#version 330 core
+
+// Ouput data
+layout(location = 0) out float fragmentdepth;
+// Values that stay constant for the whole mesh.
+uniform sampler2D diffuseTexture;
+uniform sampler2DShadow shadowMap;
+
+
+void main(){
+	fragmentdepth = gl_FragCoord.z;
+}

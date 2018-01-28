@@ -12,6 +12,7 @@
 #include "../../Components/CameraComponent.h"
 #include "../../Components/PointLightComponent.h"
 #include "../../Components/DirectionLightComponent.h"
+#include "../../Components/SpotLightComponent.h"
 
 std::map<std::string, Mesh*> ContentManager::meshes;
 std::map<std::string, Texture*> ContentManager::textures;
@@ -171,11 +172,15 @@ std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 Entity* ContentManager::LoadEntity(nlohmann::json data) {
 	Entity *entity = EntityManager::CreateDynamicEntity();		// TODO: Determine whether or not the entity is static
 
+	glm::vec3 rotationAxis = glm::vec3();
+	float rotationDegrees = 0;
 	for (auto it = data.begin(); it != data.end(); ++it) {
 		std::string key = it.key();
 		if (key == "Tag") EntityManager::SetTag(entity, it.value());
-		else if (key == "Position") entity->transform.SetPosition(JsonToVec3(data["Position"]));
-		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(data["Scale"]));
+		else if (key == "Position") entity->transform.SetPosition(JsonToVec3(it.value()));
+		else if (key == "RotationAxis") rotationAxis = JsonToVec3(it.value());
+		else if (key == "RotationAngle") rotationDegrees = it.value().get<float>();
+		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(it.value()));
 		else if (key == "Components") {
 			for (auto componentData : it.value()) {
 				Component *component = nullptr;
@@ -185,6 +190,7 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 				else if (type == "Camera") component = new CameraComponent(componentData);
 				else if (type == "PointLight") component = new PointLightComponent(componentData);
 				else if (type == "DirectionLight") component = new DirectionLightComponent(componentData);
+				else if (type == "SpotLight") component = new SpotLightComponent(componentData);
 				else {
 					std::cout << "Unsupported component type: " << type << std::endl;
 					supportedType = false;
@@ -202,6 +208,8 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 			}
 		}
 	}
+
+	entity->transform.SetRotationAxisAngles(rotationAxis, glm::radians(rotationDegrees));
 
 	return entity;
 }

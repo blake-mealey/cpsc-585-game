@@ -17,6 +17,7 @@
 #include "Content/ShaderProgram.h"
 #include "../Components/PointLightComponent.h"
 #include "../Components/DirectionLightComponent.h"
+#include "Content/SpotLight.h"
 
 class MeshComponent;
 
@@ -29,30 +30,42 @@ struct Camera {
 	glm::vec2 viewportSize;
 };
 
-struct VAOs {
+struct VAOs {		// Vertex array objects
 	enum { Vertices=0, Count };
 };
 
-struct VBOs {
+struct VBOs {		// Vertex buffer objects
 	enum { Vertices=0, UVs, Normals, Count };
 };
 
-struct SSBOs {
-	enum { PointLights=0, DirectionLights, Count };
+struct SSBOs {		// Shader storage buffer objects
+	enum { PointLights=0, DirectionLights, SpotLights, Count };
 };
 
-struct Shaders {
-	enum { Program=0, Count };
+struct FBOs {		// Frame buffer objects
+	enum { ShadowMap = 0, Count };
+};
+
+struct Shaders {	// Shaders
+	enum { Geometry=0, ShadowMap, Count };
+};
+
+struct Textures {	// Textures
+	enum { Depth=0, ColorBuffer, Count };
 };
 
 class Graphics : public System {
 public:
 	// Access the singleton instance
+	~Graphics();
 	static Graphics& Instance();
 
 	// Constants
-	static const std::string VERTEX_SHADER_FILE_NAME;
-	static const std::string FRAGMENT_SHADER_FILE_NAME;
+	static const std::string GEOMETRY_VERTEX_SHADER;
+	static const std::string GEOMETRY_FRAGMENT_SHADER;
+	
+	static const std::string SHADOW_MAP_VERTEX_SHADER;
+	static const std::string SHADOW_MAP_FRAGMENT_SHADER;
 
 	static const size_t MAX_CAMERAS;
 
@@ -80,7 +93,7 @@ private:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator= (const Graphics&) = delete;
 
-	void DrawMesh(ShaderProgram *shaderProgram, MeshComponent* meshComponent);
+	void DrawModelWithCameras(ShaderProgram *shaderProgram, MeshComponent* meshComponent);
 
 	void LoadCameras(std::vector<Component*> cameraComponents);
 	std::vector<Camera> cameras;
@@ -92,20 +105,27 @@ private:
 	GLuint vboIds[VBOs::Count];		// Vertices and UV coordinates
 	GLuint vaoIds[VAOs::Count];
 	GLuint ssboIds[SSBOs::Count];
+	GLuint fboIds[FBOs::Count];
+public:
+	GLuint textureIds[Textures::Count];
+private:
 	ShaderProgram* shaders[Shaders::Count];
 
-	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights);
-	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights);
+	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights, std::vector<Component*> _spotLights);
+	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights);
 
-    void LoadTexture(GLuint textureId, const char *uniformName);
-    void LoadTexture(Texture *texture, std::string uniformName);
+    void LoadTexture(GLuint programId, GLuint textureId, const char *uniformName);
+    void LoadTexture(ShaderProgram *program, Texture *texture, std::string uniformName);
 
-	void LoadBuffer(const glm::vec3 *vertices, const glm::vec2 *uvs, const glm::vec3 *normals, const size_t vertexCount);
-	void LoadBuffer(Mesh *mesh);
+	void LoadMesh(const glm::vec3 *vertices, const glm::vec2 *uvs, const glm::vec3 *normals, const size_t vertexCount);
+	void LoadMesh(Mesh *mesh);
 
-	void DestroyIds();
+	void LoadModel(ShaderProgram *program, MeshComponent *model);
+
+	void DestroyIds() const;
 	void GenerateIds();
 
 	void InitializeVao();
-	ShaderProgram* LoadShaderProgram();
+	void InitializeShadowMapFramebuffer();
+	ShaderProgram* LoadShaderProgram(std::string vertexShader, std::string fragmentShader);
 };
