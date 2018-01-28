@@ -18,7 +18,7 @@ void main() {
 	gl_Position = modelViewProjectionMatrix * vec4(vertexPosition_model, 1);
 
 	vec3 vertexPosition_camera = (viewMatrix * modelMatrix * vec4(vertexPosition_model, 1)).xyz;
-	eyeDirection_camera = vec3(0, 0, 0) - vertexPosition_camera;
+	eyeDirection_camera = -vertexPosition_camera;
 
 	fragmentPosition_camera = vertexPosition_camera;
 	

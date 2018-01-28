@@ -17,6 +17,7 @@
 #include "Content/ShaderProgram.h"
 #include "../Components/PointLightComponent.h"
 #include "../Components/DirectionLightComponent.h"
+#include "Content/SpotLight.h"
 
 class MeshComponent;
 
@@ -38,7 +39,7 @@ struct VBOs {
 };
 
 struct SSBOs {
-	enum { PointLights=0, DirectionLights, Count };
+	enum { PointLights=0, DirectionLights, SpotLights, Count };
 };
 
 struct Shaders {
@@ -94,8 +95,8 @@ private:
 	GLuint ssboIds[SSBOs::Count];
 	ShaderProgram* shaders[Shaders::Count];
 
-	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights);
-	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights);
+	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights, std::vector<Component*> _spotLights);
+	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights);
 
     void LoadTexture(GLuint textureId, const char *uniformName);
     void LoadTexture(Texture *texture, std::string uniformName);

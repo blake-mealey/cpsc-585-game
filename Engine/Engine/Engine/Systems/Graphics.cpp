@@ -8,6 +8,7 @@
 #include "../Entities/EntityManager.h"
 #include "../Components/CameraComponent.h"
 #include "../Components/MeshComponent.h"
+#include "../Components/SpotLightComponent.h"
 
 // Constants
 const size_t Graphics::MAX_CAMERAS = 4;
@@ -110,7 +111,8 @@ void Graphics::Update(Time deltaTime) {
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
 	const std::vector<Component*> pointLights = EntityManager::GetComponents(ComponentType_PointLight);
 	const std::vector<Component*> directionLights = EntityManager::GetComponents(ComponentType_DirectionLight);
-	LoadLights(pointLights, directionLights);
+	const std::vector<Component*> spotLights = EntityManager::GetComponents(ComponentType_SpotLight);
+	LoadLights(pointLights, directionLights, spotLights);
 
 	// Get components
 	LoadCameras(EntityManager::GetComponents(ComponentType_Camera));
@@ -219,7 +221,7 @@ glm::vec2 Graphics::GetViewportSize() const {
 }
 
 void Graphics::LoadLights(std::vector<Component*> _pointLights,
-	std::vector<Component*> _directionLights) {
+	std::vector<Component*> _directionLights, std::vector<Component*> _spotLights) {
 
 	// Get the point light data which can be directly passed to the shader	
 	std::vector<PointLight> pointLights;
@@ -235,15 +237,25 @@ void Graphics::LoadLights(std::vector<Component*> _pointLights,
 			directionLights.push_back(static_cast<DirectionLightComponent*>(component)->GetData());
 	}
 
-	LoadLights(pointLights, directionLights);
+	// Get the spot light data which can be directly passed to the shader
+	std::vector<SpotLight> spotLights;
+	for (Component *component : _spotLights) {
+		if (component->enabled)
+			spotLights.push_back(static_cast<SpotLightComponent*>(component)->GetData());
+	}
+
+	LoadLights(pointLights, directionLights, spotLights);
 }
 
-void Graphics::LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights) {
+void Graphics::LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights) {
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::PointLights]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, pointLights.size() * sizeof(PointLight), pointLights.data(), GL_DYNAMIC_COPY);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::DirectionLights]);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, directionLights.size() * sizeof(DirectionLight), directionLights.data(), GL_DYNAMIC_COPY);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboIds[SSBOs::SpotLights]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, spotLights.size() * sizeof(SpotLight), spotLights.data(), GL_DYNAMIC_COPY);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
