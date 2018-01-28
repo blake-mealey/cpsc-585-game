@@ -1,6 +1,6 @@
 #include "Component.h"
 
-Component::Component() : entity(nullptr) { }
+Component::Component() : entity(nullptr), enabled(true) { }
 
 
 void Component::SetEntity(Entity* _entity) {
