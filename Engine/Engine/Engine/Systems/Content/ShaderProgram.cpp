@@ -14,6 +14,10 @@ const char* UniformName::MaterialSpecularity = "materialSpecularity";
 const char* UniformName::DiffuseTexture = "diffuseTexture";
 const char* UniformName::DiffuseTextureEnabled = "diffuseTextureEnabled";
 
+const char* UniformName::ShadowMap = "shadowMap";
+const char* UniformName::DepthModelViewProjectionMatrix = "depthModelViewProjectionMatrix";
+const char* UniformName::DepthBiasModelViewProjectionMatrix = "depthBiasModelViewProjectionMatrix";
+
 ShaderProgram::ShaderProgram() {}
 ShaderProgram::ShaderProgram(GLuint id) : programId(id) {}
 

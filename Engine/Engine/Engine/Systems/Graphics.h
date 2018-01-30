@@ -31,7 +31,7 @@ struct Camera {
 };
 
 struct VAOs {
-	enum { Geometry=0, Count };
+	enum { Geometry=0, ShadowMap, Count };
 };
 
 struct VBOs {
@@ -69,9 +69,12 @@ public:
 
 	static const size_t SCREEN_WIDTH;
 	static const size_t SCREEN_HEIGHT;
+	static const size_t SHADOW_MAP_SIZE;
 
 	static const glm::vec3 SKY_COLOR;
 	static const glm::vec3 AMBIENT_COLOR;
+
+	static const glm::mat4 BIAS_MATRIX;
 
 	// System calls
 	bool Initialize(char* windowTitle);
@@ -123,7 +126,8 @@ private:
 	void DestroyIds();
 	void GenerateIds();
 
-	void InitializeVao();
+	void InitializeGeometryVao();
+	void InitializeShadowMapVao();
 	void InitializeShadowMapFramebuffer();
 	ShaderProgram* LoadShaderProgram(std::string vertexShaderFile, std::string fragmentShaderFile) const;
 };

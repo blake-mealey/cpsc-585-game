@@ -47,11 +47,11 @@ int main() {
 	ContentManager::LoadScene("GraphicsDemo.json");
 	Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
-
+	Entity *sun = EntityManager::FindEntities("Sun")[0];
 
 	camera->transform.SetPosition(glm::vec3(10, 5, 0));
 
-	/*const int lightCount = 5;
+	const int lightCount = 5;
 	for (int i = 0; i < lightCount; ++i) {
 		Entity *entity = EntityManager::CreateStaticEntity();
 
@@ -68,7 +68,7 @@ int main() {
 
 		MeshComponent *mesh = new MeshComponent("Sphere.obj", new Material(color, color, 1));
 		EntityManager::AddComponent(entity, mesh);
-	}*/
+	}
 
 	//Game Loop
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {

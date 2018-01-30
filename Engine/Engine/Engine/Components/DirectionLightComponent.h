@@ -13,11 +13,14 @@ public:
 	glm::vec3 GetColor() const;
 	glm::vec3 GetDirection() const;
 	DirectionLight GetData() const;
+	bool IsShadowCaster() const;
+	void SetShadowCaster(bool _castsShadows);
 
 	ComponentType GetType() override;
 	void HandleEvent(Event* event) override;
 private:
 	glm::vec3 color;
 	glm::vec3 direction;
+	bool castsShadows;
 };
 

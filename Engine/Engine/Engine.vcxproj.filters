@@ -49,7 +49,6 @@
     <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
     <ClInclude Include="Engine\Components\SpotLightComponent.h" />
     <ClInclude Include="Engine\Systems\Content\SpotLight.h" />
-    <ClInclude Include="Engine\Components\LightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
