@@ -23,9 +23,12 @@ public:
 	void SetEntity(Entity* _entity) override;
 
 	Mesh* GetMesh() const;
+	Material* GetMaterial() const;
+	Texture* GetTexture() const;
+	glm::vec2 GetUvScale() const;
 private:
 	Mesh *mesh;
-public:
 	Material *material;
 	Texture *texture;
+	glm::vec2 uvScale;
 };

@@ -35,6 +35,8 @@ uniform sampler2DShadow shadowMap;
 uniform sampler2D diffuseTexture;
 uniform uint diffuseTextureEnabled;
 
+uniform vec2 uvScale;
+
 in vec3 fragmentPosition_camera;
 in vec3 surfaceNormal_camera;
 in vec3 eyeDirection_camera;
@@ -68,7 +70,7 @@ void main() {
 	}*/
 
 	vec3 diffuseColor = (1 - diffuseTextureEnabled) * materialDiffuseColor
-		+ diffuseTextureEnabled * texture(diffuseTexture, vec2(1.f - fragmentUv.x, fragmentUv.y)).rgb;
+		+ diffuseTextureEnabled * texture(diffuseTexture, uvScale*vec2(1.f - fragmentUv.x, fragmentUv.y)).rgb;
 	vec3 materialAmbientColor = ambientColor * diffuseColor;
 
 	fragmentColor = materialAmbientColor;

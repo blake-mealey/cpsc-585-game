@@ -240,7 +240,7 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
 
 	// Get the mesh's material
-	Material *mat = model->material;
+	Material *mat = model->GetMaterial();
 
 	// Load the material data into the GPU
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
@@ -251,9 +251,10 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	LoadMesh(model->GetMesh());
 
 	// Load the texture into the GPU
-	if (model->texture != nullptr) {
+	if (model->GetTexture() != nullptr) {
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
-		LoadTexture(shaderProgram, model->texture, UniformName::DiffuseTexture);
+		LoadTexture(shaderProgram, model->GetTexture(), UniformName::DiffuseTexture);
+		glUniform2f(shaderProgram->GetUniformLocation("uvScale"), model->GetUvScale().x, model->GetUvScale().y);
 	} else {
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
 	}

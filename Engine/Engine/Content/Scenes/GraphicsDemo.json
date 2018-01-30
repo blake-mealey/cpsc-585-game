@@ -8,7 +8,8 @@
 				"Type": "Mesh",
 				"Mesh": "Plane.obj",
 				"Texture": "DiamondPlate.jpg",
-				"Material": "Basic.json"
+				"Material": "Basic.json",
+				"UvScale": [2, 2]
 			}
 		]
 	},
@@ -43,6 +44,7 @@
 						"Mesh": "Boulder.obj",
 						"Texture": "Boulder.jpg",
 						"Material": "Basic.json",
+						"UvScale": [0.5, 0.5],
 						"Enabled": true
 					}
 				]
@@ -56,6 +58,7 @@
 						"Mesh": "Boulder.obj",
 						"Texture": "Boulder.jpg",
 						"Material": "Basic.json",
+						"UvScale": [0.5, 0.5],
 						"Enabled": true
 					}
 				]
