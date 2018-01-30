@@ -49,7 +49,9 @@ int main() {
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
 
 
-	const int lightCount = 5;
+	camera->transform.SetPosition(glm::vec3(10, 5, 0));
+
+	/*const int lightCount = 5;
 	for (int i = 0; i < lightCount; ++i) {
 		Entity *entity = EntityManager::CreateStaticEntity();
 
@@ -66,8 +68,7 @@ int main() {
 
 		MeshComponent *mesh = new MeshComponent("Sphere.obj", new Material(color, color, 1));
 		EntityManager::AddComponent(entity, mesh);
-	}
-
+	}*/
 
 	//Game Loop
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
@@ -77,7 +78,7 @@ int main() {
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
-		// "Game" logic
+		// "Game" logic		TODO: Move to Game/Simulation system
 		boulder->transform.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
 		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
 		camera->transform.SetPosition(10.f * glm::vec3(

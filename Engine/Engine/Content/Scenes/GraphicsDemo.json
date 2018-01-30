@@ -37,8 +37,8 @@
 			{
 				"Type": "DirectionLight",
 				"Color": [1, 1, 1],
-				"Direction": [0, 0, 1],
-				"Enabled":  false
+				"Direction": [1, -1, 0],
+				"Enabled":  true
 			}
 		]
 	},
@@ -96,7 +96,7 @@
         "Position": [ 0, 0, 0 ],
         "Target": [ 0, 0, 0 ],
         "UpVector": [ 0, 1, 0 ],
-        "Enabled": true
+        "Enabled": false
       },
       {
 				"Type": "Camera",
