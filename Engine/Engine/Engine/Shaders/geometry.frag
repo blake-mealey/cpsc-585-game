@@ -31,6 +31,7 @@ uniform float materialSpecularity;
 
 uniform vec3 ambientColor;
 
+uniform sampler2DShadow shadowMap;
 uniform sampler2D diffuseTexture;
 uniform uint diffuseTextureEnabled;
 
@@ -38,6 +39,7 @@ in vec3 fragmentPosition_camera;
 in vec3 surfaceNormal_camera;
 in vec3 eyeDirection_camera;
 in vec2 fragmentUv;
+in vec4 shadowCoord;
 
 out vec3 fragmentColor;
 
@@ -55,6 +57,16 @@ vec3 getColorFromLight(vec3 diffuseColor, vec3 lightDirection_camera, vec3 light
 }
 
 void main() {
+	// float bias = 0.005 * tan(acos(dot(surfaceNormal_camera, l)));
+	// bias = clamp(bias, 0, 0.01);
+	float bias = 0.005;
+	float visibility = 1.0;
+	visibility -= 0.75 * texture(shadowMap, vec3(shadowCoord.xy, shadowCoord.z - bias));
+	// visibility -= 0.8 * (1 - texture(shadowMap, vec3(shadowCoord.xy, (shadowCoord.z - bias)/shadowCoord.w)));
+	/*if ((texture(shadowMap, shadowCoord.xy)).z < shadowCoord.z - bias) {
+		visibility = 0.25;
+	}*/
+
 	vec3 diffuseColor = (1 - diffuseTextureEnabled) * materialDiffuseColor
 		+ diffuseTextureEnabled * texture(diffuseTexture, vec2(1.f - fragmentUv.x, fragmentUv.y)).rgb;
 	vec3 materialAmbientColor = ambientColor * diffuseColor;
@@ -67,13 +79,13 @@ void main() {
 		vec3 lightDirection_camera = lightPosition_camera - fragmentPosition_camera;
 		float distanceToLight = length(lightDirection_camera);
 		float attenuation = 1.0 / (1.0 * (1.0/light.power) * (distanceToLight*distanceToLight));
-		fragmentColor += attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
+		fragmentColor += visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
 	}
 
 	for (int i = 0; i < directionLights.length(); i++) {
 		DirectionLight light = directionLights[i];
 		vec3 lightDirection_camera = (viewMatrix * vec4(-light.direction_world, 0)).xyz;
-		fragmentColor += getColorFromLight(diffuseColor, lightDirection_camera, light.color);
+		fragmentColor += visibility * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
 	}
 
 	for (int i = 0; i < spotLights.length(); i++) {
@@ -86,7 +98,7 @@ void main() {
 		if (lightAngle < light.angle) {
 			float distanceToLight = length(lightDirection_camera);
 			float attenuation = 1.0 / (1.0 * (1.0/light.power) * (distanceToLight*distanceToLight));
-			fragmentColor += attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
+			fragmentColor += visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
 		}
 	}
 }
