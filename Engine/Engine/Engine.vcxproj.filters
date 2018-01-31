@@ -19,6 +19,7 @@
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Systems\IO\XboxController.cpp" />
+    <ClCompile Include="Engine\Systems\Audio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="Engine\Systems\System.h" />
     <ClInclude Include="Engine\Systems\Time.h" />
     <ClInclude Include="Engine\Systems\IO\XboxController.h" />
+    <ClInclude Include="Engine\Systems\Audio.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

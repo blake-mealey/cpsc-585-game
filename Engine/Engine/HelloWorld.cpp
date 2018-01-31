@@ -4,6 +4,7 @@
 #include "Engine/Systems/Content/ContentManager.h"
 
 #include "Engine/Systems/IO/XboxController.h"
+#include "Engine/Systems/Audio.h"
 
 #include <vector>
 #include <iostream>
@@ -42,8 +43,11 @@ int main() {
 	//New Controller Stuff
 	player = new XboxController(1);
 
+    Audio* myAudio = new Audio();
+
 	//Game Loop
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
+        myAudio->playSound();
 
 		if (player->IsConnected()) {
 			if (player->GetState().Gamepad.bLeftTrigger > 5) {
