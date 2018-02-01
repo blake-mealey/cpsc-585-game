@@ -4,6 +4,10 @@
 #include <iostream>
 #include <GL/glew.h>
 
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 #include "../../Entities/EntityManager.h"
@@ -100,12 +104,45 @@ Mesh* LoadObj(const std::string filePath) {
 	return new Mesh(vertices, uvs, normals, vertexCount);
 }
 
+glm::vec3 AssimpVectorToGlm(aiVector3D v) {
+	return glm::vec3(v.x, v.y, v.z);
+}
+
+glm::vec2 AssimpVectorToGlm(aiVector2D v) {
+	return glm::vec2(v.x, v.y);
+}
+
 Mesh* ContentManager::GetMesh(const std::string filePath) {
 	Mesh* mesh = meshes[filePath];
 	if (mesh != nullptr) return mesh;
 
 	// TODO: Load meshes using Assimp
-	mesh = LoadObj(MESH_DIR_PATH + filePath);
+//	mesh = LoadObj(MESH_DIR_PATH + filePath);
+	Assimp::Importer importer;
+
+	const aiScene *scene = importer.ReadFile(MESH_DIR_PATH + filePath,
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_SortByPType);
+
+	if (scene == nullptr) {
+		std::cout << "WARNING: Failed to load mesh: " << filePath << std::endl;
+		return nullptr;
+	}
+
+	aiMesh *aiMesh = scene->mMeshes[0];
+
+	size_t vertexCount = aiMesh->mNumVertices;
+	glm::vec3 *vertices = new glm::vec3[vertexCount];
+	glm::vec2 *uvs = new glm::vec2[vertexCount];
+	glm::vec3 *normals = new glm::vec3[vertexCount];
+	for (size_t i = 0; i < vertexCount; ++i) {
+		vertices[i] = AssimpVectorToGlm(aiMesh->mVertices[i]);
+		uvs[i] = AssimpVectorToGlm(aiMesh->mTextureCoords[0][i]);
+		normals[i] = AssimpVectorToGlm(aiMesh->mNormals[i]);
+	}
+
+	mesh = new Mesh(vertices, uvs, normals, vertexCount);
 
 	meshes[filePath] = mesh;
 	return mesh;
