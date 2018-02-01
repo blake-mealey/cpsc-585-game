@@ -22,8 +22,12 @@ void Mesh::GenerateNormals() {
 		const glm::vec3 v1 = vertices[i];
 		const glm::vec3 triangleNormal = glm::normalize(glm::cross(vertices[i + 1] - v1, vertices[i + 2] - v1));
 		for (size_t j = i; j < i + 3; j++) {
-			_normals[j] = glm::normalize(_normals[j] + triangleNormal);
+			_normals[j] = _normals[j] + triangleNormal;
 		}
+	}
+
+	for (size_t i = 0; i < vertexCount; i++) {
+		_normals[i] = glm::normalize(_normals[i]);
 	}
 
 	normals = _normals;

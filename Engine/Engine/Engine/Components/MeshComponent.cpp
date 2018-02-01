@@ -2,7 +2,7 @@
 #include "../Systems/Content/ContentManager.h"
 #include "../Entities/Entity.h"
 // not to sure what to do with this
-glm::vec3 ToCylinder(glm::vec3 point, float radius);
+glm::vec3 ToCylinder(glm::vec3 point, float radius, float ratio);
 
 ComponentType MeshComponent::GetType() {
 	return ComponentType_Mesh;
@@ -63,10 +63,10 @@ float MeshComponent::MakeCylinder(Mesh* mesh) {
 		maxX = std::max(maxX, mesh->vertices[i].x);
 		minX = std::min(minX, mesh->vertices[i].x);
 	}
-	float R = maxX / 4 / 3.141592;
+	float R = (maxX- minX) / 12.5663706144;
 	for (int i = 0; i < mesh->vertexCount; ++i) {
-		glm::vec3 point = { (mesh->vertices[i].x - minX)/(maxX-minX), mesh->vertices[i].y, mesh->vertices[i].z };
-		point = ToCylinder(point, R);
+		glm::vec3 point = { mesh->vertices[i].x, mesh->vertices[i].y, mesh->vertices[i].z };
+		point = ToCylinder(point, R, 1.f);
 		mesh->vertices[i] = point;
 	}
 	mesh->GenerateNormals();
@@ -74,8 +74,8 @@ float MeshComponent::MakeCylinder(Mesh* mesh) {
 	return R;
 }
 
-glm::vec3 ToCylinder(glm::vec3 point, float radius) {
-	float theta = point.x * 2 * 3.141592;
+glm::vec3 ToCylinder(glm::vec3 point, float radius, float ratio) {
+	float theta = point.x * 2 * ratio / 3.141592;
 	float r = radius - point.y;
 	float h = point.z;
 
