@@ -95,13 +95,13 @@ void InputManager::HandleController() {
 			//Right Joystick X
 			if ((((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
 				cout << (*controller)->GetState().Gamepad.sThumbRX << endl;
-				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), ((float)(*controller)->GetState().Gamepad.sThumbRX / 327670.f) * dt.GetTimeSeconds());
+				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Rotate(glm::vec3(0.0f, -1.0f, 0.0f), ((float)(*controller)->GetState().Gamepad.sThumbRX / 327670.f) * dt.GetTimeSeconds());
 			}
 
 			//Right Joystick Y
 			if ((((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
 				cout << (*controller)->GetState().Gamepad.sThumbRY << endl;
-				EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Rotate(glm::vec3(1.0f, 0.0f, 0.0f), ((float)(*controller)->GetState().Gamepad.sThumbRY / 327670.f) * dt.GetTimeSeconds());
+				//EntityManager::FindEntities("Boulder")[(*controller)->GetControllerNumber()]->transform.Rotate(glm::vec3(0.0f, -1.0f, 0.0f), ((float)(*controller)->GetState().Gamepad.sThumbRY / 327670.f) * dt.GetTimeSeconds());
 			}
 
 			//Manage Button States

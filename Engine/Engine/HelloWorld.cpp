@@ -49,7 +49,7 @@ int main() {
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
 	Entity *sun = EntityManager::FindEntities("Sun")[0];
 
-	camera->transform.SetPosition(glm::vec3(10, 5, 0));
+	camera->transform.SetPosition(glm::vec3(0, 5, 10));
 
 	const int lightCount = 5;
 	for (int i = 0; i < lightCount; ++i) {
