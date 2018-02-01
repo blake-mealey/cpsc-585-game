@@ -27,8 +27,9 @@ void Game::Initialize() {
 	boulder = EntityManager::FindEntities("Boulder")[0];
 	camera = EntityManager::FindEntities("Camera")[0];
 	sun = EntityManager::FindEntities("Sun")[0];
+	floor = EntityManager::FindEntities("Floor")[0];
 
-	camera->transform.SetPosition(glm::vec3(10, 5, 0));
+	camera->transform.SetPosition(glm::vec3(0, 5, 10));
 
 	const int lightCount = 5;
 	for (int i = 0; i < lightCount; ++i) {
@@ -53,7 +54,8 @@ void Game::Initialize() {
 void Game::Update(Time currentTime, Time deltaTime) {
 	boulder->transform.SetPosition(glm::vec3(0 * cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds() / 500), 0));
 	boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-	camera->transform.SetPosition(5.f * glm::vec3(
-		sin(currentTime.GetTimeMilliSeconds() / 10000), 0.25,
-		cos(currentTime.GetTimeMilliSeconds() / 10000)));
+	//camera->transform.SetPosition(5.f * glm::vec3(
+	//	sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
+	//	cos(currentTime.GetTimeMilliSeconds() / 1000)));
+	floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
 }

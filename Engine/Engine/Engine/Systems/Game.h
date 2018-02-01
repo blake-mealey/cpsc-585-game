@@ -18,8 +18,8 @@ private:
 	Game(const Game&) = delete;
 	Game& operator= (const Game&) = delete;
 
-
 	Entity *boulder;
 	Entity *camera;
 	Entity *sun;
+	Entity *floor;
 };
