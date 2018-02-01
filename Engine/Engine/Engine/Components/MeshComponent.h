@@ -7,6 +7,8 @@
 #include "../Systems/Content/Material.h"
 #include "../Systems/Content/Texture.h"
 #include <json/json.hpp>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 class MeshComponent : public Component {
 public:

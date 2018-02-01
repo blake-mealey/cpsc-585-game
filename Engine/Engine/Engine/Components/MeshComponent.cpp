@@ -59,12 +59,12 @@ void MeshComponent::SetEntity(Entity* _entity) {
 float MeshComponent::MakeCylinder(Mesh* mesh) {
 	float maxX = mesh->vertices[0].x;
 	float minX = mesh->vertices[0].x;
-	for (int i = 1; i < mesh->vertexCount; ++i) {
+	for (size_t i = 1; i < mesh->vertexCount; ++i) {
 		maxX = std::max(maxX, mesh->vertices[i].x);
 		minX = std::min(minX, mesh->vertices[i].x);
 	}
-	float R = (maxX- minX) / 12.5663706144;
-	for (int i = 0; i < mesh->vertexCount; ++i) {
+	float R = (maxX- minX) / 4.f * (float) M_PI;
+	for (size_t i = 0; i < mesh->vertexCount; ++i) {
 		glm::vec3 point = { mesh->vertices[i].x, mesh->vertices[i].y, mesh->vertices[i].z };
 		point = ToCylinder(point, R, 1.f);
 		mesh->vertices[i] = point;
@@ -75,7 +75,7 @@ float MeshComponent::MakeCylinder(Mesh* mesh) {
 }
 
 glm::vec3 ToCylinder(glm::vec3 point, float radius, float ratio) {
-	float theta = point.x * 2 * ratio / 3.141592;
+	float theta = point.x * 2.f * ratio / (float) M_PI;
 	float r = radius - point.y;
 	float h = point.z;
 
