@@ -105,7 +105,7 @@ bool Graphics::Initialize(char* windowTitle) {
 	return true;
 }
 
-void Graphics::Update(Time deltaTime) {
+void Graphics::Update(Time currentTime, Time deltaTime) {
 	glfwPollEvents();			// Should this be here or in InputManager?
 
 	// Get components
@@ -254,7 +254,7 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	if (model->GetTexture() != nullptr) {
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
 		LoadTexture(shaderProgram, model->GetTexture(), UniformName::DiffuseTexture);
-		glUniform2f(shaderProgram->GetUniformLocation("uvScale"), model->GetUvScale().x, model->GetUvScale().y);
+		glUniform2f(shaderProgram->GetUniformLocation(UniformName::UvScale), model->GetUvScale().x, model->GetUvScale().y);
 	} else {
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
 	}

@@ -21,6 +21,8 @@
     <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
     <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
     <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
+    <ClCompile Include="Engine\Systems\Game.cpp" />
+    <ClCompile Include="Engine\Systems\StateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\Component.h" />
@@ -49,6 +51,8 @@
     <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
     <ClInclude Include="Engine\Components\SpotLightComponent.h" />
     <ClInclude Include="Engine\Systems\Content\SpotLight.h" />
+    <ClInclude Include="Engine\Systems\Game.h" />
+    <ClInclude Include="Engine\Systems\StateManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

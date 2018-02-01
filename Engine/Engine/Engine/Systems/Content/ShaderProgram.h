@@ -16,6 +16,7 @@ const struct UniformName {
 
 	static const char* DiffuseTexture;
 	static const char* DiffuseTextureEnabled;
+	static const char* UvScale;
 	
 	static const char* ShadowMap;
 	static const char* DepthModelViewProjectionMatrix;

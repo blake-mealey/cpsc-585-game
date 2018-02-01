@@ -13,6 +13,7 @@ const char* UniformName::MaterialSpecularity = "materialSpecularity";
 
 const char* UniformName::DiffuseTexture = "diffuseTexture";
 const char* UniformName::DiffuseTextureEnabled = "diffuseTextureEnabled";
+const char* UniformName::UvScale = "uvScale";
 
 const char* UniformName::ShadowMap = "shadowMap";
 const char* UniformName::DepthModelViewProjectionMatrix = "depthModelViewProjectionMatrix";

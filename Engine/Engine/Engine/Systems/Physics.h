@@ -6,7 +6,7 @@ public:
 	// Access the singleton instance
 	static Physics& Instance();
 
-	void Update(Time deltaTime) override;
+	void Update(Time currentTime, Time deltaTime) override;
 
 private:
 	// No instantiation or copying

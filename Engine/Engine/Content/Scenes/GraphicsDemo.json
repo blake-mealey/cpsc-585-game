@@ -7,9 +7,9 @@
 			{
 				"Type": "Mesh",
 				"Mesh": "Plane.obj",
-				"Texture": "DiamondPlate.jpg",
+				"Texture": "TileableDiamondPlate.jpg",
 				"Material": "Basic.json",
-				"UvScale": [2, 2]
+				"UvScale": [6, 6]
 			}
 		]
 	},

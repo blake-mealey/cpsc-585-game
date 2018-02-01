@@ -78,7 +78,7 @@ public:
 
 	// System calls
 	bool Initialize(char* windowTitle);
-	void Update(Time deltaTime) override;
+	void Update(Time currentTime, Time deltaTime) override;
 
 	// System accessors
 	GLFWwindow* GetWindow() const;

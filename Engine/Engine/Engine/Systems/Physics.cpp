@@ -10,4 +10,4 @@ Physics &Physics::Instance() {
 	return instance;
 }
 
-void Physics::Update(Time deltaTime) { }
+void Physics::Update(Time currentTime, Time deltaTime) { }
