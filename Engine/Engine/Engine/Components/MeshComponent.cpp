@@ -1,6 +1,8 @@
 #include "MeshComponent.h"
 #include "../Systems/Content/ContentManager.h"
 #include "../Entities/Entity.h"
+// not to sure what to do with this
+glm::vec3 ToCylinder(glm::vec3 point, float radius);
 
 ComponentType MeshComponent::GetType() {
 	return ComponentType_Mesh;
@@ -15,6 +17,7 @@ MeshComponent::MeshComponent(nlohmann::json data) : transform(Transform()) {
 	else texture = nullptr;
 	if (!data["UvScale"].is_null()) uvScale = ContentManager::JsonToVec2(data["UvScale"]);
 	else uvScale = glm::vec2(1);
+	if (!data["Cylinder"].is_null() && data["Cylinder"]) MakeCylinder(mesh); //TODO: store the cylinder radius for later conversions
 }
 
 MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : texture(nullptr) {
@@ -53,3 +56,31 @@ void MeshComponent::SetEntity(Entity* _entity) {
 	transform.parent = &_entity->transform;
 }
 
+float MeshComponent::MakeCylinder(Mesh* mesh) {
+	float maxX = mesh->vertices[0].x;
+	float minX = mesh->vertices[0].x;
+	for (int i = 1; i < mesh->vertexCount; ++i) {
+		maxX = std::max(maxX, mesh->vertices[i].x);
+		minX = std::min(minX, mesh->vertices[i].x);
+	}
+	float R = maxX / 4 / 3.141592;
+	for (int i = 0; i < mesh->vertexCount; ++i) {
+		glm::vec3 point = { (mesh->vertices[i].x - minX)/(maxX-minX), mesh->vertices[i].y, mesh->vertices[i].z };
+		point = ToCylinder(point, R);
+		mesh->vertices[i] = point;
+	}
+	//return radius
+	return R;
+}
+
+glm::vec3 ToCylinder(glm::vec3 point, float radius) {
+	float theta = point.x * 2 * 3.141592;
+	float r = radius - point.y;
+	float h = point.z;
+
+	point.x = r * cos(theta);
+	point.y = r * sin(theta);
+	point.z = h;
+
+	return point;
+}
