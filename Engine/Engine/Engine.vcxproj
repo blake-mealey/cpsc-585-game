@@ -161,7 +161,6 @@
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
-    <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Components\SpotLightComponent.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />

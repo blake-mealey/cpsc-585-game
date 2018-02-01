@@ -13,6 +13,8 @@ MeshComponent::MeshComponent(nlohmann::json data) : transform(Transform()) {
 	material = ContentManager::GetMaterial(data["Material"]);
 	if (!data["Texture"].is_null()) texture = ContentManager::GetTexture(data["Texture"]);
 	else texture = nullptr;
+	if (!data["UvScale"].is_null()) uvScale = ContentManager::JsonToVec2(data["UvScale"]);
+	else uvScale = glm::vec2(1);
 }
 
 MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : texture(nullptr) {
@@ -32,6 +34,18 @@ MeshComponent::MeshComponent(std::string meshPath, Material *_material) : materi
 
 Mesh* MeshComponent::GetMesh() const {
 	return mesh;
+}
+
+Material* MeshComponent::GetMaterial() const {
+	return material;
+}
+
+Texture* MeshComponent::GetTexture() const {
+	return texture;
+}
+
+glm::vec2 MeshComponent::GetUvScale() const {
+	return uvScale;
 }
 
 void MeshComponent::SetEntity(Entity* _entity) {

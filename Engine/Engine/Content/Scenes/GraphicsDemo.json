@@ -8,26 +8,8 @@
 				"Type": "Mesh",
 				"Mesh": "Cplane.obj",
 				"Texture": "DiamondPlate.jpg",
-				"Material": "Basic.json"
-			}
-		]
-	},
-	{
-		"Tag":  "Light",
-		"Position": [0, 0, -5],
-		"Scale": [0.1, 0.1, 0.1],
-		"Components":  [
-			{
-				"Type": "PointLight",
-				"Color": [1, 1, 1],
-				"Power": 10,
-				"Enabled":  false
-			},
-			{
-				"Type": "Mesh",
-				"Mesh": "Sphere.obj",
 				"Material": "Basic.json",
-				"Enabled":  false
+				"UvScale": [2, 2]
 			}
 		]
 	},
@@ -38,7 +20,7 @@
 				"Type": "DirectionLight",
 				"Color": [1, 1, 1],
 				"Direction": [1, -1, 0],
-				"Enabled":  true
+				"CastsShadows": true
 			}
 		]
 	},
@@ -62,6 +44,7 @@
 						"Mesh": "Boulder.obj",
 						"Texture": "Boulder.jpg",
 						"Material": "Basic.json",
+						"UvScale": [0.5, 0.5],
 						"Enabled": true
 					}
 				]
@@ -75,6 +58,7 @@
 						"Mesh": "Boulder.obj",
 						"Texture": "Boulder.jpg",
 						"Material": "Basic.json",
+						"UvScale": [0.5, 0.5],
 						"Enabled": true
 					}
 				]

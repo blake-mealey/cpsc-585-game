@@ -23,10 +23,17 @@ const std::string Graphics::SHADOW_MAP_FRAGMENT_SHADER = "shadowMap.frag";
 // Initial Screen Dimensions
 const size_t Graphics::SCREEN_WIDTH = 1024;
 const size_t Graphics::SCREEN_HEIGHT = 768;
+const size_t Graphics::SHADOW_MAP_SIZE = 1024;
 
 // Lighting
 const glm::vec3 Graphics::SKY_COLOR = glm::vec3(144.f, 195.f, 212.f) / 255.f;
 const glm::vec3 Graphics::AMBIENT_COLOR = glm::vec3(0.4f);
+const glm::mat4 Graphics::BIAS_MATRIX = glm::mat4(
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 0.5, 0.0,
+	0.5, 0.5, 0.5, 1.0
+);
 
 // Singleton
 Graphics::Graphics() { }
@@ -99,107 +106,124 @@ bool Graphics::Initialize(char* windowTitle) {
 }
 
 void Graphics::Update(Time deltaTime) {
-	glfwPollEvents();
+	glfwPollEvents();			// Should this be here or in InputManager?
 
-
-
-	// Render shadow map
-	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::ShadowMap]);
-
-	//Clear Back Buffer Before We Draw
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Cull front faces (avoid peter-panning)
-	glCullFace(GL_FRONT);
-
-	// Set the current shader and VAO
-	ShaderProgram *shaderProgram = shaders[Shaders::ShadowMap];
-	glUseProgram(shaderProgram->GetId());
-	glBindVertexArray(vaoIds[VAOs::Geometry]);
-
-	// Load our lights into the GPU
+	// Get components
 	const std::vector<Component*> pointLights = EntityManager::GetComponents(ComponentType_PointLight);
 	const std::vector<Component*> directionLights = EntityManager::GetComponents(ComponentType_DirectionLight);
 	const std::vector<Component*> spotLights = EntityManager::GetComponents(ComponentType_SpotLight);
+	const std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
+	const std::vector<Component*> cameraComponents = EntityManager::GetComponents(ComponentType_Camera);
 
-	// Get models
-	std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
 
-	// Draw the scene
-	glViewport(0, 0, 1024, 1024);
-	const glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-	const glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(-5, 5, 0), glm::vec3(0), glm::vec3(0, 1, 0));
-	for (size_t j = 0; j < meshes.size(); j++) {
-		MeshComponent* model = static_cast<MeshComponent*>(meshes[j]);
-		if (!model->enabled) continue;
-		Mesh *mesh = model->GetMesh();
+	// -------------------------------------------------------------------------------------------------------------- //
+	// RENDER SHADOW MAP
+	// -------------------------------------------------------------------------------------------------------------- //
 
-		LoadVertices(mesh->vertices, mesh->vertexCount);
+	// Get the shadow caster
+	DirectionLightComponent* shadowCaster = nullptr;
+	for (Component* component : directionLights) {
+		DirectionLightComponent* light = static_cast<DirectionLightComponent*>(component);
+		if (!light->enabled) continue;
+		if (light->IsShadowCaster()) {
+			shadowCaster = light;
+			break;
+		}
+	}
 
-		const glm::mat4 depthModelMatrix = model->transform.GetTransformationMatrix();
-		const glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-		glUniformMatrix4fv(shaderProgram->GetUniformLocation("depthModelViewProjectionMatrix"), 1, GL_FALSE, &depthModelViewProjectionMatrix[0][0]);
+	glm::mat4 depthProjectionMatrix;
+	glm::mat4 depthViewMatrix;
+	if (shadowCaster != nullptr) {
+		depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+		depthViewMatrix = glm::lookAt(-shadowCaster->GetDirection(), glm::vec3(0), glm::vec3(0, 1, 0));
 
-		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
+		// Render to the shadow map framebuffer
+		glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::ShadowMap]);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCullFace(GL_FRONT);
+		glBindVertexArray(vaoIds[VAOs::ShadowMap]);
+
+		// Set the current shader and VAO
+		ShaderProgram *shadowProgram = shaders[Shaders::ShadowMap];
+		glUseProgram(shadowProgram->GetId());
+
+		// Draw the scene
+		glViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+		for (size_t j = 0; j < meshes.size(); j++) {
+			// Get enabled models
+			MeshComponent* model = static_cast<MeshComponent*>(meshes[j]);
+			if (!model->enabled) continue;
+
+			// Load the mesh's vertices into the GPU
+			Mesh *mesh = model->GetMesh();
+			LoadVertices(mesh->vertices, mesh->vertexCount);
+
+			// Load the depth model view projection matrix into the GPU
+			const glm::mat4 depthModelMatrix = model->transform.GetTransformationMatrix();
+			const glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+			glUniformMatrix4fv(shadowProgram->GetUniformLocation(UniformName::DepthModelViewProjectionMatrix), 1, GL_FALSE, &depthModelViewProjectionMatrix[0][0]);
+
+			// Render the model
+			glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
+		}
 	}
 
 
+	// -------------------------------------------------------------------------------------------------------------- //
+	// RENDER WORLD
+	// -------------------------------------------------------------------------------------------------------------- //
 
-
-	// Draw scene
+	// Render to the default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	//Clear Back Buffer Before We Draw
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Cull back faces (avoid peter-panning)
 	glCullFace(GL_BACK);
-
-	// Set the current shader and VAO
-	shaderProgram = shaders[Shaders::Geometry];
-	glUseProgram(shaderProgram->GetId());
 	glBindVertexArray(vaoIds[VAOs::Geometry]);
 
+	// Set the current shader and VAO
+	ShaderProgram *geometryProgram = shaders[Shaders::Geometry];
+	glUseProgram(geometryProgram->GetId());
+
 	// Load shader map into GPU
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ShadowMap]);
-	glUniform1i(shaderProgram->GetUniformLocation("shadowMap"), 1);
+	if (shadowCaster != nullptr) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ShadowMap]);
+		glUniform1i(geometryProgram->GetUniformLocation(UniformName::ShadowMap), 1);
+	}
 
 	// Load our lights into the GPU
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
+	glUniform3f(geometryProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
 	LoadLights(pointLights, directionLights, spotLights);
 
-	// Get components
-	LoadCameras(EntityManager::GetComponents(ComponentType_Camera));
+	// Get the active cameras and setup their viewports
+	LoadCameras(cameraComponents);
 
 	// Draw the scene
 	for (size_t j = 0; j < meshes.size(); j++) {
+		// Get enabled models
 		MeshComponent* model = static_cast<MeshComponent*>(meshes[j]);
 		if (!model->enabled) continue;
 
-		LoadModel(shaderProgram, model);
+		// Load the model's vertices, uvs, normals, and textures into the GPU
+		LoadModel(geometryProgram, model);
 
-		const glm::mat4 biasMatrix(
-			0.5, 0.0, 0.0, 0.0,
-			0.0, 0.5, 0.0, 0.0,
-			0.0, 0.0, 0.5, 0.0,
-			0.5, 0.5, 0.5, 1.0
-		);
-
-		const glm::mat4 depthModelMatrix = model->transform.GetTransformationMatrix();
-		const glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-		glm::mat4 depthBiasMVP = biasMatrix*depthModelViewProjectionMatrix;
-
-		glUniformMatrix4fv(shaderProgram->GetUniformLocation("depthBiasModelViewProjectionMatrix"), 1, GL_FALSE, &depthBiasMVP[0][0]);
+		if (shadowCaster != nullptr) {
+			// Load the depth bias model view projection matrix into the GPU
+			const glm::mat4 depthModelMatrix = model->transform.GetTransformationMatrix();
+			const glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+			glm::mat4 depthBiasMVP = BIAS_MATRIX*depthModelViewProjectionMatrix;
+			glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::DepthBiasModelViewProjectionMatrix), 1, GL_FALSE, &depthBiasMVP[0][0]);
+		}
 
 		for (Camera camera : cameras) {
+			// Setup the viewport for each camera (split-screen)
 			glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
 
 			// Load the model view projection matrix into the GPU
 			glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * model->transform.GetTransformationMatrix();
-			glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
-			glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
+			glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
+			glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
 
+			// Render the model
 			glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
 		}
 	}
@@ -216,7 +240,7 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
 
 	// Get the mesh's material
-	Material *mat = model->material;
+	Material *mat = model->GetMaterial();
 
 	// Load the material data into the GPU
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
@@ -227,9 +251,10 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	LoadMesh(model->GetMesh());
 
 	// Load the texture into the GPU
-	if (model->texture != nullptr) {
+	if (model->GetTexture() != nullptr) {
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
-		LoadTexture(shaderProgram, model->texture, UniformName::DiffuseTexture);
+		LoadTexture(shaderProgram, model->GetTexture(), UniformName::DiffuseTexture);
+		glUniform2f(shaderProgram->GetUniformLocation("uvScale"), model->GetUvScale().x, model->GetUvScale().y);
 	} else {
 		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
 	}
@@ -383,48 +408,40 @@ void Graphics::GenerateIds() {
 	shaders[Shaders::Geometry] = LoadShaderProgram(GEOMETRY_VERTEX_SHADER, GEOMETRY_FRAGMENT_SHADER);
 	shaders[Shaders::ShadowMap] = LoadShaderProgram(SHADOW_MAP_VERTEX_SHADER, SHADOW_MAP_FRAGMENT_SHADER);
 
-	InitializeVao();
+	InitializeGeometryVao();
+	InitializeShadowMapVao();
 	InitializeShadowMapFramebuffer();
 }
 
-void Graphics::InitializeVao() {
+void Graphics::InitializeGeometryVao() {
 	glBindVertexArray(vaoIds[VAOs::Geometry]);
 
 	// Vertices
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::Vertices]);
-	glVertexAttribPointer(
-		0,							// Attribute
-		3,							// Size (#Components)
-		GL_FLOAT,					// Type
-		GL_FALSE,					// Normalized?
-		0,							// Stride
-		static_cast<void*>(nullptr)	// Offset
-	);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
 
 	// UVs
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::UVs]);
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		static_cast<void*>(nullptr)
-	);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
 
 	// Normals
 	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::Normals]);
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		static_cast<void*>(nullptr)
-	);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+void Graphics::InitializeShadowMapVao() {
+	glBindVertexArray(vaoIds[VAOs::ShadowMap]);
+
+	// Vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::Vertices]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -435,7 +452,7 @@ void Graphics::InitializeShadowMapFramebuffer() {
 
 	// Add depth texture
 	glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ShadowMap]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -446,6 +463,7 @@ void Graphics::InitializeShadowMapFramebuffer() {
 
 	// No draw buffers
 	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR: Shadow map framebuffer incomplete!" << std::endl;
