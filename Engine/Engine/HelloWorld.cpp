@@ -48,6 +48,7 @@ int main() {
 	Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
 	Entity *sun = EntityManager::FindEntities("Sun")[0];
+	Entity *floor = EntityManager::FindEntities("Floor")[0];
 
 	camera->transform.SetPosition(glm::vec3(0, 5, 10));
 
@@ -81,10 +82,10 @@ int main() {
 		// "Game" logic		TODO: Move to Game/Simulation system
 		boulder->transform.SetPosition(glm::vec3(0*cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds()/500), 0));
 		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-		camera->transform.SetPosition(10.f * glm::vec3(
-			sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
-			cos(currentTime.GetTimeMilliSeconds() / 1000)));
-
+		//camera->transform.SetPosition(5.f * glm::vec3(
+		//	sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
+		//	cos(currentTime.GetTimeMilliSeconds() / 1000)));
+		floor->transform.Rotate({0,0,1}, deltaTime.GetTimeMilliSeconds() * 0.00002);
 		// Iterate through each system and call their update methods
 		for (auto it = systems.begin(); it != systems.end(); ++it) {
 			(*it)->Update(deltaTime);
