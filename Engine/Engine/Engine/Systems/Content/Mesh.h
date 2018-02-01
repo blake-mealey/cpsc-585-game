@@ -8,11 +8,11 @@ public:
 	Mesh(glm::vec3 *_vertices, glm::vec2 *_uvs, size_t _vertexCount);
 
 	glm::vec3 *vertices;
-	const glm::vec2 *uvs;
-	const glm::vec3 *normals;
+	glm::vec2 *uvs;
+	glm::vec3 *normals;
 
 	const size_t vertexCount;
-
-private:
 	void GenerateNormals();
+private:
+	
 };

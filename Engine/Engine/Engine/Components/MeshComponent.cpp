@@ -69,6 +69,7 @@ float MeshComponent::MakeCylinder(Mesh* mesh) {
 		point = ToCylinder(point, R);
 		mesh->vertices[i] = point;
 	}
+	mesh->GenerateNormals();
 	//return radius
 	return R;
 }
