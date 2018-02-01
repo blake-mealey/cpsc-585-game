@@ -2,14 +2,15 @@
 	{
 		"Tag": "Floor",
 		"Position": [0, -2.5, 0],
-		"Scale": [10, 1, 10],
+		"Scale": [0.5, 0.5, 0.5],
 		"Components": [
 			{
 				"Type": "Mesh",
 				"Mesh": "Cplane.obj",
 				"Texture": "DiamondPlate.jpg",
 				"Material": "Basic.json",
-				"UvScale": [2, 2]
+        "UvScale": [ 80, 50 ],
+        "Cylinder":  true
 			}
 		]
 	},
