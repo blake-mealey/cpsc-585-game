@@ -3,7 +3,6 @@
 	"Components": [
 		{
 			"Type": "DirectionLight",
-			"Color": [1, 1, 1],
 			"Direction": [1, -1, 0],
 			"CastsShadows": true
 		}

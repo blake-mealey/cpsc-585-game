@@ -18,9 +18,8 @@ MeshComponent::MeshComponent(nlohmann::json data) : transform(Transform()) {
 	material = ContentManager::GetMaterial(data["Material"]);
 	if (!data["Texture"].is_null()) texture = ContentManager::GetTexture(data["Texture"]);
 	else texture = nullptr;
-	if (!data["UvScale"].is_null()) uvScale = ContentManager::JsonToVec2(data["UvScale"]);
-	else uvScale = glm::vec2(1);
-	if (!data["Cylinder"].is_null() && data["Cylinder"]) MakeCylinder(mesh); //TODO: store the cylinder radius for later conversions
+	uvScale = ContentManager::JsonToVec2(data["UvScale"], glm::vec2(1.f));
+    if (ContentManager::GetFromJson<bool>(data["Cylinder"], false)) MakeCylinder(mesh); //TODO: store the cylinder radius for later conversions
 }
 
 MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : texture(nullptr) {

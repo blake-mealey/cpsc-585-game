@@ -33,80 +33,6 @@ const std::string ContentManager::COMPONENT_PREFAB_DIR_PATH = PREFAB_DIR_PATH + 
 
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
-Mesh* LoadObj(const std::string filePath) {
-	FILE *file;
-	errno_t err = fopen_s(&file, filePath.c_str(), "r");
-	if (file == NULL) {
-		std::cout << "Failed to load OBJ file." << std::endl;
-		return nullptr;
-	}
-
-	std::vector<glm::vec3> tempVertices;
-	std::vector<glm::vec2> tempUvs;
-	std::vector<glm::vec3> tempNormals;
-
-	std::vector<unsigned int> vertexIndices;
-	std::vector<unsigned int> uvIndices;
-	std::vector<unsigned int> normalIndices;
-
-	while (true) {
-		char lineHeader[128];
-		int res = fscanf_s( file, "%s", lineHeader);
-		if (res == EOF) {
-			break;
-		}
-
-		if (strcmp(lineHeader, "v") == 0) {
-			glm::vec3 vertex;
-			fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-			tempVertices.push_back(vertex);
-		} else if (strcmp(lineHeader, "vt") == 0) {
-			glm::vec2 uv;
-			fscanf_s(file, "%f %f\n", &uv.x, &uv.y);
-			tempUvs.push_back(uv);
-		} else if (strcmp(lineHeader, "vn") == 0) {
-			glm::vec3 normal;
-			fscanf_s(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-			tempNormals.push_back(normal);
-		} else if (strcmp(lineHeader, "f") == 0) {
-			std::string vertex1, vertex2, vertex3;
-			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-			int matches = fscanf_s(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",
-				&vertexIndex[0], &uvIndex[0], &normalIndex[0],
-				&vertexIndex[1], &uvIndex[1], &normalIndex[1],
-				&vertexIndex[2], &uvIndex[2], &normalIndex[2]);
-			if (matches != 9) {
-				std::cout << "Unknown format for simple parser." << std::endl;
-				return nullptr;
-			}
-			vertexIndices.push_back(vertexIndex[0]);
-			vertexIndices.push_back(vertexIndex[1]);
-			vertexIndices.push_back(vertexIndex[2]);
-			uvIndices.push_back(uvIndex[0]);
-			uvIndices.push_back(uvIndex[1]);
-			uvIndices.push_back(uvIndex[2]);
-			normalIndices.push_back(normalIndex[0]);
-			normalIndices.push_back(normalIndex[1]);
-			normalIndices.push_back(normalIndex[2]);
-		}
-	}
-
-	fclose(file);
-
-	const size_t vertexCount = vertexIndices.size();
-	glm::vec3 *vertices = new glm::vec3[vertexCount];
-	glm::vec2 *uvs = new glm::vec2[vertexCount];
-	glm::vec3 *normals = new glm::vec3[vertexCount];
-
-	for (size_t i = 0; i < vertexCount; i++) {
-		vertices[i] = tempVertices[vertexIndices[i] - 1];
-		uvs[i] = tempUvs[uvIndices[i] - 1];
-		normals[i] = tempNormals[normalIndices[i] - 1];
-	}
-
-	return new Mesh(vertices, uvs, normals, vertexCount);
-}
-
 glm::vec3 AssimpVectorToGlm(aiVector3D v) {
 	return glm::vec3(v.x, v.y, v.z);
 }
@@ -119,8 +45,6 @@ Mesh* ContentManager::GetMesh(const std::string filePath) {
 	Mesh* mesh = meshes[filePath];
 	if (mesh != nullptr) return mesh;
 
-	// TODO: Load meshes using Assimp
-//	mesh = LoadObj(MESH_DIR_PATH + filePath);
 	Assimp::Importer importer;
 
 	const aiScene *scene = importer.ReadFile(MESH_DIR_PATH + filePath,
@@ -294,17 +218,27 @@ nlohmann::json ContentManager::LoadJson(const std::string filePath) {
 	return object;
 }
 
+glm::vec3 ContentManager::JsonToVec3(nlohmann::json data, glm::vec3 defaultValue) {
+    if (!data.is_array() || data.size() != 3) return defaultValue;
+    return glm::vec3(
+        GetFromJson<float>(data[0], defaultValue.x),
+        GetFromJson<float>(data[1], defaultValue.y),
+        GetFromJson<float>(data[2], defaultValue.z));
+}
+
 glm::vec3 ContentManager::JsonToVec3(nlohmann::json data) {
-	return glm::vec3(
-		data[0].get<float>(),
-		data[1].get<float>(),
-		data[2].get<float>());
+    return JsonToVec3(data, glm::vec3());
+}
+
+glm::vec2 ContentManager::JsonToVec2(nlohmann::json data, glm::vec2 defaultValue) {
+    if (!data.is_array() || data.size() != 2) return defaultValue;
+    return glm::vec2(
+        GetFromJson<float>(data[0], defaultValue.x),
+        GetFromJson<float>(data[1], defaultValue.y));
 }
 
 glm::vec2 ContentManager::JsonToVec2(nlohmann::json data) {
-	return glm::vec2(
-		data[0].get<float>(),
-		data[1].get<float>());
+    return JsonToVec2(data, glm::vec2());
 }
 
 GLuint ContentManager::LoadShader(std::string filePath, const GLenum shaderType) {

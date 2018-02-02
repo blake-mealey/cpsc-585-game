@@ -2,7 +2,7 @@
 #include "../Systems/Content/ContentManager.h"
 
 PointLightComponent::PointLightComponent(nlohmann::json data) {
-	color = ContentManager::JsonToVec3(data["Color"]);
+	color = ContentManager::JsonToVec3(data["Color"], glm::vec3(1.f));
 	power = ContentManager::GetFromJson<float>(data["Power"], 10);
 }
 

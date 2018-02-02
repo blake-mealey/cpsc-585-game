@@ -34,7 +34,9 @@ public:
 	template <typename T>
 	static T GetFromJson(nlohmann::json json, T defaultValue);
 	static nlohmann::json LoadJson(std::string filePath);
+    static glm::vec3 JsonToVec3(nlohmann::json data, glm::vec3 defaultValue);
 	static glm::vec3 JsonToVec3(nlohmann::json data);
+	static glm::vec2 JsonToVec2(nlohmann::json data, glm::vec2 defaultValue);
 	static glm::vec2 JsonToVec2(nlohmann::json data);
 
 	static GLuint LoadShader(std::string filePath, GLenum shaderType);
