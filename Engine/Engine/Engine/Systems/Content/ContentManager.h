@@ -17,12 +17,15 @@ public:
 	static const std::string TEXTURE_DIR_PATH;
 	static const std::string MATERIAL_DIR_PATH;
 	static const std::string SCENE_DIR_PATH;
+	static const std::string PREFAB_DIR_PATH;
 
 	static const std::string SHADERS_DIR_PATH;
 
 	static Mesh* GetMesh(std::string filePath);
 	static Texture* GetTexture(std::string filePath);
 	static Material* GetMaterial(std::string filePath);
+	
+	static Entity* LoadPrefab(std::string filePath);
 	static std::vector<Entity*> LoadScene(std::string filePath);
 
 	template <typename T>

@@ -27,6 +27,7 @@ const std::string ContentManager::MESH_DIR_PATH = CONTENT_DIR_PATH + "Meshes/";
 const std::string ContentManager::TEXTURE_DIR_PATH = CONTENT_DIR_PATH + "Textures/";
 const std::string ContentManager::MATERIAL_DIR_PATH = CONTENT_DIR_PATH + "Materials/";
 const std::string ContentManager::SCENE_DIR_PATH = CONTENT_DIR_PATH + "Scenes/";
+const std::string ContentManager::PREFAB_DIR_PATH = CONTENT_DIR_PATH + "Prefabs/";
 
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
@@ -206,8 +207,18 @@ std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 	return entities;
 }
 
+Entity* ContentManager::LoadPrefab(std::string filePath) {
+	nlohmann::json data = LoadJson(PREFAB_DIR_PATH + filePath);
+	return LoadEntity(data);
+}
+
 Entity* ContentManager::LoadEntity(nlohmann::json data) {
-	Entity *entity = EntityManager::CreateDynamicEntity();		// TODO: Determine whether or not the entity is static
+	Entity *entity;
+	if (!data["Prefab"].is_null()) {
+		entity = LoadPrefab(data["Prefab"]);
+	} else {
+		entity = EntityManager::CreateDynamicEntity();		// TODO: Determine whether or not the entity is static
+	}
 
 	for (auto it = data.begin(); it != data.end(); ++it) {
 		std::string key = it.key();
