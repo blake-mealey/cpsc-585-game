@@ -123,8 +123,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Content\Prefabs\Components\Camera.json" />
     <None Include="Content\Materials\Basic.json" />
-    <None Include="Content\Prefabs\Boulder.json" />
+    <None Include="Content\Prefabs\Entities\Boulder.json" />
+    <None Include="Content\Prefabs\Entities\Sun.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
     <None Include="Engine\Shaders\geometry.frag" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />

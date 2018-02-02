@@ -1,80 +1,31 @@
 [
-  {
-    "Tag": "Floor",
-    "Position": [ 0, -2.5, 0 ],
-    "Scale": [ 1, 1, 1 ],
-    "Components": [
-      {
-        "Type": "Mesh",
-        "Mesh": "Cplane.obj",
-        "Texture": "DiamondPlate.jpg",
-        "Material": "Basic.json",
-        "UvScale": [ 8, 8 ],
-        "Cylinder": true
-      }
-    ],
-    "Children": [
-      {
-        "Position": [ -0.7, -0.7, 0 ],
-        "Scale": [ 0.5, 0.6, 0.7 ],
-        "Components": [
-          {
-            "Type": "Mesh",
-            "Mesh": "Boulder.obj",
-            "Texture": "Boulder.jpg",
-            "Material": "Basic.json",
-            "UvScale": [ 0.5, 0.5 ],
-            "Enabled": true
-          }
-        ]
-      }
-    ]
-	},
 	{
-		"Tag":  "Sun",
-		"Components":  [
+		"Tag": "Floor",
+		"Position": [0, -2.5, 0],
+		"Scale": [1, 1, 1],
+		"Components": [
 			{
-				"Type": "DirectionLight",
-				"Color": [1, 1, 1],
-				"Direction": [1, -1, 0],
-				"CastsShadows": true
+				"Type": "Mesh",
+				"Mesh": "Cplane.obj",
+				"Texture": "DiamondPlate.jpg",
+				"Material": "Basic.json",
+				"UvScale": [8, 8],
+				"Cylinder": true
 			}
+		],
+		"Children": [
+			"Boulder.json"
 		]
 	},
+	"Sun.json",
 	{
-		"Prefab": "Boulder.json"
+		"Prefab": "Boulder.json",
+		"Tag": "Boulder"
 	},
 	{
 		"Tag": "Camera",
 		"Components": [
-			{
-				"Type": "Camera",
-				"Position": [0, 0, 0],
-				"Target": [0, 0, 0],
-				"UpVector": [0, 1, 0],
-				"Enabled": true
-			},
-			{
-				"Type": "Camera",
-				"Position": [ 0, 0, 0 ],
-				"Target": [ 0, 0, 0 ],
-				"UpVector": [ 0, 1, 0 ],
-				"Enabled": false
-			},
-			{
-				"Type": "Camera",
-				"Position": [0, 0, 0],
-				"Target": [0, 0, 0],
-				"UpVector": [0, 1, 0],
-				"Enabled": false
-			},
-			{
-				"Type": "Camera",
-				"Position": [0, 0, 0],
-				"Target": [0, 0, 0],
-				"UpVector": [0, 1, 0],
-				"Enabled": false
-			}
+			"Camera.json"
 		]
 	}
 ]

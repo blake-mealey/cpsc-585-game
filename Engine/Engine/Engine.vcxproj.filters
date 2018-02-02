@@ -64,6 +64,8 @@
     <None Include="Engine\Shaders\geometry.vert" />
     <None Include="Engine\Shaders\shadowMap.frag" />
     <None Include="Engine\Shaders\shadowMap.vert" />
-    <None Include="Content\Prefabs\Boulder.json" />
+    <None Include="Content\Prefabs\Components\Camera.json" />
+    <None Include="Content\Prefabs\Entities\Boulder.json" />
+    <None Include="Content\Prefabs\Entities\Sun.json" />
   </ItemGroup>
 </Project>

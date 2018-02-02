@@ -18,14 +18,17 @@ public:
 	static const std::string MATERIAL_DIR_PATH;
 	static const std::string SCENE_DIR_PATH;
 	static const std::string PREFAB_DIR_PATH;
+	static const std::string ENTITY_PREFAB_DIR_PATH;
+	static const std::string COMPONENT_PREFAB_DIR_PATH;
 
 	static const std::string SHADERS_DIR_PATH;
 
 	static Mesh* GetMesh(std::string filePath);
 	static Texture* GetTexture(std::string filePath);
 	static Material* GetMaterial(std::string filePath);
-	
-	static Entity* LoadPrefab(std::string filePath);
+
+    static Component* LoadComponentPrefab(std::string filePath);
+	static Entity* LoadEntityPrefab(std::string filePath);
 	static std::vector<Entity*> LoadScene(std::string filePath);
 
 	template <typename T>
@@ -46,6 +49,7 @@ private:
 	static std::map<std::string, Texture*> textures;
 	static std::map<std::string, Material*> materials;
 
+	static Component* LoadComponent(nlohmann::json data);
 	static Entity* LoadEntity(nlohmann::json data);
 };
 

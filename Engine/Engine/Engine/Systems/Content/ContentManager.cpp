@@ -28,6 +28,8 @@ const std::string ContentManager::TEXTURE_DIR_PATH = CONTENT_DIR_PATH + "Texture
 const std::string ContentManager::MATERIAL_DIR_PATH = CONTENT_DIR_PATH + "Materials/";
 const std::string ContentManager::SCENE_DIR_PATH = CONTENT_DIR_PATH + "Scenes/";
 const std::string ContentManager::PREFAB_DIR_PATH = CONTENT_DIR_PATH + "Prefabs/";
+const std::string ContentManager::ENTITY_PREFAB_DIR_PATH = PREFAB_DIR_PATH + "Entities/";
+const std::string ContentManager::COMPONENT_PREFAB_DIR_PATH = PREFAB_DIR_PATH + "Components/";
 
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
@@ -196,6 +198,16 @@ Material* ContentManager::GetMaterial(const std::string filePath) {
 	return new Material(diffuseColor, specularColor, specularity);
 }
 
+Component* ContentManager::LoadComponentPrefab(std::string filePath) {
+    const nlohmann::json data = LoadJson(COMPONENT_PREFAB_DIR_PATH + filePath);
+    return LoadComponent(data);
+}
+
+Entity* ContentManager::LoadEntityPrefab(std::string filePath) {
+    const nlohmann::json data = LoadJson(ENTITY_PREFAB_DIR_PATH + filePath);
+    return LoadEntity(data);
+}
+
 std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 	std::vector<Entity*> entities;
 
@@ -207,15 +219,46 @@ std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 	return entities;
 }
 
-Entity* ContentManager::LoadPrefab(std::string filePath) {
-	nlohmann::json data = LoadJson(PREFAB_DIR_PATH + filePath);
-	return LoadEntity(data);
+Component* ContentManager::LoadComponent(nlohmann::json data) {
+    if (data.is_string()) {
+        return LoadComponentPrefab(data.get<std::string>());
+    }
+
+    Component *component = nullptr;
+    bool supportedType;
+    if (!data["Prefab"].is_null()) {
+        component = LoadComponentPrefab(data["Prefab"]);
+        supportedType = component != nullptr;
+    } else {
+        supportedType = true;
+        std::string type = data["Type"];
+        if (type == "Mesh") component = new MeshComponent(data);
+        else if (type == "Camera") component = new CameraComponent(data);
+        else if (type == "PointLight") component = new PointLightComponent(data);
+        else if (type == "DirectionLight") component = new DirectionLightComponent(data);
+        else if (type == "SpotLight") component = new SpotLightComponent(data);
+        else {
+            std::cout << "Unsupported component type: " << type << std::endl;
+            supportedType = false;
+        }
+    }
+
+    if (supportedType) {
+        component->enabled = GetFromJson<bool>(data["Enabled"], true);
+        return component;
+    }
+
+    return nullptr;
 }
 
 Entity* ContentManager::LoadEntity(nlohmann::json data) {
-	Entity *entity;
+    if (data.is_string()) {
+        return LoadEntityPrefab(data.get<std::string>());
+    }
+
+    Entity *entity;
 	if (!data["Prefab"].is_null()) {
-		entity = LoadPrefab(data["Prefab"]);
+		entity = LoadEntityPrefab(data["Prefab"]);
 	} else {
 		entity = EntityManager::CreateDynamicEntity();		// TODO: Determine whether or not the entity is static
 	}
@@ -226,25 +269,12 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 		else if (key == "Position") entity->transform.SetPosition(JsonToVec3(data["Position"]));
 		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(data["Scale"]));
 		else if (key == "Components") {
-			for (auto componentData : it.value()) {
-				Component *component = nullptr;
-				bool supportedType = true;
-				std::string type = componentData["Type"];
-				if (type == "Mesh") component = new MeshComponent(componentData);
-				else if (type == "Camera") component = new CameraComponent(componentData);
-				else if (type == "PointLight") component = new PointLightComponent(componentData);
-				else if (type == "DirectionLight") component = new DirectionLightComponent(componentData);
-				else if (type == "SpotLight") component = new SpotLightComponent(componentData);
-				else {
-					std::cout << "Unsupported component type: " << type << std::endl;
-					supportedType = false;
-				}
-				
-				if (supportedType) {
-					component->enabled = GetFromJson<bool>(componentData["Enabled"], true);
-					EntityManager::AddComponent(entity, component);
-				}
-			}
+            for (auto componentData : it.value()) {
+                Component *component = LoadComponent(componentData);
+                if (component != nullptr) {
+                    EntityManager::AddComponent(entity, component);
+                }
+            }
 		} else if (key == "Children") {
 			for (auto childData : it.value()) {
 				Entity *child = LoadEntity(childData);

@@ -1,0 +1,6 @@
+{
+	"Type": "Camera",
+	"Position": [0, 0, 0],
+	"Target": [0, 0, 0],
+	"UpVector": [0, 1, 0]
+}
