@@ -1,5 +1,6 @@
 #include "InputManager.h"
 
+#include "../Systems/StateManager.h"
 #include "../Entities/EntityManager.h"
 
 vector<XboxController*> InputManager::xboxControllers;
@@ -51,6 +52,11 @@ void InputManager::HandleKeyboard() {
 	//Keyboard Inputs
 	if (Keyboard::KeyPressed(GLFW_KEY_W)) {
 		cout << "W Key Pressed" << endl;
+		if (StateManager::GetState() == GameState_Playing) {
+			StateManager::SetState(GameState_Paused);
+		} else if (StateManager::GetState() == GameState_Paused) {
+			StateManager::SetState(GameState_Playing);
+		}
 	}
 	if (Keyboard::KeyDown(GLFW_KEY_W)) {
 		cout << "W Key Held" << endl;
