@@ -42,13 +42,19 @@ void EntityManager::SetTag(size_t entityId, std::string tag) {
 }
 
 void EntityManager::SetTag(Entity* entity, std::string tag) {
-	auto it = tagToEntities.find(entity->GetTag());
+    if (entity->HasTag(tag)) return;
+	
+    // Find the list of entities with this entity's tag
+    auto it = tagToEntities.find(entity->GetTag());
 	if (it != tagToEntities.end()) {
 		std::vector<Entity*> entities = it->second;
+        // Remove this entity from that list
 		auto it2 = std::find(entities.begin(), entities.end(), entity);
 		if (it2 != entities.end())
 			entities.erase(it2);
 	}
+
+    // Set this entity's tag and add this entity to the list of entities with this tag
 	entity->SetTag(tag);
 	tagToEntities[tag].push_back(entity);
 }

@@ -19,6 +19,9 @@ const char* UniformName::ShadowMap = "shadowMap";
 const char* UniformName::DepthModelViewProjectionMatrix = "depthModelViewProjectionMatrix";
 const char* UniformName::DepthBiasModelViewProjectionMatrix = "depthBiasModelViewProjectionMatrix";
 
+const char* UniformName::Skybox = "skybox";
+const char* UniformName::ViewProjectionMatrix = "viewProjectionMatrix";
+
 ShaderProgram::ShaderProgram() {}
 ShaderProgram::ShaderProgram(GLuint id) : programId(id) {}
 

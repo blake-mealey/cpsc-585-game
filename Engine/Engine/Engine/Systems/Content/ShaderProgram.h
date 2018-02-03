@@ -21,6 +21,9 @@ const struct UniformName {
 	static const char* ShadowMap;
 	static const char* DepthModelViewProjectionMatrix;
 	static const char* DepthBiasModelViewProjectionMatrix;
+	
+    static const char* Skybox;
+    static const char* ViewProjectionMatrix;
 };
 
 class ShaderProgram {

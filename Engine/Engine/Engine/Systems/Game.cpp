@@ -22,6 +22,8 @@ float unitRand() {
 }
 
 void Game::Initialize() {
+    ContentManager::LoadSkybox("PurpleNebula/");
+
 	// Load the scene and get some entities
 	ContentManager::LoadScene("GraphicsDemo.json");
 	boulder = EntityManager::FindEntities("Boulder")[0];
@@ -54,8 +56,8 @@ void Game::Initialize() {
 void Game::Update(Time currentTime, Time deltaTime) {
 	boulder->transform.SetPosition(glm::vec3(0 * cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds() / 500), 0));
 	boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-	//camera->transform.SetPosition(5.f * glm::vec3(
-	//	sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
-	//	cos(currentTime.GetTimeMilliSeconds() / 1000)));
+	camera->transform.SetPosition(10.f * glm::vec3(
+		sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
+		cos(currentTime.GetTimeMilliSeconds() / 1000)));
 	floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
 }
