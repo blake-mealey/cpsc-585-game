@@ -1,6 +1,7 @@
 #include "Game.h"
 
 #include <iostream>
+#include "StateManager.h"
 #include "Content/ContentManager.h"
 #include "../Entities/EntityManager.h"
 #include "../Components/SpotLightComponent.h"
@@ -9,6 +10,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 using namespace std;
+
+Time gameTime(0);
 
 // Singleton
 Game::Game() {}
@@ -52,10 +55,18 @@ void Game::Initialize() {
 }
 
 void Game::Update(Time currentTime, Time deltaTime) {
-	boulder->transform.SetPosition(glm::vec3(0 * cos(currentTime.GetTimeMilliSeconds() / 500), sin(currentTime.GetTimeMilliSeconds() / 500), 0));
-	boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-	//camera->transform.SetPosition(5.f * glm::vec3(
-	//	sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
-	//	cos(currentTime.GetTimeMilliSeconds() / 1000)));
-	floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
+
+	if (StateManager::GetState() == GameState_Playing) {
+		gameTime += deltaTime;
+
+		//boulder->transform.Translate(glm::vec3(0.0f, sin(currentTime.GetTimeSeconds()), 0.0f));
+		boulder->transform.SetPosition(glm::vec3(0 * cos(gameTime.GetTimeMilliSeconds() / 500), sin(gameTime.GetTimeMilliSeconds() / 500), 0));
+		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
+		//camera->transform.SetPosition(5.f * glm::vec3(
+		//	sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
+		//	cos(currentTime.GetTimeMilliSeconds() / 1000)));
+		floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
+	} else if (StateManager::GetState() == GameState_Paused) {
+		
+	}
 }
