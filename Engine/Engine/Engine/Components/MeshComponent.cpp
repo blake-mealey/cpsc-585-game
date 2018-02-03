@@ -70,7 +70,7 @@ float MeshComponent::MakeCylinder(Mesh* mesh) {
 	float R = circumfrence / 2.f / (float) M_PI;
 	for (size_t i = 0; i < mesh->vertexCount; ++i) {
 		glm::vec3 point = { mesh->vertices[i].x, mesh->vertices[i].y, mesh->vertices[i].z };
-		point = FromCylinder(point,R);
+		point = ToCylinder(point,R);
 		mesh->vertices[i] = point;
 	}
 	mesh->GenerateNormals();
