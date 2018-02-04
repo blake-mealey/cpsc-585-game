@@ -20,6 +20,7 @@ const char* UniformName::DepthModelViewProjectionMatrix = "depthModelViewProject
 const char* UniformName::DepthBiasModelViewProjectionMatrix = "depthBiasModelViewProjectionMatrix";
 
 const char* UniformName::Skybox = "skybox";
+const char* UniformName::SkyboxColor = "colorAdjust";
 const char* UniformName::ViewProjectionMatrix = "viewProjectionMatrix";
 
 ShaderProgram::ShaderProgram() {}

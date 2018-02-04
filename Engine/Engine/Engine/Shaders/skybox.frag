@@ -2,10 +2,12 @@
 
 in vec3 fragmentUv;
 
+uniform vec3 colorAdjust;
 uniform samplerCube skybox;
 
 out vec4 fragmentColor;
 
 void main() {
-	fragmentColor = texture(skybox, fragmentUv);
+	vec4 mult = vec4(colorAdjust, 1);
+	fragmentColor = texture(skybox, fragmentUv)*mult;
 }
