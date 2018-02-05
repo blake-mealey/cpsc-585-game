@@ -8,7 +8,9 @@ enum ComponentType {
 	ComponentType_Camera,
 	ComponentType_PointLight,
 	ComponentType_DirectionLight,
-	ComponentType_SpotLight
+	ComponentType_SpotLight,
+	ComponentType_Collider,
+	ComponentType_Rigidbody
 };
 
 class Component {
