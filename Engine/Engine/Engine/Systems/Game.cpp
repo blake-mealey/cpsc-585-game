@@ -65,8 +65,8 @@ void Game::Update(Time currentTime, Time deltaTime) {
         boulder->transform.SetPosition(glm::vec3(pos.x, sin(gameTime.GetTimeMilliSeconds() / 500), pos.z));
 //		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
 		camera->transform.SetPosition(10.f * glm::vec3(
-			sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
-			cos(currentTime.GetTimeMilliSeconds() / 1000)));
+			sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
+			cos(gameTime.GetTimeMilliSeconds() / 1000)));
 		floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
 	} else if (StateManager::GetState() == GameState_Paused) {
 		
