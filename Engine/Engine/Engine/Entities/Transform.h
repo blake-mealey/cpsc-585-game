@@ -6,7 +6,11 @@
 class Transform {
 public:
 	Transform();
-	Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation);
+	Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connectedToCylinder);
+
+	void Update();
+
+	static float radius;
 
 	Transform *parent;
 
@@ -22,6 +26,7 @@ public:
 	void SetRotationEulerAngles(glm::vec3 eulerAngles);
 	void SetRotationAxisAngles(glm::vec3 axis, float radians);
 
+
 	// Operators for basic data
 	void Translate(glm::vec3 offset);
 	void Scale(float scaleFactor);
@@ -33,12 +38,18 @@ public:
 	glm::mat4 GetRotationMatrix();
 	glm::mat4 GetLocalTransformationMatrix();
 	glm::mat4 GetTransformationMatrix();
+
+	static glm::vec3 ToCylinder(glm::vec3 point);
+	static glm::vec3 FromCylinder(glm::vec3 point);
+	void ConnectToCylinder();
+
+	bool connectedToCylinder;
 private:
 	// Basic data
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
-
+	
 	// Output data for lazy-loading purposes
 	glm::mat4 translationMatrix;
 	glm::mat4 scalingMatrix;
