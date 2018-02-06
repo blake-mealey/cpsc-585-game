@@ -145,7 +145,6 @@ std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 	for (nlohmann::json entityData : data) {
 		entities.push_back(LoadEntity(entityData));
 	}
-
 	return entities;
 }
 
@@ -205,14 +204,17 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
                     EntityManager::AddComponent(entity, component);
                 }
             }
-		} else if (key == "Children") {
+		}
+		else if (key == "Children") {
 			for (auto childData : it.value()) {
 				Entity *child = LoadEntity(childData);
 				child->transform.parent = &entity->transform;
 			}
 		}
+		else if (key == "Cylinder" && data["Cylinder"]) {
+			entity->transform.ConnectToCylinder();
+		}
 	}
-
 	return entity;
 }
 

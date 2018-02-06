@@ -5,12 +5,25 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
-Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f, 1.f, 1.f), glm::quat()) {}
+float Transform::radius = 0;
 
-Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation) : parent(pParent) {
+Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f, 1.f, 1.f), glm::quat(), false) {}
+
+Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connected) : parent(pParent) {
+	connectedToCylinder = connected;
 	SetPosition(pPosition);
 	SetScale(pScale);
 	SetRotation(pRotation);
+}
+
+void Transform::Update() {
+	SetPosition(position);
+	SetScale(scale);
+	SetRotation(rotation);
+}
+
+void Transform::ConnectToCylinder() {
+	connectedToCylinder = true;
 }
 
 glm::vec3 Transform::GetPosition() {
@@ -25,14 +38,21 @@ glm::quat Transform::GetRotation() {
 	return rotation;
 }
 
-
 void Transform::UpdateTransformationMatrix() {
 	transformationMatrix = translationMatrix * rotationMatrix * scalingMatrix;
 }
 
 void Transform::SetPosition(glm::vec3 pPosition) {
 	position = pPosition;
-	translationMatrix = glm::translate(glm::mat4(), position);
+	if (connectedToCylinder && radius > 0) {
+		translationMatrix = glm::translate(glm::mat4(), ToCylinder(pPosition));
+		//rotate accordingly
+		float rotBy = position.x / radius;
+		rotationMatrix = glm::toMat4(glm::rotate(rotation, rotBy, glm::vec3(0,0,1)));
+	}
+	else {
+		translationMatrix = glm::translate(glm::mat4(), position);
+	}
 	UpdateTransformationMatrix();
 }
 
@@ -55,7 +75,6 @@ void Transform::SetRotationEulerAngles(glm::vec3 eulerAngles) {
 void Transform::SetRotationAxisAngles(glm::vec3 axis, float radians) {
 	SetRotation(glm::angleAxis(radians, axis));
 }
-
 
 void Transform::Translate(glm::vec3 offset) {
 	SetPosition(position + offset);
@@ -94,4 +113,24 @@ glm::mat4 Transform::GetTransformationMatrix() {
 		transform = transform->parent;
 	} while (transform != nullptr);
 	return matrix;
+}
+
+glm::vec3 Transform::ToCylinder(glm::vec3 point) {
+	float theta = point.x / radius;
+	float r = radius - point.y;
+	
+	point.x = r * cos(theta);
+	point.y = r * sin(theta);
+
+	return point;
+}
+
+glm::vec3 Transform::FromCylinder(glm::vec3 point) {
+	float r = sqrt(point.x*point.x + point.y*point.y);
+	float theta = atan2(point.y, point.x);
+
+	point.x = theta * radius;
+	point.y = radius - r;
+
+	return point;
 }
