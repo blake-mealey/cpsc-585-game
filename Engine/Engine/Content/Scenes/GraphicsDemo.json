@@ -13,10 +13,15 @@
 				"Cylinder": true
 			}
 		],
-		"Children": [
-      "Boulder.json"
-		]
-	},
+    "Children": [
+      {
+        "Prefab": "Boulder.json",
+        "Position": [0,-1,0],
+        "Cylinder": true,
+        "Tag": "Baby"
+      }
+    ]
+  },
 	"Sun.json",
   {
     "Prefab": "Boulder.json",

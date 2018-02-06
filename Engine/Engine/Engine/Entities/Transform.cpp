@@ -70,7 +70,7 @@ void Transform::SetPosition(glm::vec3 pPosition) {
 		translationMatrix = glm::translate(glm::mat4(), ToCylinder(pPosition));
 		//rotate accordingly
 		float rotBy = position.x / radius;
-		rotationMatrix = glm::toMat4(glm::rotate(rotation, rotBy, glm::vec3(0,0,1)));
+		rotationMatrix = glm::toMat4(glm::rotate(glm::quat(), rotBy, glm::vec3(0,0,1)))*glm::toMat4(rotation);
 	}
 	else {
 		translationMatrix = glm::translate(glm::mat4(), position);
@@ -86,8 +86,14 @@ void Transform::SetScale(glm::vec3 pScale) {
 
 void Transform::SetRotation(glm::quat pRotation) {
 	rotation = pRotation;
-	rotationMatrix = glm::toMat4(rotation);
-	UpdateTransformationMatrix();
+	if (connectedToCylinder && radius > 0) {
+		rotationMatrix = glm::toMat4(glm::rotate(glm::quat(), position.x/radius, glm::vec3(0, 0, 1)))*glm::toMat4(rotation);
+	}
+	else {
+		rotationMatrix = glm::toMat4(rotation);
+		UpdateTransformationMatrix();
+	}
+	
 }
 
 void Transform::SetRotationEulerAngles(glm::vec3 eulerAngles) {
@@ -109,7 +115,6 @@ void Transform::Scale(float scaleFactor) {
 void Transform::Rotate(glm::vec3 axis, float radians) {
 	SetRotation(glm::rotate(rotation, glm::degrees(radians), axis));
 }
-
 
 glm::mat4 Transform::GetTranslationMatrix() {
 	return translationMatrix;
