@@ -10,4 +10,9 @@ Physics &Physics::Instance() {
 	return instance;
 }
 
+void Physics::Initialize() {
+    
+}
+
+
 void Physics::Update(Time currentTime, Time deltaTime) { }

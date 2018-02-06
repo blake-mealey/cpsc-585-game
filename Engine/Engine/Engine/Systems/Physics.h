@@ -6,6 +6,8 @@ public:
 	// Access the singleton instance
 	static Physics& Instance();
 
+    void Initialize();
+
 	void Update(Time currentTime, Time deltaTime) override;
 
 private:
