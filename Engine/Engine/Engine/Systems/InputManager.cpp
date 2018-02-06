@@ -2,6 +2,7 @@
 
 #include "../Systems/StateManager.h"
 #include "../Entities/EntityManager.h"
+#include "../Components/CameraComponent.h"
 
 vector<XboxController*> InputManager::xboxControllers;
 
@@ -66,6 +67,9 @@ void InputManager::HandleKeyboard() {
 	}
 }
 
+float cameraAngle = 0.f;
+float cameraLift = 0.f;
+
 void InputManager::HandleController() {
 	//Iterate through each controller
 	for (auto controller = xboxControllers.begin(); controller != xboxControllers.end(); controller++) {
@@ -95,6 +99,11 @@ void InputManager::HandleController() {
 			} else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held R-TRIGGER" << endl;
 				rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
+
+				Entity *boulder = EntityManager::FindEntities("Boulder")[0];
+				float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;
+				boulder->transform.Translate(boulder->transform.GetForward() * dt.GetTimeSeconds() * x);
+
 			} else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released R-TRIGGER" << endl;
 			}
@@ -104,6 +113,12 @@ void InputManager::HandleController() {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed LEFT-JOYSTICK X-AXIS" << endl;
 			} else if ((((*controller)->GetPreviousState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held LEFT-JOYSTICK X-AXIS" << endl;
+
+
+				Entity *boulder = EntityManager::FindEntities("Boulder")[0];
+				float x = -0.1f * (*controller)->GetState().Gamepad.sThumbLX / 30000.f;
+				boulder->transform.Rotate(Transform::UP, dt.GetTimeSeconds() * x);
+
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released LEFT-JOYSTICK X-AXIS" << endl;
 			}
@@ -122,6 +137,16 @@ void InputManager::HandleController() {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed RIGHT-JOYSTICK X-AXIS" << endl;
 			} else if ((((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held RIGHT-JOYSTICK X-AXIS" << endl;
+
+				Entity *camera = EntityManager::FindEntities("Camera")[0];
+				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRX / 30000.f;
+				cameraAngle += x;
+				glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
+				//glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) + sin(cameraLift), sin(cameraLift), sin(cameraAngle) + cos(cameraLift));
+				//static_cast<CameraComponent*>(camera->components[0])->SetPosition(5.f * glm::vec3(cos(cameraAngle), 0.5f, sin(cameraAngle)));
+				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+				
+
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRX < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released RIGHT-JOYSTICK X-AXIS" << endl;
 			}
@@ -131,6 +156,15 @@ void InputManager::HandleController() {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed RIGHT-JOYSTICK Y-AXIS" << endl;
 			} else if ((((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)) && (((*controller)->GetState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) || ((*controller)->GetState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held RIGHT-JOYSTICK Y-AXIS" << endl;
+
+
+				Entity *camera = EntityManager::FindEntities("Camera")[0];
+				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRY / 30000.f;
+				cameraLift += x;
+				glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
+				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+
+
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRY < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released RIGHT-JOYSTICK Y-AXIS" << endl;
 			}

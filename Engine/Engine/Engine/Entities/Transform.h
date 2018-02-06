@@ -14,10 +14,20 @@ public:
 
 	Transform *parent;
 
+	static const glm::vec3 FORWARD;
+	static const glm::vec3 RIGHT;
+	static const glm::vec3 UP;
+
 	// Getters for basic data
-	glm::vec3 GetPosition();
-	glm::vec3 GetScale();
-	glm::quat GetRotation();
+	glm::vec3 GetLocalPosition();
+	glm::vec3 GetLocalScale();
+	glm::quat GetLocalRotation();
+
+	glm::vec3 GetGlobalPosition();
+
+	glm::vec3 GetForward();
+	glm::vec3 GetRight();
+	glm::vec3 GetUp();
 
 	// Setters for basic data
 	void SetPosition(glm::vec3 pPosition);

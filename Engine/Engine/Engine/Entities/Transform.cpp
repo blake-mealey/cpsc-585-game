@@ -5,6 +5,10 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
+const glm::vec3 Transform::FORWARD = glm::vec3(0, 0, -1);
+const glm::vec3 Transform::RIGHT = glm::vec3(1, 0, 0);
+const glm::vec3 Transform::UP = glm::vec3(0, 1, 0);
+
 float Transform::radius = 0;
 
 Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f, 1.f, 1.f), glm::quat(), false) {}
@@ -26,17 +30,35 @@ void Transform::ConnectToCylinder() {
 	connectedToCylinder = true;
 }
 
-glm::vec3 Transform::GetPosition() {
+glm::vec3 Transform::GetLocalPosition() {
 	return position;
 }
 
-glm::vec3 Transform::GetScale() {
+glm::vec3 Transform::GetLocalScale() {
 	return scale;
 }
 
-glm::quat Transform::GetRotation() {
+glm::quat Transform::GetLocalRotation() {
 	return rotation;
 }
+
+glm::vec3 Transform::GetGlobalPosition() {
+	return GetTransformationMatrix() * glm::vec4(0.f, 0.f, 0.f, 1.f);
+}
+
+
+glm::vec3 Transform::GetForward() {
+	return rotation * FORWARD;
+}
+
+glm::vec3 Transform::GetRight() {
+	return rotation * RIGHT;
+}
+
+glm::vec3 Transform::GetUp() {
+	return rotation * UP;
+}
+
 
 void Transform::UpdateTransformationMatrix() {
 	transformationMatrix = translationMatrix * rotationMatrix * scalingMatrix;

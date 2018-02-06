@@ -5,6 +5,9 @@
 #include "../Entities/EntityManager.h"
 #include "../Components/SpotLightComponent.h"
 #include "../Components/MeshComponent.h"
+#include "../Components/CameraComponent.h"
+
+#include <glm/gtx/string_cast.hpp>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -34,7 +37,7 @@ void Game::Initialize() {
 	sun = EntityManager::FindEntities("Sun")[0];
 	floor = EntityManager::FindEntities("Floor")[0];
 
-	camera->transform.SetPosition(glm::vec3(0, 5, 10));
+	//camera->transform.SetPosition(glm::vec3(0, 5, 10));
 
 	const int lightCount = 5;
 	for (int i = 0; i < lightCount; ++i) {
@@ -61,12 +64,22 @@ void Game::Update(Time currentTime, Time deltaTime) {
 		gameTime += deltaTime;
 
 		//boulder->transform.Translate(glm::vec3(0.0f, sin(currentTime.GetTimeSeconds()), 0.0f));
-	    const glm::vec3 pos = boulder->transform.GetPosition();
-        boulder->transform.SetPosition(glm::vec3(pos.x, sin(gameTime.GetTimeMilliSeconds() / 500), pos.z));
-//		boulder->transform.Rotate(glm::vec3(1, 1, 1), deltaTime.GetTimeMilliSeconds() * 0.00002);
-		camera->transform.SetPosition(10.f * glm::vec3(
-			sin(currentTime.GetTimeMilliSeconds() / 1000), 0.5,
-			cos(currentTime.GetTimeMilliSeconds() / 1000)));
+	    const glm::vec3 pos = boulder->transform.GetLocalPosition();
+        //boulder->transform.SetPosition(glm::vec3(pos.x, sin(gameTime.GetTimeMilliSeconds() / 500), pos.z));
+		//boulder->transform.Rotate(glm::vec3(0, 1, 0), deltaTime.GetTimeMilliSeconds() * 0.00002);
+
+		//boulder->transform.Translate(boulder->transform.GetForward() * 0.1f);
+
+		/*camera->transform.SetPosition(10.f * glm::vec3(
+			sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
+			cos(gameTime.GetTimeMilliSeconds() / 1000)));*/
+
+
+		camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
+
+		//camera->transform.SetPosition(boulder->transform.GetGlobalPosition());
+
+		static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
 		floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
 	} else if (StateManager::GetState() == GameState_Paused) {
 		

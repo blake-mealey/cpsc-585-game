@@ -33,7 +33,7 @@ glm::vec3 CameraComponent::GetPosition() const {
 	if (entity == nullptr) {
 		return position;
 	}
-	return position + entity->transform.GetPosition();
+	return position + entity->transform.GetGlobalPosition();
 }
 
 glm::vec3 CameraComponent::GetTarget() const {
