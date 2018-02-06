@@ -11,14 +11,14 @@ Time::Time(double _timeValueSeconds) {
 	timeValueSeconds = _timeValueSeconds;
 }
 
-double Time::GetTimeSeconds() {
+float Time::GetTimeSeconds() {
 	return timeValueSeconds;
 }
 
 /*
 Converts stored time value (seconds) to milliseconds
 */
-double Time::GetTimeMilliSeconds() {
+float Time::GetTimeMilliSeconds() {
 	return timeValueSeconds * 1000;
 }
 

@@ -5,8 +5,8 @@ public:
 	Time();
 	Time(double _timeValueSeconds);
 
-	double GetTimeSeconds();
-	double GetTimeMilliSeconds();
+	float GetTimeSeconds();
+	float GetTimeMilliSeconds();
 
 	double operator-(Time _timeValueSeconds);
 	double operator+(Time _timeValueSeconds);

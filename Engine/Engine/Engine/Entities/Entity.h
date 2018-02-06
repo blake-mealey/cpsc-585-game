@@ -28,5 +28,6 @@ private:
 
 	size_t id;
 	std::string tag;
+public:
 	std::vector<Component*> components;
 };

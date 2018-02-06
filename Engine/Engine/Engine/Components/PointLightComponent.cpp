@@ -17,7 +17,7 @@ float PointLightComponent::GetPower() const {
 }
 
 PointLight PointLightComponent::GetData() const {
-	return PointLight(color, power, GetEntity()->transform.GetPosition());
+	return PointLight(color, power, GetEntity()->transform.GetLocalPosition());
 }
 
 ComponentType PointLightComponent::GetType() {

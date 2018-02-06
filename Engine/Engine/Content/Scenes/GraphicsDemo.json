@@ -14,18 +14,18 @@
 			}
 		],
 		"Children": [
-			"Boulder.json"
+      "Boulder.json"
 		]
 	},
 	"Sun.json",
-	{
-		"Prefab": "Boulder.json",
-		"Tag": "Boulder"
-	},
-	{
-		"Tag": "Camera",
-		"Components": [
-			"Camera.json"
-		]
-	}
+  {
+    "Prefab": "Boulder.json",
+    "Tag": "Boulder"
+  },
+  {
+    "Tag": "Camera",
+    "Components": [
+      "Camera.json"
+    ]
+  }
 ]
