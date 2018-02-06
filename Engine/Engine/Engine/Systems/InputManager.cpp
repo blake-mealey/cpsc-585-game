@@ -67,8 +67,8 @@ void InputManager::HandleKeyboard() {
 	}
 }
 
-float cameraAngle = 0.f;
-float cameraLift = 0.f;
+float cameraAngle = 3.14f / 2;
+float cameraLift = 3.14f / 2;
 
 void InputManager::HandleController() {
 	//Iterate through each controller
@@ -142,9 +142,9 @@ void InputManager::HandleController() {
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRX / 30000.f;
 				cameraAngle += x;
 				glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
-				//glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) + sin(cameraLift), sin(cameraLift), sin(cameraAngle) + cos(cameraLift));
-				//static_cast<CameraComponent*>(camera->components[0])->SetPosition(5.f * glm::vec3(cos(cameraAngle), 0.5f, sin(cameraAngle)));
 				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+
+                std::cout << cameraAngle << std::endl;
 				
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRX < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
@@ -163,6 +163,8 @@ void InputManager::HandleController() {
 				cameraLift += x;
 				glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
 				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+
+                std::cout << cameraLift << std::endl;
 
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRY < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {

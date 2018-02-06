@@ -76,10 +76,10 @@ void Game::Update(Time currentTime, Time deltaTime) {
 
 
 		camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
+		static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
 
 		//camera->transform.SetPosition(boulder->transform.GetGlobalPosition());
 
-		static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
 		floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
 	} else if (StateManager::GetState() == GameState_Paused) {
 		

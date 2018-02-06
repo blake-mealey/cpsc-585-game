@@ -25,7 +25,10 @@
   {
     "Tag": "Camera",
     "Components": [
-      "Camera.json"
+	    {
+		    "Type": "Camera",
+            "Position": [-5, 5, 0]
+	    }
     ]
   }
 ]
