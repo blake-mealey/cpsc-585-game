@@ -4,6 +4,8 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 const glm::vec3 Transform::FORWARD = glm::vec3(0, 0, -1);
 const glm::vec3 Transform::RIGHT = glm::vec3(1, 0, 0);
@@ -67,7 +69,14 @@ void Transform::UpdateTransformationMatrix() {
 void Transform::SetPosition(glm::vec3 pPosition) {
 	position = pPosition;
 	if (connectedToCylinder && radius > 0) {
-		translationMatrix = glm::translate(glm::mat4(), ToCylinder(pPosition));
+		// bound to the location on the rectangle part of the cylinder
+		while (position.x > M_PI * radius) {
+			position.x -= 2 * M_PI * radius;
+		}
+		while (position.x < -M_PI * radius) {
+			position.x += 4 * M_PI * radius;
+		}
+		translationMatrix = glm::translate(glm::mat4(), ToCylinder(position));
 		//rotate accordingly
 		float rotBy = position.x / radius;
 		rotationMatrix = glm::toMat4(glm::rotate(glm::quat(), rotBy, glm::vec3(0,0,1)))*glm::toMat4(rotation);
@@ -93,7 +102,6 @@ void Transform::SetRotation(glm::quat pRotation) {
 		rotationMatrix = glm::toMat4(rotation);
 		UpdateTransformationMatrix();
 	}
-	
 }
 
 void Transform::SetRotationEulerAngles(glm::vec3 eulerAngles) {
@@ -142,6 +150,8 @@ glm::mat4 Transform::GetTransformationMatrix() {
 	return matrix;
 }
 
+// returns the world location of a point in the cylinder co-ordinates
+// since the x coordinate will wrap transforming to the cylinder and then back may result in diffrent locations
 glm::vec3 Transform::ToCylinder(glm::vec3 point) {
 	float theta = point.x / radius;
 	float r = radius - point.y;
@@ -152,11 +162,15 @@ glm::vec3 Transform::ToCylinder(glm::vec3 point) {
 	return point;
 }
 
+// returns the location on rectangular part of the unwrapped cylinder 
+// x coordinates: [-radius*pi,radius*pi]
+// y coordinates: [...,radius]
+// z coordinates: [...,...]
 glm::vec3 Transform::FromCylinder(glm::vec3 point) {
 	float r = sqrt(point.x*point.x + point.y*point.y);
 	float theta = atan2(point.y, point.x);
 
-	point.x = theta * radius;
+	point.x = theta * radius - M_PI * radius;
 	point.y = radius - r;
 
 	return point;

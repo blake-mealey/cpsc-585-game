@@ -211,7 +211,7 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 				child->transform.parent = &entity->transform;
 			}
 		}
-		else if (key == "Cylinder" && data["Cylinder"]) {
+		else if (key == "CylinderPart" && data["CylinderPart"]) {
 			entity->transform.ConnectToCylinder();
 		}
 	}
