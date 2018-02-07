@@ -10,14 +10,14 @@
 				"Texture": "DiamondPlate.jpg",
 				"Material": "Basic.json",
 				"UvScale": [8, 8],
-				"Cylinder": true
+				"CylinderMesh": true
 			}
 		],
     "Children": [
       {
         "Prefab": "Boulder.json",
-        "Position": [0,-1,0],
-        "Cylinder": true,
+        "Position": [0,-10,5],
+        "CylinderPart": true,
         "Tag": "Baby"
       }
     ]
