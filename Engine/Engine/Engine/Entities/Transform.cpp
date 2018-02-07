@@ -78,7 +78,7 @@ void Transform::SetPosition(glm::vec3 pPosition) {
 		}
 		translationMatrix = glm::translate(glm::mat4(), ToCylinder(position));
 		//rotate accordingly
-		float rotBy = position.x / radius;
+		float rotBy = position.x / radius + 90;
 		rotationMatrix = glm::toMat4(glm::rotate(glm::quat(), rotBy, glm::vec3(0,0,1)))*glm::toMat4(rotation);
 	}
 	else {

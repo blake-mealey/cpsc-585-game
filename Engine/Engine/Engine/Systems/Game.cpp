@@ -71,10 +71,10 @@ void Game::Update(Time currentTime, Time deltaTime) {
 
 		//boulder->transform.Translate(boulder->transform.GetForward() * 0.1f);
 
-		/*camera->transform.SetPosition(10.f * glm::vec3(
-			sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
-			cos(gameTime.GetTimeMilliSeconds() / 1000)));
-			*/
+		//camera->transform.SetPosition(10.f * glm::vec3(
+			//sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
+			//cos(gameTime.GetTimeMilliSeconds() / 1000)));
+		
 
 		camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
 		static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
@@ -82,8 +82,8 @@ void Game::Update(Time currentTime, Time deltaTime) {
 		//camera->transform.SetPosition(boulder->transform.GetGlobalPosition());
 
 		//floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
-		baby->transform.Translate(glm::vec3(.05, 0, 0));
-		baby->transform.Rotate(glm::vec3(1,0,0),.01f);
+		baby->transform.Translate(glm::vec3(.01, 0, 0));
+		//baby->transform.Rotate(glm::vec3(1,0,0),.01f);
 
 	} else if (StateManager::GetState() == GameState_Paused) {
 		std::cout << "paused" << std::endl;
