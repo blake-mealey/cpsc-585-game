@@ -16,7 +16,7 @@ void CameraComponent::HandleEvent(Event* event) {}
 CameraComponent::CameraComponent() : CameraComponent(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) {}
 
 CameraComponent::CameraComponent(nlohmann::json data) : fieldOfView(DEFAULT_FIELD_OF_VIEW) {
-	position = ContentManager::JsonToVec3(data["Position"]);
+	position = ContentManager::JsonToVec3(data["Position"], glm::vec3(0.f, 0.f, 1.f));
 	target = ContentManager::JsonToVec3(data["Target"]);
 	upVector = ContentManager::JsonToVec3(data["UpVector"], glm::vec3(0.f, 1.f, 0.f));
 
@@ -33,7 +33,7 @@ glm::vec3 CameraComponent::GetPosition() const {
 	if (entity == nullptr) {
 		return position;
 	}
-	return position + entity->transform.GetPosition();
+	return position + entity->transform.GetGlobalPosition();
 }
 
 glm::vec3 CameraComponent::GetTarget() const {

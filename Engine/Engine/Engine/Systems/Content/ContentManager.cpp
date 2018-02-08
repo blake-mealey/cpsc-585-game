@@ -21,12 +21,18 @@
 std::map<std::string, Mesh*> ContentManager::meshes;
 std::map<std::string, Texture*> ContentManager::textures;
 std::map<std::string, Material*> ContentManager::materials;
+GLuint ContentManager::skyboxCubemap;
 
 const std::string ContentManager::CONTENT_DIR_PATH = "./Content/";
+
 const std::string ContentManager::MESH_DIR_PATH = CONTENT_DIR_PATH + "Meshes/";
 const std::string ContentManager::TEXTURE_DIR_PATH = CONTENT_DIR_PATH + "Textures/";
 const std::string ContentManager::MATERIAL_DIR_PATH = CONTENT_DIR_PATH + "Materials/";
 const std::string ContentManager::SCENE_DIR_PATH = CONTENT_DIR_PATH + "Scenes/";
+
+const std::string ContentManager::SKYBOX_DIR_PATH = CONTENT_DIR_PATH + "Skyboxes/";
+const std::string ContentManager::SKYBOX_FACE_NAMES[6] = {"right", "left", "top", "bottom", "front", "back"};
+
 const std::string ContentManager::PREFAB_DIR_PATH = CONTENT_DIR_PATH + "Prefabs/";
 const std::string ContentManager::ENTITY_PREFAB_DIR_PATH = PREFAB_DIR_PATH + "Entities/";
 const std::string ContentManager::COMPONENT_PREFAB_DIR_PATH = PREFAB_DIR_PATH + "Components/";
@@ -139,7 +145,6 @@ std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 	for (nlohmann::json entityData : data) {
 		entities.push_back(LoadEntity(entityData));
 	}
-
 	return entities;
 }
 
@@ -192,6 +197,10 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 		if (key == "Tag") EntityManager::SetTag(entity, it.value());
 		else if (key == "Position") entity->transform.SetPosition(JsonToVec3(data["Position"]));
 		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(data["Scale"]));
+		else if (key == "Rotate") {
+			glm::vec3 rotation = JsonToVec3(data["Rotate"]);
+			entity->transform.SetRotation(glm::vec3(glm::radians(rotation.x), glm::radians(rotation.y), glm::radians(rotation.z)));
+		}
 		else if (key == "Components") {
             for (auto componentData : it.value()) {
                 Component *component = LoadComponent(componentData);
@@ -199,14 +208,17 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
                     EntityManager::AddComponent(entity, component);
                 }
             }
-		} else if (key == "Children") {
+		}
+		else if (key == "Children") {
 			for (auto childData : it.value()) {
 				Entity *child = LoadEntity(childData);
 				child->transform.parent = &entity->transform;
 			}
 		}
+		else if (key == "CylinderPart" && data["CylinderPart"]) {
+			entity->transform.ConnectToCylinder();
+		}
 	}
-
 	return entity;
 }
 
@@ -239,6 +251,33 @@ glm::vec2 ContentManager::JsonToVec2(nlohmann::json data, glm::vec2 defaultValue
 
 glm::vec2 ContentManager::JsonToVec2(nlohmann::json data) {
     return JsonToVec2(data, glm::vec2());
+}
+
+void ContentManager::LoadSkybox(std::string directoryPath) {
+    glGenTextures(1, &skyboxCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxCubemap);
+
+    int width, height, nrChannels;
+    for (size_t i = 0; i < 6; i++) {
+        const char *filePath = (SKYBOX_DIR_PATH + directoryPath + SKYBOX_FACE_NAMES[i] + ".png").c_str();
+        unsigned char *data = stbi_load(filePath, &width, &height, &nrChannels, 0);
+        if (data) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        } else {
+            std::cout << "ERROR: Failed to load cubemap texture: " << filePath << std::endl;
+        }
+        stbi_image_free(data);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+GLuint ContentManager::GetSkybox() {
+    return skyboxCubemap;
 }
 
 GLuint ContentManager::LoadShader(std::string filePath, const GLenum shaderType) {

@@ -23,6 +23,7 @@ int main() {
 	
 	// Initialize physics
 	Physics &physicsManager = Physics::Instance();
+    physicsManager.Initialize();
 	
 	// Initialize game
 	Game &gameManager = Game::Instance();

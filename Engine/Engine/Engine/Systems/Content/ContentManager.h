@@ -13,10 +13,15 @@ struct Texture;
 class ContentManager {
 public:
 	static const std::string CONTENT_DIR_PATH;
+
 	static const std::string MESH_DIR_PATH;
 	static const std::string TEXTURE_DIR_PATH;
 	static const std::string MATERIAL_DIR_PATH;
 	static const std::string SCENE_DIR_PATH;
+
+	static const std::string SKYBOX_DIR_PATH;
+	static const std::string SKYBOX_FACE_NAMES[6];
+
 	static const std::string PREFAB_DIR_PATH;
 	static const std::string ENTITY_PREFAB_DIR_PATH;
 	static const std::string COMPONENT_PREFAB_DIR_PATH;
@@ -39,6 +44,9 @@ public:
 	static glm::vec2 JsonToVec2(nlohmann::json data, glm::vec2 defaultValue);
 	static glm::vec2 JsonToVec2(nlohmann::json data);
 
+    static void LoadSkybox(std::string directoryPath);
+    static GLuint GetSkybox();
+
 	static GLuint LoadShader(std::string filePath, GLenum shaderType);
 
 	// TODO: These guys
@@ -50,6 +58,7 @@ private:
 	static std::map<std::string, Mesh*> meshes;
 	static std::map<std::string, Texture*> textures;
 	static std::map<std::string, Material*> materials;
+    static GLuint skyboxCubemap;
 
 	static Component* LoadComponent(nlohmann::json data);
 	static Entity* LoadEntity(nlohmann::json data);

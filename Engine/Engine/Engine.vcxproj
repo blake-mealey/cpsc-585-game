@@ -98,8 +98,11 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc15win32;$(ProjectDir)Dependencies\PhysX\Lib\vc15win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PsFastXml_x86.lib;PxFoundation_x86.lib;PxPvdSDK_x86.lib;PxTask_x86.lib;PhysX3Common_x86.lib;PhysX3Cooking_x86.lib;PhysX3Vehicle.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib;PsFastXml_x86.lib;PsFastXmlDEBUG_x86.lib;PxFoundation_x86.lib;PxFoundationDEBUG_x86.lib;PxPvdSDK_x86.lib;PxPvdSDKDEBUG_x86.lib;PxTask_x86.lib;PxTaskDEBUG_x86.lib;LowLevel.lib;LowLevelAABB.lib;LowLevelAABBDEBUG.lib;LowLevelCloth.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamics.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticles.lib;LowLevelParticlesDEBUG.lib;PhysX3_x86.lib;PhysX3CharacterKinematic_x86.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3Common_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3Cooking_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysX3DEBUG_x86.lib;PhysX3Extensions.lib;PhysX3ExtensionsDEBUG.lib;PhysX3Vehicle.lib;PhysX3VehicleDEBUG.lib;SceneQuery.lib;SceneQueryDEBUG.lib;SimulationController.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,6 +125,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -152,11 +156,7 @@
     <None Include="Content\Prefabs\Entities\Boulder.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
-    <None Include="Engine\Shaders\geometry.frag" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
-    <None Include="Engine\Shaders\geometry.vert" />
-    <None Include="Engine\Shaders\shadowMap.frag" />
-    <None Include="Engine\Shaders\shadowMap.vert" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -164,10 +164,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
+    <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
+    <ClCompile Include="Engine\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
+    <ClCompile Include="Engine\Entities\Actor.cpp" />
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Entities\EntityManager.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
@@ -181,19 +185,28 @@
     <ClCompile Include="Engine\Systems\IO\Mouse.cpp" />
     <ClCompile Include="Engine\Systems\IO\XboxController.cpp" />
     <ClCompile Include="Engine\Systems\Physics.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\Vehicle4WCreate.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleCreate.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleFilterShader.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleSceneQuery.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleTireFriction.cpp" />
     <ClCompile Include="Engine\Systems\StateManager.cpp" />
     <ClCompile Include="Engine\Systems\Time.cpp" />
     <ClCompile Include="HelloWorld.cpp" />
-    <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
+    <ClInclude Include="Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
+    <ClInclude Include="Engine\Components\PointLightComponent.h" />
+    <ClInclude Include="Engine\Components\RigidbodyComponent.h" />
     <ClInclude Include="Engine\Components\SpotLightComponent.h" />
+    <ClInclude Include="Engine\Entities\Actor.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
+    <ClInclude Include="Engine\Entities\Transform.h" />
     <ClInclude Include="Engine\Events\Event.h" />
     <ClInclude Include="Engine\Systems\Content\ContentManager.h" />
     <ClInclude Include="Engine\Systems\Content\DirectionLight.h" />
@@ -210,11 +223,15 @@
     <ClInclude Include="Engine\Systems\IO\Mouse.h" />
     <ClInclude Include="Engine\Systems\IO\XboxController.h" />
     <ClInclude Include="Engine\Systems\Physics.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleConcurrency.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleCreate.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleFilterShader.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleSceneQuery.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleTireFriction.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleWheelQueryResult.h" />
     <ClInclude Include="Engine\Systems\StateManager.h" />
     <ClInclude Include="Engine\Systems\System.h" />
     <ClInclude Include="Engine\Systems\Time.h" />
-    <ClInclude Include="Engine\Entities\Transform.h" />
-    <ClInclude Include="Engine\Components\PointLightComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

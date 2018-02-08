@@ -22,7 +22,7 @@ public:
 	MeshComponent(std::string meshPath, Material *_material);
 	MeshComponent(std::string meshPath, std::string materialPath, std::string texturePath);
 
-	float MakeCylinder(Mesh* mesh);
+	void MakeCylinder(Mesh* mesh);
 
 	void SetEntity(Entity* _entity) override;
 

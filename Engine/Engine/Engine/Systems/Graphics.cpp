@@ -19,6 +19,8 @@ const std::string Graphics::GEOMETRY_VERTEX_SHADER = "geometry.vert";
 const std::string Graphics::GEOMETRY_FRAGMENT_SHADER = "geometry.frag";
 const std::string Graphics::SHADOW_MAP_VERTEX_SHADER = "shadowMap.vert";
 const std::string Graphics::SHADOW_MAP_FRAGMENT_SHADER = "shadowMap.frag";
+const std::string Graphics::SKYBOX_VERTEX_SHADER = "skybox.vert";
+const std::string Graphics::SKYBOX_FRAGMENT_SHADER = "skybox.frag";
 
 // Initial Screen Dimensions
 const size_t Graphics::SCREEN_WIDTH = 1024;
@@ -93,7 +95,7 @@ bool Graphics::Initialize(char* windowTitle) {
 
 	// Z-Buffer
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
 
 	// Sets the sky color
 	glClearColor(SKY_COLOR.r, SKY_COLOR.g, SKY_COLOR.b, 1.0f);
@@ -101,6 +103,8 @@ bool Graphics::Initialize(char* windowTitle) {
 	glewExperimental = GL_TRUE;		// TODO: Determine whether this is necessary or not
 	glewInit();
 	GenerateIds();
+
+    skyboxCube = ContentManager::GetMesh("Cube.obj");
 
 	return true;
 }
@@ -114,6 +118,9 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	const std::vector<Component*> spotLights = EntityManager::GetComponents(ComponentType_SpotLight);
 	const std::vector<Component*> meshes = EntityManager::GetComponents(ComponentType_Mesh);
 	const std::vector<Component*> cameraComponents = EntityManager::GetComponents(ComponentType_Camera);
+
+    // Get the active cameras and setup their viewports
+    LoadCameras(cameraComponents);
 
 
 	// -------------------------------------------------------------------------------------------------------------- //
@@ -131,17 +138,21 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 		}
 	}
 
+    // Declare depth transformation matrices
 	glm::mat4 depthProjectionMatrix;
 	glm::mat4 depthViewMatrix;
 	if (shadowCaster != nullptr) {
+        // Define depth transformation matrices
 		depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
 		depthViewMatrix = glm::lookAt(-shadowCaster->GetDirection(), glm::vec3(0), glm::vec3(0, 1, 0));
 
-		// Render to the shadow map framebuffer
-		glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::ShadowMap]);
+        // Render to the shadow map framebuffer and bind the shadow map VAO
+        glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::ShadowMap]);
+        glBindVertexArray(vaoIds[VAOs::ShadowMap]);
+
+        // Clear the buffer and enable front-face culling
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glCullFace(GL_FRONT);
-		glBindVertexArray(vaoIds[VAOs::ShadowMap]);
 
 		// Set the current shader and VAO
 		ShaderProgram *shadowProgram = shaders[Shaders::ShadowMap];
@@ -173,13 +184,15 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	// RENDER WORLD
 	// -------------------------------------------------------------------------------------------------------------- //
 
-	// Render to the default framebuffer
+	// Render to the default framebuffer and bind the geometry VAO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glCullFace(GL_BACK);
-	glBindVertexArray(vaoIds[VAOs::Geometry]);
+    glBindVertexArray(vaoIds[VAOs::Geometry]);
 
-	// Set the current shader and VAO
+    // Clear the buffer and enable back-face culling
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_BACK);
+
+	// Use the geometry shader program
 	ShaderProgram *geometryProgram = shaders[Shaders::Geometry];
 	glUseProgram(geometryProgram->GetId());
 
@@ -193,9 +206,6 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	// Load our lights into the GPU
 	glUniform3f(geometryProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
 	LoadLights(pointLights, directionLights, spotLights);
-
-	// Get the active cameras and setup their viewports
-	LoadCameras(cameraComponents);
 
 	// Draw the scene
 	for (size_t j = 0; j < meshes.size(); j++) {
@@ -227,6 +237,42 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 			glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
 		}
 	}
+
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    // RENDER SKYBOX
+    // -------------------------------------------------------------------------------------------------------------- //
+
+    // Render to the default framebuffer and bind the skybox VAO
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindVertexArray(vaoIds[VAOs::Skybox]);
+
+    // Use the skybox shader program
+    ShaderProgram *skyboxProgram = shaders[Shaders::Skybox];
+    glUseProgram(skyboxProgram->GetId());
+
+    // Load the skybox texture to the GPU
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, ContentManager::GetSkybox());
+	glUniform1i(skyboxProgram->GetUniformLocation(UniformName::Skybox), 2);
+	// Load the color adjustment to the GPU
+	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 3.f,2.f,2.f);
+
+    // Load the skybox geometry into the GPU
+    LoadVertices(skyboxCube->vertices, skyboxCube->vertexCount);
+
+    for (Camera camera : cameras) {
+        // Setup the viewport for each camera (split-screen)
+        glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
+
+        // Load the view projection matrix into the GPU
+        glm::mat4 viewProjectionMatrix = camera.projectionMatrix * glm::mat4(glm::mat3(camera.viewMatrix));
+        glUniformMatrix4fv(skyboxProgram->GetUniformLocation(UniformName::ViewProjectionMatrix), 1, GL_FALSE, &viewProjectionMatrix[0][0]);
+
+        // Render the skybox
+        glDrawArrays(GL_TRIANGLES, 0, skyboxCube->vertexCount);
+    }
+
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
@@ -407,9 +453,11 @@ void Graphics::GenerateIds() {
 	glGenTextures(Textures::Count, textureIds);
 	shaders[Shaders::Geometry] = LoadShaderProgram(GEOMETRY_VERTEX_SHADER, GEOMETRY_FRAGMENT_SHADER);
 	shaders[Shaders::ShadowMap] = LoadShaderProgram(SHADOW_MAP_VERTEX_SHADER, SHADOW_MAP_FRAGMENT_SHADER);
+	shaders[Shaders::Skybox] = LoadShaderProgram(SKYBOX_VERTEX_SHADER, SKYBOX_FRAGMENT_SHADER);
 
 	InitializeGeometryVao();
 	InitializeShadowMapVao();
+	InitializeSkyboxVao();
 	InitializeShadowMapFramebuffer();
 }
 
@@ -445,6 +493,18 @@ void Graphics::InitializeShadowMapVao() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void Graphics::InitializeSkyboxVao() {
+    glBindVertexArray(vaoIds[VAOs::Skybox]);
+
+    // Vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::Vertices]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void Graphics::InitializeShadowMapFramebuffer() {
