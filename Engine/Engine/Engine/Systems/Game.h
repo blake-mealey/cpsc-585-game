@@ -22,4 +22,5 @@ private:
 	Entity *camera;
 	Entity *sun;
 	Entity *floor;
+	Entity *baby;
 };

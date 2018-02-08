@@ -145,7 +145,6 @@ std::vector<Entity*> ContentManager::LoadScene(std::string filePath) {
 	for (nlohmann::json entityData : data) {
 		entities.push_back(LoadEntity(entityData));
 	}
-
 	return entities;
 }
 
@@ -198,6 +197,10 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
 		if (key == "Tag") EntityManager::SetTag(entity, it.value());
 		else if (key == "Position") entity->transform.SetPosition(JsonToVec3(data["Position"]));
 		else if (key == "Scale") entity->transform.SetScale(JsonToVec3(data["Scale"]));
+		else if (key == "Rotate") {
+			glm::vec3 rotation = JsonToVec3(data["Rotate"]);
+			entity->transform.SetRotation(glm::vec3(glm::radians(rotation.x), glm::radians(rotation.y), glm::radians(rotation.z)));
+		}
 		else if (key == "Components") {
             for (auto componentData : it.value()) {
                 Component *component = LoadComponent(componentData);
@@ -205,14 +208,17 @@ Entity* ContentManager::LoadEntity(nlohmann::json data) {
                     EntityManager::AddComponent(entity, component);
                 }
             }
-		} else if (key == "Children") {
+		}
+		else if (key == "Children") {
 			for (auto childData : it.value()) {
 				Entity *child = LoadEntity(childData);
 				child->transform.parent = &entity->transform;
 			}
 		}
+		else if (key == "CylinderPart" && data["CylinderPart"]) {
+			entity->transform.ConnectToCylinder();
+		}
 	}
-
 	return entity;
 }
 

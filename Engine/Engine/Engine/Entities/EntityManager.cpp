@@ -14,7 +14,9 @@ Entity* EntityManager::FindEntity(size_t id) {
 }
 
 std::vector<Entity*> EntityManager::FindEntities(std::string tag) {
-	return tagToEntities[tag];
+	std::vector<Entity*> ret = tagToEntities[tag];
+	for (size_t i = 0; i < ret.size(); i++) ret[i]->transform.Update();
+	return ret;
 }
 
 Entity* EntityManager::CreateDynamicEntity() {
