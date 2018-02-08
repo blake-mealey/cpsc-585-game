@@ -71,11 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc15win32;$(ProjectDir)Dependencies\PhysX\Lib\vc15win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc15win32;$(ProjectDir)Dependencies\PhysX\Lib\vc15win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>

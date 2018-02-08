@@ -7,6 +7,14 @@
 #include "../Components/MeshComponent.h"
 #include "../Components/CameraComponent.h"
 
+#include "Physics\VehicleCreate.h"
+#include "Physics\VehicleWheelQueryResult.h"
+#include "Physics\SnippetUtils.h"
+#include "Physics\VehicleConcurrency.h"
+#include "Physics\VehicleFilterShader.h"
+#include "Physics\VehicleSceneQuery.h"
+#include "Physics\VehicleTireFriction.h"
+
 #include <glm/gtx/string_cast.hpp>
 
 #define _USE_MATH_DEFINES
@@ -37,6 +45,14 @@ void Game::Initialize() {
 	sun = EntityManager::FindEntities("Sun")[0];
 	floor = EntityManager::FindEntities("Floor")[0];
 	baby = EntityManager::FindEntities("Baby")[0];
+
+	//Create Vehicle
+	const PxU32 numWheels = 4;
+
+	PxVehicleWheelsSimData* wheelsSimData = PxVehicleWheelsSimData::allocate(numWheels);
+	//setupWheelsSimluationData(wheelsSimData);
+
+
 
 	//camera->transform.SetPosition(glm::vec3(0, 5, 10));
 
