@@ -16,6 +16,5 @@ private:
     FMOD::Channel *channel = 0;
     FMOD_RESULT result;
     unsigned int version;
-    void  *extradriverdata = 0;
     int numsubsounds;
 };

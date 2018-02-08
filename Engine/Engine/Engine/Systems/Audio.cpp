@@ -8,15 +8,15 @@ Audio::Audio() {
     if (result != FMOD_OK) {
     }
 
-    result = soundSystem->getVersion(&version);
+    // result = soundSystem->getVersion(&version);
     if (result != FMOD_OK) {
     }
 
-    result = soundSystem->init(32, FMOD_INIT_NORMAL, extradriverdata);
+    result = soundSystem->init(32, FMOD_INIT_NORMAL, 0);
     if (result != FMOD_OK) {
     }
 
-    result = soundSystem->createStream("content/sounds/car_running3.wav", FMOD_LOOP_NORMAL | FMOD_2D, 0, &sound);
+    result = soundSystem->createStream("content/sounds/peel_out.wav", FMOD_LOOP_NORMAL | FMOD_2D, 0, &sound);
     result = sound->getNumSubSounds(&numsubsounds);
 
 
