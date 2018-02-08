@@ -13,7 +13,9 @@ const glm::vec3 Transform::UP = glm::vec3(0, 1, 0);
 
 float Transform::radius = 0;
 
-Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f, 1.f, 1.f), glm::quat(), false) {}
+Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f), glm::quat(), false) {}
+
+Transform::Transform(physx::PxTransform t) : Transform(nullptr, FromPx(t.p), glm::vec3(1.f), FromPx(t.q), false) {}
 
 Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connected) : parent(pParent) {
 	connectedToCylinder = connected;
@@ -174,4 +176,22 @@ glm::vec3 Transform::FromCylinder(glm::vec3 point) {
 	point.y = radius - r;
 
 	return point;
+}
+
+
+
+glm::vec4 Transform::FromPx(physx::PxVec4 v) {
+	return glm::vec4(v.x, v.y, v.z, v.w);
+}
+
+glm::vec3 Transform::FromPx(physx::PxVec3 v) {
+	return glm::vec3(v.x, v.y, v.z);
+}
+
+glm::vec2 Transform::FromPx(physx::PxVec2 v) {
+	return glm::vec2(v.x, v.y);
+}
+
+glm::quat Transform::FromPx(physx::PxQuat q) {
+	return glm::quat(q.w, q.x, q.y, q.z);
 }

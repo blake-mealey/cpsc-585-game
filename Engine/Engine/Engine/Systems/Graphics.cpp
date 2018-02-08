@@ -255,6 +255,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ContentManager::GetSkybox());
 	glUniform1i(skyboxProgram->GetUniformLocation(UniformName::Skybox), 2);
+
 	// Load the color adjustment to the GPU
 	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 3.f,2.f,2.f);
 

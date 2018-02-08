@@ -30,8 +30,10 @@ float unitRand() {
 void Game::Initialize() {
     ContentManager::LoadSkybox("PurpleNebula/");
 
+	ContentManager::LoadScene("PhysicsDemo.json");
+
 	// Load the scene and get some entities
-	ContentManager::LoadScene("GraphicsDemo.json");
+	/*ContentManager::LoadScene("GraphicsDemo.json");
 	boulder = EntityManager::FindEntities("Boulder")[0];
 	camera = EntityManager::FindEntities("Camera")[0];
 	sun = EntityManager::FindEntities("Sun")[0];
@@ -57,7 +59,7 @@ void Game::Initialize() {
 
 		MeshComponent *mesh = new MeshComponent("Sphere.obj", new Material(color, color, 1));
 		EntityManager::AddComponent(entity, mesh);
-	}
+	}*/
 }
 
 void Game::Update(Time currentTime, Time deltaTime) {
@@ -65,7 +67,7 @@ void Game::Update(Time currentTime, Time deltaTime) {
 		gameTime += deltaTime;
 
 		//boulder->transform.Translate(glm::vec3(0.0f, sin(currentTime.GetTimeSeconds()), 0.0f));
-	    const glm::vec3 pos = boulder->transform.GetLocalPosition();
+	    //const glm::vec3 pos = boulder->transform.GetLocalPosition();
         //boulder->transform.SetPosition(glm::vec3(pos.x, sin(gameTime.GetTimeMilliSeconds() / 500), pos.z));
 		//boulder->transform.Rotate(glm::vec3(0, 1, 0), deltaTime.GetTimeMilliSeconds() * 0.00002);
 
@@ -76,13 +78,13 @@ void Game::Update(Time currentTime, Time deltaTime) {
 			//cos(gameTime.GetTimeMilliSeconds() / 1000)));
 		
 
-		camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
-		static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
+		//camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
+		//static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
 
 		//camera->transform.SetPosition(boulder->transform.GetGlobalPosition());
 
 		//floor->transform.Rotate({ 0,0,1 }, deltaTime.GetTimeMilliSeconds() * 0.00002);
-		baby->transform.Translate(glm::vec3(.01, 0, 0));
+		//baby->transform.Translate(glm::vec3(.01, 0, 0));
 		//baby->transform.Rotate(glm::vec3(1,0,0),.01f);
 
 	} else if (StateManager::GetState() == GameState_Paused) {

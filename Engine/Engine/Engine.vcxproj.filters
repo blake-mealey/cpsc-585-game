@@ -9,6 +9,7 @@
     <None Include="Content\Prefabs\Components\Camera.json" />
     <None Include="Content\Prefabs\Entities\Boulder.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />
+    <None Include="Content\Scenes\PhysicsDemo.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />

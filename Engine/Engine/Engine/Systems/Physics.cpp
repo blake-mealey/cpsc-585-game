@@ -4,6 +4,10 @@
 
 #include "vehicle/PxVehicleUtil.h"
 
+#include "../Entities/Entity.h"
+#include "../Entities/EntityManager.h"
+#include "../Entities/Transform.h"
+
 #include <iostream>
 #include "Physics/VehicleFilterShader.h"
 #include "Physics/VehicleTireFriction.h"
@@ -194,4 +198,11 @@ void Physics::Update(Time currentTime, Time deltaTime) {
     //Scene update.
     gScene->simulate(timestep);
     gScene->fetchResults(true);
+
+
+	Entity* car = EntityManager::FindEntities("Car")[0];
+
+	PxTransform t = gVehicle4W->getRigidDynamicActor()->getGlobalPose();
+	car->transform = Transform(t);
+
 }
