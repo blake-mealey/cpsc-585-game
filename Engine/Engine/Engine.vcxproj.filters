@@ -11,7 +11,6 @@
     <None Include="Content\Prefabs\Entities\Sun.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HelloWorld.cpp" />
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
     <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
@@ -36,6 +35,12 @@
     <ClCompile Include="Engine\Systems\Physics.cpp" />
     <ClCompile Include="Engine\Systems\StateManager.cpp" />
     <ClCompile Include="Engine\Systems\Time.cpp" />
+    <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\Vehicle4WCreate.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleCreate.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleFilterShader.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleSceneQuery.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\VehicleTireFriction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
@@ -69,5 +74,11 @@
     <ClInclude Include="Engine\Systems\StateManager.h" />
     <ClInclude Include="Engine\Systems\System.h" />
     <ClInclude Include="Engine\Systems\Time.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleConcurrency.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleCreate.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleFilterShader.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleSceneQuery.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleTireFriction.h" />
+    <ClInclude Include="Engine\Systems\Physics\VehicleWheelQueryResult.h" />
   </ItemGroup>
 </Project>
