@@ -1,0 +1,38 @@
+[
+  {
+    "Tag": "Floor",
+    "Position": [ 0, 0, 0 ],
+    "Scale": [ 15, 1, 15 ],
+    "Components": [
+      {
+        "Type": "Mesh",
+        "Mesh": "Plane.obj",
+        "Texture": "DiamondPlate.jpg",
+        "Material": "Basic.json",
+        "UvScale": [ 5, 5 ]
+      }
+    ]
+  },
+  {
+    "Tag": "Car",
+    "Position": [ 2.5, 2, 5 ],
+    "Components": [
+      {
+        "Type": "Mesh",
+        "Mesh": "Cube.obj",
+        "Texture": "Boulder.jpg",
+        "Material": "Basic.json"
+      }
+    ]
+  },
+  "Sun.json",
+  {
+    "Tag": "Camera",
+    "Components": [
+      {
+        "Type": "Camera",
+        "Position": [ -25, 10, 0 ]
+      }
+    ]
+  }
+]

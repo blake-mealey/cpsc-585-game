@@ -156,6 +156,7 @@
     <None Include="Content\Prefabs\Entities\Boulder.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
+    <None Include="Content\Scenes\PhysicsDemo.json" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

@@ -3,9 +3,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "PxPhysicsAPI.h"
+
 class Transform {
 public:
 	Transform();
+	Transform(physx::PxTransform transform);
 	Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connectedToCylinder);
 
 	void Update();
@@ -54,6 +57,12 @@ public:
 	void ConnectToCylinder();
 
 	bool connectedToCylinder;
+
+	static glm::vec4 FromPx(physx::PxVec4 v);
+	static glm::vec3 FromPx(physx::PxVec3 v);
+	static glm::vec2 FromPx(physx::PxVec2 v);
+	static glm::quat FromPx(physx::PxQuat q);
+
 private:
 	// Basic data
 	glm::vec3 position;
