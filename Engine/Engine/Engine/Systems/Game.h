@@ -1,5 +1,6 @@
 #pragma once
 #include "System.h"
+#include <vector>
 
 class Entity;
 
@@ -19,6 +20,9 @@ private:
 	Game();
 	Game(const Game&) = delete;
 	Game& operator= (const Game&) = delete;
+
+	std::vector<Entity*> cameras;
+	std::vector<Entity*> cars;
 
 	Entity *boulder;
 	Entity *camera;

@@ -37,5 +37,32 @@
         "Position": [ 0, 10, -25 ]
       }
     ]
+  },
+    {
+    "Tag": "Camera",
+    "Components": [
+      {
+        "Type": "Camera",
+        "Position": [ 0, 10, -25 ]
+      }
+    ]
+  },
+    {
+    "Tag": "Camera",
+    "Components": [
+      {
+        "Type": "Camera",
+        "Position": [ 0, 10, -25 ]
+      }
+    ]
+  },
+    {
+    "Tag": "Camera",
+    "Components": [
+      {
+        "Type": "Camera",
+        "Position": [ 0, 10, -25 ]
+      }
+    ]
   }
 ]

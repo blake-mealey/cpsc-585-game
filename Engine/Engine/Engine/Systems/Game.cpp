@@ -42,11 +42,13 @@ void Game::Initialize() {
 
 	ContentManager::LoadScene("PhysicsDemo.json");
 
-	car = EntityManager::FindEntities("Vehicle")[0];
-	camera = EntityManager::FindEntities("Camera")[0];
+	cars = EntityManager::FindEntities("Vehicle");
+	cameras = EntityManager::FindEntities("Camera");
 
-	glm::vec3 pos = 20.0f * glm::vec3(cos(-3.14/2) * sin(3.14/4), cos(3.14 / 4), sin(-3.14 / 2) * sin(3.14 / 4));
-	static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+	for (Entity* camera : cameras) {
+		glm::vec3 pos = 20.0f * glm::vec3(cos(-3.14 / 2) * sin(3.14 / 4), cos(3.14 / 4), sin(-3.14 / 2) * sin(3.14 / 4));
+		static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+	}
 
 	// Load the scene and get some entities
 	/*ContentManager::LoadScene("GraphicsDemo.json");
@@ -100,11 +102,15 @@ void Game::Update(Time currentTime, Time deltaTime) {
 			//sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
 			//cos(gameTime.GetTimeMilliSeconds() / 1000)));
 		
+		for (int i = 0; i < cars.size(); i++) {
+			Entity* camera = cameras[i];
+			Entity* car = cars[i];
 
-		//camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
-		camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), car->transform.GetGlobalPosition(), 0.05f));
-		//static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
-		static_cast<CameraComponent*>(camera->components[0])->SetTarget(car->transform.GetGlobalPosition() + glm::vec3(0.0f, 1.0f, 0.0f));
+			//camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
+			camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), car->transform.GetGlobalPosition(), 0.05f));
+			//static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
+			static_cast<CameraComponent*>(camera->components[0])->SetTarget(car->transform.GetGlobalPosition() + glm::vec3(0.0f, 1.0f, 0.0f));
+		}
 
 		//camera->transform.SetPosition(boulder->transform.GetGlobalPosition());
 
