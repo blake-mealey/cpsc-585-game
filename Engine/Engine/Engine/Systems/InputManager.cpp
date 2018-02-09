@@ -100,7 +100,7 @@ void InputManager::HandleController() {
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
 				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
-				vehicle->pxVehicleInputData.setAnalogAccel((*controller)->GetState().Gamepad.bLeftTrigger);
+				vehicle->pxVehicleInputData.setAnalogAccel((float)(*controller)->GetState().Gamepad.bLeftTrigger / 255.0f);
 
 			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released L-TRIGGER" << endl;
@@ -108,7 +108,6 @@ void InputManager::HandleController() {
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
 				vehicle->pxVehicleInputData.setAnalogAccel(0.0f);
-				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eNEUTRAL);
 			}
 
 			//Right Trigger
@@ -121,7 +120,7 @@ void InputManager::HandleController() {
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
 				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
-				vehicle->pxVehicleInputData.setAnalogAccel((*controller)->GetState().Gamepad.bRightTrigger);
+				vehicle->pxVehicleInputData.setAnalogAccel((float)(*controller)->GetState().Gamepad.bRightTrigger / 255.0f);
 				
 				//Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 				//float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;
@@ -133,7 +132,6 @@ void InputManager::HandleController() {
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
 				vehicle->pxVehicleInputData.setAnalogAccel(0.0f);
-				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eNEUTRAL);
 			}
 
 			//Left Joystick X-Axis
@@ -150,7 +148,7 @@ void InputManager::HandleController() {
 
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
-				vehicle->pxVehicleInputData.setAnalogSteer((*controller)->GetState().Gamepad.sThumbLX / 32768.0f);
+				vehicle->pxVehicleInputData.setAnalogSteer(-(*controller)->GetState().Gamepad.sThumbLX / 32768.0f);
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released LEFT-JOYSTICK X-AXIS" << endl;
