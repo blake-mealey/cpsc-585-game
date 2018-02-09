@@ -22,6 +22,8 @@
 #include "StateManager.h"
 using namespace std;
 
+const unsigned int Game::MAX_VEHICLE_COUNT = 8;
+
 Time gameTime(0);
 
 // Singleton

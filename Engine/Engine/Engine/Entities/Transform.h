@@ -63,6 +63,12 @@ public:
 	static glm::vec2 FromPx(physx::PxVec2 v);
 	static glm::quat FromPx(physx::PxQuat q);
 
+    static physx::PxVec4 ToPx(glm::vec4 v);
+    static physx::PxVec3 ToPx(glm::vec3 v);
+    static physx::PxVec2 ToPx(glm::vec2 v);
+    static physx::PxQuat ToPx(glm::quat q);
+    static physx::PxTransform ToPx(Transform t);
+
 private:
 	// Basic data
 	glm::vec3 position;

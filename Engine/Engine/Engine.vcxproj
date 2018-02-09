@@ -155,6 +155,7 @@
     <None Include="Content\Materials\Basic.json" />
     <None Include="Content\Prefabs\Entities\Boulder.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />
+    <None Include="Content\Prefabs\Entities\Vehicle.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
     <None Include="Content\Scenes\PhysicsDemo.json" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
@@ -172,6 +173,7 @@
     <ClCompile Include="Engine\Components\PointLightComponent.cpp" />
     <ClCompile Include="Engine\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
+    <ClCompile Include="Engine\Components\VehicleComponent.cpp" />
     <ClCompile Include="Engine\Entities\Actor.cpp" />
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Entities\EntityManager.cpp" />
@@ -204,6 +206,7 @@
     <ClInclude Include="Engine\Components\PointLightComponent.h" />
     <ClInclude Include="Engine\Components\RigidbodyComponent.h" />
     <ClInclude Include="Engine\Components\SpotLightComponent.h" />
+    <ClInclude Include="Engine\Components\VehicleComponent.h" />
     <ClInclude Include="Engine\Entities\Actor.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />

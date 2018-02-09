@@ -13,18 +13,18 @@
       }
     ]
   },
-  {
-    "Tag": "Car",
-    "Position": [ 2.5, 2, 5 ],
-    "Components": [
-      {
-        "Type": "Mesh",
-        "Mesh": "Cube.obj",
-        "Texture": "Boulder.jpg",
-        "Material": "Basic.json"
-      }
-    ]
-  },
+	{
+		"Prefab":  "Vehicle.json",
+        "Position": [0, 10, 0]
+	},
+	{
+		"Prefab":  "Vehicle.json",
+		"Position": [5, 10, 0]
+	},
+	{
+		"Prefab":  "Vehicle.json",
+		"Position": [-5, 10, 0]
+	},
   "Sun.json",
   {
     "Tag": "Camera",
