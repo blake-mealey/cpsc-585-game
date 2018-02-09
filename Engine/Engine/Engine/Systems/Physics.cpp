@@ -262,7 +262,8 @@ void Physics::Update(Time currentTime, Time deltaTime) {
     for (Component* component : vehicleComponents) {
         VehicleComponent* vehicle = static_cast<VehicleComponent*>(component);
         PxTransform t = vehicle->pxVehicle->getRigidDynamicActor()->getGlobalPose();
-        component->GetEntity()->transform = Transform(t);
+        component->GetEntity()->transform.SetPosition(Transform::FromPx(t.p));
+        component->GetEntity()->transform.SetRotation(Transform::FromPx(t.q));
     }
 
     // retrieve array of actors that moved
