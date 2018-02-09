@@ -148,7 +148,6 @@ void InputManager::HandleController() {
 
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
-				vehicle->
 				vehicle->pxVehicleInputData.setAnalogAccel(0.0f);
 				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eNEUTRAL);
 

@@ -67,6 +67,24 @@ const PxVehiclePadSmoothingData Physics::gPadSmoothingData =
     }
 };
 
+const PxVehicleKeySmoothingData Physics::gKeySmoothingData =
+{
+    {
+        6.0f,	//rise rate eANALOG_INPUT_ACCEL
+        6.0f,	//rise rate eANALOG_INPUT_BRAKE		
+        6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
+        2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
+        2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+    },
+    {
+        10.0f,	//fall rate eANALOG_INPUT_ACCEL
+        10.0f,	//fall rate eANALOG_INPUT_BRAKE		
+        10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
+        5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
+        5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+    }
+};
+
 const PxF32 Physics::gSteerVsForwardSpeedData[2 * 8] =
 {
     0.0f,		0.75f,
@@ -205,7 +223,11 @@ void Physics::Update(Time currentTime, Time deltaTime) {
         VehicleComponent* vehicle = static_cast<VehicleComponent*>(component);
         vehicles.push_back(vehicle->pxVehicle);
 
-		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, vehicle->pxVehicleInputData, timestep, gIsVehicleInAir, *vehicle->pxVehicle);
+        if (vehicle->inputTypeDigital) {
+            PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, vehicle->pxVehicleInputData, timestep, gIsVehicleInAir, *vehicle->pxVehicle);
+        } else {
+            PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, vehicle->pxVehicleInputData, timestep, gIsVehicleInAir, *vehicle->pxVehicle);
+        }
     }
 
     PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
@@ -242,4 +264,14 @@ void Physics::Update(Time currentTime, Time deltaTime) {
         PxTransform t = vehicle->pxVehicle->getRigidDynamicActor()->getGlobalPose();
         component->GetEntity()->transform = Transform(t);
     }
+
+    // retrieve array of actors that moved
+    /*PxU32 nbActiveActors;
+    PxActor** activeActors = gScene->getActiveActors(nbActiveActors);
+
+    // update each render object with the new transform
+    for (PxU32 i = 0; i < nbActiveActors; ++i) {
+        Component* component = static_cast<Component*>(activeActors[i]->userData);
+        component->GetEntity()->transform = Transform(activeActors[i]->getGlobalPose());
+    }*/
 }

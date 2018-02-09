@@ -24,8 +24,9 @@ private:
 
     VehicleDesc initVehicleDesc();
 
-    PxVehicleDrive4WRawInputData gVehicleInputData;
+    //PxVehicleDrive4WRawInputData gVehicleInputData;
     static const PxVehiclePadSmoothingData gPadSmoothingData;
+    static const PxVehicleKeySmoothingData gKeySmoothingData;
     static const PxF32 gSteerVsForwardSpeedData[2 * 8];
     static const PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable;
 
