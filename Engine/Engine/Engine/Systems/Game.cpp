@@ -42,10 +42,12 @@ void Game::Initialize() {
 
 	ContentManager::LoadScene("PhysicsDemo.json");
 
+	car = EntityManager::FindEntities("Vehicle")[0];
+	camera = EntityManager::FindEntities("Camera")[0];
+
 	// Load the scene and get some entities
 	/*ContentManager::LoadScene("GraphicsDemo.json");
 	boulder = EntityManager::FindEntities("Boulder")[0];
-	camera = EntityManager::FindEntities("Camera")[0];
 	sun = EntityManager::FindEntities("Sun")[0];
 	floor = EntityManager::FindEntities("Floor")[0];
 	baby = EntityManager::FindEntities("Baby")[0];
@@ -97,7 +99,9 @@ void Game::Update(Time currentTime, Time deltaTime) {
 		
 
 		//camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
+		camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), car->transform.GetGlobalPosition() + glm::vec3(0.0f, 5.0f, 0.0f), 0.05f));
 		//static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
+		static_cast<CameraComponent*>(camera->components[0])->SetTarget(car->transform.GetGlobalPosition());
 
 		//camera->transform.SetPosition(boulder->transform.GetGlobalPosition());
 

@@ -15,15 +15,18 @@
   },
 	{
 		"Prefab":  "Vehicle.json",
-        "Position": [0, 10, 0]
+        "Position": [0, 10, 0],
+		"Tag": "Vehicle"
 	},
 	{
 		"Prefab":  "Vehicle.json",
-		"Position": [5, 10, 0]
+		"Position": [5, 10, 0],
+		"Tag": "Vehicle"
 	},
 	{
 		"Prefab":  "Vehicle.json",
-		"Position": [-5, 10, 0]
+		"Position": [-5, 10, 0],
+		"Tag": "Vehicle"
 	},
   "Sun.json",
   {
