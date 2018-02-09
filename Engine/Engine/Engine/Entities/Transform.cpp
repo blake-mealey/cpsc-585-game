@@ -195,3 +195,23 @@ glm::vec2 Transform::FromPx(physx::PxVec2 v) {
 glm::quat Transform::FromPx(physx::PxQuat q) {
 	return glm::quat(q.w, q.x, q.y, q.z);
 }
+
+physx::PxVec4 Transform::ToPx(glm::vec4 v) {
+    return physx::PxVec4(v.x, v.y, v.z, v.w);
+}
+
+physx::PxVec3 Transform::ToPx(glm::vec3 v) {
+    return physx::PxVec3(v.x, v.y, v.z);
+}
+
+physx::PxVec2 Transform::ToPx(glm::vec2 v) {
+    return physx::PxVec2(v.x, v.y);
+}
+
+physx::PxQuat Transform::ToPx(glm::quat q) {
+    return physx::PxQuat(q.x, q.y, q.z, q.w);
+}
+
+physx::PxTransform Transform::ToPx(Transform t) {
+    return physx::PxTransform(ToPx(t.GetGlobalPosition()), ToPx(t.GetLocalRotation()));
+}

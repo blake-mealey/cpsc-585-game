@@ -5,6 +5,8 @@ class Entity;
 
 class Game : public System {
 public:
+    static const unsigned int MAX_VEHICLE_COUNT;
+
 	// Access the singleton instance
 	static Game& Instance();
 

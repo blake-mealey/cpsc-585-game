@@ -50,7 +50,7 @@ private:
     physx::PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
 
     physx::PxRigidStatic* gGroundPlane = NULL;
-    physx::PxVehicleDrive4W* gVehicle4W = NULL;
+    //physx::PxVehicleDrive4W* gVehicle4W = NULL;
 
     bool gIsVehicleInAir = true;
 };

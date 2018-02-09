@@ -1,0 +1,13 @@
+{
+	"Components": [
+		{
+			"Type": "Mesh",
+			"Mesh": "Cube.obj",
+			"Texture": "Boulder.jpg",
+			"Material": "Basic.json"
+		},
+		{
+			"Type": "Vehicle"
+		}
+	]
+},

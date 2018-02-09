@@ -14,20 +14,20 @@ int main() {
 	//Fake Change
 	// Initialize systems
 	
-	// Initialize graphics (MUST come before entity instantiation)
+	// Initialize graphics (MUST come before Game)
 	Graphics &graphicsManager = Graphics::Instance();
 	graphicsManager.Initialize("Car Wars");
 	
 	// Initialize input
 	InputManager &inputManager = InputManager::Instance();
+
+    // Initialize game (MUST come before Physics)
+    Game &gameManager = Game::Instance();
+    gameManager.Initialize();
 	
 	// Initialize physics
 	Physics &physicsManager = Physics::Instance();
     physicsManager.Initialize();
-	
-	// Initialize game
-	Game &gameManager = Game::Instance();
-	gameManager.Initialize();
 
 	// Add systems in desired order
 	systems.push_back(&inputManager);

@@ -17,6 +17,7 @@
 #include "../../Components/PointLightComponent.h"
 #include "../../Components/DirectionLightComponent.h"
 #include "../../Components/SpotLightComponent.h"
+#include "../../Components/VehicleComponent.h"
 
 std::map<std::string, Mesh*> ContentManager::meshes;
 std::map<std::string, Texture*> ContentManager::textures;
@@ -166,6 +167,7 @@ Component* ContentManager::LoadComponent(nlohmann::json data) {
         else if (type == "PointLight") component = new PointLightComponent(data);
         else if (type == "DirectionLight") component = new DirectionLightComponent(data);
         else if (type == "SpotLight") component = new SpotLightComponent(data);
+        else if (type == "Vehicle") component = new VehicleComponent();
         else {
             std::cout << "Unsupported component type: " << type << std::endl;
             supportedType = false;

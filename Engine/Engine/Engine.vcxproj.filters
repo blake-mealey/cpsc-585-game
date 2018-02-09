@@ -10,6 +10,7 @@
     <None Include="Content\Prefabs\Entities\Boulder.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />
     <None Include="Content\Scenes\PhysicsDemo.json" />
+    <None Include="Content\Prefabs\Entities\Vehicle.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="Engine\Systems\Physics\VehicleFilterShader.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleTireFriction.cpp" />
+    <ClCompile Include="Engine\Components\VehicleComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
@@ -81,5 +83,6 @@
     <ClInclude Include="Engine\Systems\Physics\VehicleSceneQuery.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleTireFriction.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleWheelQueryResult.h" />
+    <ClInclude Include="Engine\Components\VehicleComponent.h" />
   </ItemGroup>
 </Project>
