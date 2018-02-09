@@ -31,7 +31,7 @@
     "Components": [
       {
         "Type": "Camera",
-        "Position": [ -25, 10, 0 ]
+        "Position": [ 0, 10, -25 ]
       }
     ]
   }

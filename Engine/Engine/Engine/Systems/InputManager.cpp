@@ -4,6 +4,12 @@
 #include "../Entities/EntityManager.h"
 #include "../Components/CameraComponent.h"
 
+#include "Physics.h"
+
+#include "PxPhysicsAPI.h"
+
+#include "vehicle/PxVehicleUtil.h"
+
 vector<XboxController*> InputManager::xboxControllers;
 
 Time dt;
@@ -65,6 +71,12 @@ void InputManager::HandleKeyboard() {
 	if (Keyboard::KeyReleased(GLFW_KEY_W)) {
 		cout << "W Key Released" << endl;
 	}
+
+	if (Keyboard::KeyDown(GLFW_KEY_UP)) {
+		Entity* car = EntityManager::FindEntities("Car")[0];
+		//car->transform.Translate(glm::vec3(0.0f, 1.0f, 0.0f));
+		car->transform.SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
+	}
 }
 
 float cameraAngle = 3.14f / 2;
@@ -100,9 +112,11 @@ void InputManager::HandleController() {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held R-TRIGGER" << endl;
 				rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
 
-				Entity *boulder = EntityManager::FindEntities("Boulder")[0];
-				float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;
-				boulder->transform.Translate(boulder->transform.GetForward() * dt.GetTimeSeconds() * x);
+				Entity *car = EntityManager::FindEntities("Car")[0];
+
+				//Entity *boulder = EntityManager::FindEntities("Boulder")[0];
+				//float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;
+				//boulder->transform.Translate(boulder->transform.GetForward() * dt.GetTimeSeconds() * x);
 
 			} else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released R-TRIGGER" << endl;
@@ -115,9 +129,9 @@ void InputManager::HandleController() {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held LEFT-JOYSTICK X-AXIS" << endl;
 
 
-				Entity *boulder = EntityManager::FindEntities("Boulder")[0];
-				float x = -0.1f * (*controller)->GetState().Gamepad.sThumbLX / 30000.f;
-				boulder->transform.Rotate(Transform::UP, dt.GetTimeSeconds() * x);
+				//Entity *boulder = EntityManager::FindEntities("Boulder")[0];
+				//float x = -0.1f * (*controller)->GetState().Gamepad.sThumbLX / 30000.f;
+				//boulder->transform.Rotate(Transform::UP, dt.GetTimeSeconds() * x);
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbLX >= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbLX <= -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released LEFT-JOYSTICK X-AXIS" << endl;
@@ -141,7 +155,7 @@ void InputManager::HandleController() {
 				Entity *camera = EntityManager::FindEntities("Camera")[0];
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRX / 30000.f;
 				cameraAngle += x;
-				glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
+				glm::vec3 pos = 10.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
 				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
 
                 std::cout << cameraAngle << std::endl;
@@ -161,7 +175,7 @@ void InputManager::HandleController() {
 				Entity *camera = EntityManager::FindEntities("Camera")[0];
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRY / 30000.f;
 				cameraLift += x;
-				glm::vec3 pos = 5.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
+				glm::vec3 pos = 10.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
 				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
 
                 std::cout << cameraLift << std::endl;
