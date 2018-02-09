@@ -4,7 +4,7 @@
 
 using namespace physx;
 
-VehicleComponent::VehicleComponent() {
+VehicleComponent::VehicleComponent() : inputTypeDigital(false) {
 }
 
 ComponentType VehicleComponent::GetType() {

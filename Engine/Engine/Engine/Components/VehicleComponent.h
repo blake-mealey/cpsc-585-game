@@ -12,6 +12,7 @@ public:
     void HandleEvent(Event *event);
     physx::PxVehicleDrive4W* pxVehicle = nullptr;
 	physx::PxVehicleDrive4WRawInputData pxVehicleInputData;
+    bool inputTypeDigital;
 
 private:
 };
