@@ -204,6 +204,8 @@ void Physics::Update(Time currentTime, Time deltaTime) {
     for (Component* component : vehicleComponents) {
         VehicleComponent* vehicle = static_cast<VehicleComponent*>(component);
         vehicles.push_back(vehicle->pxVehicle);
+
+		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, vehicle->pxVehicleInputData, timestep, gIsVehicleInAir, *vehicle->pxVehicle);
     }
 
     PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
