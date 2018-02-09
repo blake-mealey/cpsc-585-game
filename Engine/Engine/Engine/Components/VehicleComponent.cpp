@@ -21,7 +21,7 @@ VehicleComponent::VehicleComponent(size_t _wheelCount, bool _inputTypeDigital) :
 
 void VehicleComponent::Initialize() {
 	for (size_t i = 0; i < wheelCount; ++i) {
-		MeshComponent* wheel = new MeshComponent("Cylinder.obj", "Basic.json");
+		MeshComponent* wheel = new MeshComponent("Boulder.obj", "Basic.json", "Boulder.jpg");
 		wheel->transform.SetScale(glm::vec3(0.5f));
 		wheelMeshes.push_back(wheel);
 	}
@@ -35,7 +35,7 @@ void VehicleComponent::UpdateWheelTransforms() {
 		PxTransform pose = shapes[i]->getLocalPose();
 		wheel->transform.SetPosition(Transform::FromPx(pose.p));
 		wheel->transform.SetRotation(Transform::FromPx(pose.q));
-		wheel->transform.Rotate(Transform::UP, glm::radians(90.f));
+		//wheel->transform.Rotate(Transform::UP, glm::radians(90.f));
 	}
 	delete[] shapes;
 }

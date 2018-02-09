@@ -3,7 +3,7 @@
 		{
 			"Type": "Mesh",
 			"Mesh": "ice_cream_truck.obj",
-			"Texture": "Boulder.jpg",
+			"Texture": "IceCream.png",
 			"Material": "Basic.json",
 			"Rotate": [0, 180, 0],
 			"Position": [0, -2, 0]
