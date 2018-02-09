@@ -71,12 +71,6 @@ void InputManager::HandleKeyboard() {
 	if (Keyboard::KeyReleased(GLFW_KEY_W)) {
 		cout << "W Key Released" << endl;
 	}
-
-	if (Keyboard::KeyDown(GLFW_KEY_UP)) {
-		Entity* car = EntityManager::FindEntities("Car")[0];
-		//car->transform.Translate(glm::vec3(0.0f, 1.0f, 0.0f));
-		car->transform.SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
-	}
 }
 
 float cameraAngle = 3.14f / 2;
@@ -113,6 +107,8 @@ void InputManager::HandleController() {
 				rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
 
 				Entity *car = EntityManager::FindEntities("Car")[0];
+
+
 
 				//Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 				//float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;

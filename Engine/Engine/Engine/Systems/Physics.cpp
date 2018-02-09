@@ -18,7 +18,7 @@ using namespace std;
 using namespace physx;
 
 float nextTime = 0;
-int i = 1;
+float i = 1.0f;
 
 // Singleton
 Physics::Physics() { }
@@ -206,11 +206,25 @@ void Physics::Update(Time currentTime, Time deltaTime) {
 
 	Entity* car = EntityManager::FindEntities("Car")[0];
 
+	/*
 	if (currentTime.GetTimeSeconds() >= nextTime) {
 		gVehicle4W->getRigidDynamicActor()->addForce(PxVec3(500000.0f * i, 1000000.0f, 0.0f), PxForceMode::eFORCE, true);
 		nextTime = currentTime.GetTimeSeconds() + 5.0f;
 		i *= -1;
 	}
+	*/
+
+	if (currentTime.GetTimeSeconds() >= nextTime) {
+		if(i < 0)
+			gVehicle4W->mDriveDynData.forceGearChange((PxVehicleGearsData::eREVERSE));
+		else
+			gVehicle4W->mDriveDynData.forceGearChange((PxVehicleGearsData::eFIRST));
+		i *= -1;
+		nextTime = currentTime.GetTimeSeconds() + 2.0f;
+	}
+
+	gVehicleInputData.setAnalogAccel(1.0f);
+
 
 	PxTransform t = gVehicle4W->getRigidDynamicActor()->getGlobalPose();
 	car->transform = Transform(t);
