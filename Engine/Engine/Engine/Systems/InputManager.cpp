@@ -74,8 +74,8 @@ void InputManager::HandleKeyboard() {
 	}
 }
 
-float cameraAngle = 3.14f / 2;
-float cameraLift = 3.14f / 2;
+float cameraAngle = -3.14/2;
+float cameraLift = 3.14/4;
 
 void InputManager::HandleController() {
 	//Iterate through each controller
@@ -177,7 +177,7 @@ void InputManager::HandleController() {
 				Entity *camera = EntityManager::FindEntities("Camera")[0];
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRX / 30000.f;
 				cameraAngle += x;
-				glm::vec3 pos = 10.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
+				glm::vec3 pos = 20.0f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
 				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
 
                 std::cout << cameraAngle << std::endl;
@@ -197,7 +197,7 @@ void InputManager::HandleController() {
 				Entity *camera = EntityManager::FindEntities("Camera")[0];
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRY / 30000.f;
 				cameraLift += x;
-				glm::vec3 pos = 10.f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
+				glm::vec3 pos = 20.0f * glm::vec3(cos(cameraAngle) * sin(cameraLift), cos(cameraLift), sin(cameraAngle) * sin(cameraLift));
 				static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
 
                 std::cout << cameraLift << std::endl;

@@ -1,11 +1,12 @@
 {
-    "Scale": [1.25, 1, 2.5],
 	"Components": [
 		{
 			"Type": "Mesh",
-			"Mesh": "Cube.obj",
+			"Mesh": "ice_cream_truck.obj",
 			"Texture": "Boulder.jpg",
-			"Material": "Basic.json"
+			"Material": "Basic.json",
+			"Rotate": [0, 180, 0],
+			"Position": [0, -2, 0]
 		},
 		{
 			"Type": "Vehicle"

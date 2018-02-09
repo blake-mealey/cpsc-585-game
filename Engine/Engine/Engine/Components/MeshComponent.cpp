@@ -10,13 +10,18 @@ ComponentType MeshComponent::GetType() {
 
 void MeshComponent::HandleEvent(Event* event) {}
 
-MeshComponent::MeshComponent(nlohmann::json data) : transform(Transform()) {
+MeshComponent::MeshComponent(nlohmann::json data) {
 	mesh = ContentManager::GetMesh(data["Mesh"]);
 	material = ContentManager::GetMaterial(data["Material"]);
 	if (!data["Texture"].is_null()) texture = ContentManager::GetTexture(data["Texture"]);
 	else texture = nullptr;
 	uvScale = ContentManager::JsonToVec2(data["UvScale"], glm::vec2(1.f));
     if (ContentManager::GetFromJson<bool>(data["CylinderMesh"], false)) MakeCylinder(mesh);
+	glm::vec3 pos = ContentManager::JsonToVec3(data["Position"], glm::vec3());
+	glm::vec3 rot = ContentManager::JsonToVec3(data["Rotate"], glm::vec3());
+	glm::vec3 scale = ContentManager::JsonToVec3(data["Scale"], glm::vec3(1.0f));
+	glm::vec3 rotRad = glm::vec3(glm::radians(rot.x), glm::radians(rot.y), glm::radians(rot.z));
+	transform = Transform(nullptr, pos, scale, rotRad, false);
 }
 
 MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : texture(nullptr) {

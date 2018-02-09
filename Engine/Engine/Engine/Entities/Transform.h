@@ -9,6 +9,7 @@ class Transform {
 public:
 	Transform();
 	Transform(physx::PxTransform transform);
+	Transform(Transform *parent, glm::vec3 pPosition, glm::vec3 pScale, glm::vec3 pEulerRotation, bool connectedToCylinder);
 	Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connectedToCylinder);
 
 	void Update();

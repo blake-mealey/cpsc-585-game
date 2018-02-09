@@ -17,6 +17,13 @@ Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f), glm::qu
 
 Transform::Transform(physx::PxTransform t) : Transform(nullptr, FromPx(t.p), glm::vec3(1.f), FromPx(t.q), false) {}
 
+Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::vec3 pEulerRotation, bool connected) : parent(pParent) {
+	connectedToCylinder = connected;
+	SetPosition(pPosition);
+	SetScale(pScale);
+	SetRotationEulerAngles(pEulerRotation);
+}
+
 Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connected) : parent(pParent) {
 	connectedToCylinder = connected;
 	SetPosition(pPosition);
