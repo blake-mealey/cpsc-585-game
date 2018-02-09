@@ -1,5 +1,5 @@
 {
-    "Scale": [2.5, 2, 5],
+    "Scale": [1.25, 1, 2.5],
 	"Components": [
 		{
 			"Type": "Mesh",
