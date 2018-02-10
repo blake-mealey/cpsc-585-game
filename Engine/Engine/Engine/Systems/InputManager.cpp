@@ -241,8 +241,6 @@ void InputManager::HandleController() {
 				CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRX / 30000.f;
 				cameraC->SetCameraHorizontalAngle(cameraC->GetCameraHorizontalAngle() + x);
-				glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
-				cameraC->SetPosition(pos);
 				
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRX < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
@@ -259,9 +257,7 @@ void InputManager::HandleController() {
 				Entity *camera = EntityManager::FindEntities("Camera")[controllerNum];
 				CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRY / 30000.f;
-				cameraC->SetCameraVerticalAngle(std::min(std::max(cameraC->GetCameraVerticalAngle() + x,0.1f),(float)M_PI -0.1f));
-				glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
-				cameraC->SetPosition(pos);
+				cameraC->SetCameraVerticalAngle(std::min(std::max(cameraC->GetCameraVerticalAngle() + x,0.1f),static_cast<float>(M_PI) -0.1f));
 
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRY < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
