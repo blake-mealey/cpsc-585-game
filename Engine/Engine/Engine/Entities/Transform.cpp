@@ -36,6 +36,11 @@ glm::vec3 Transform::GetLocalPosition() {
 	return position;
 }
 
+glm::vec3 Transform::GetCylinderPosition() {
+	if (connectedToCylinder) return position;
+	return FromCylinder(GetGlobalPosition());
+}
+
 glm::vec3 Transform::GetLocalScale() {
 	return scale;
 }
@@ -48,6 +53,15 @@ glm::vec3 Transform::GetGlobalPosition() {
 	return GetTransformationMatrix() * glm::vec4(0.f, 0.f, 0.f, 1.f);
 }
 
+glm::vec3 Transform::GetGlobalScale() {
+	float globalScale;
+	Transform* transform = this;
+	do {
+		globalScale = transform->GetLocalScale() * globalScale;
+		transform = transform->parent;
+	} while (transform != nullptr);
+	return globalScale;
+}
 
 glm::vec3 Transform::GetForward() {
 	return rotation * FORWARD;
@@ -61,7 +75,6 @@ glm::vec3 Transform::GetUp() {
 	return rotation * UP;
 }
 
-
 void Transform::UpdateTransformationMatrix() {
 	transformationMatrix = translationMatrix * rotationMatrix * scalingMatrix;
 }
@@ -71,14 +84,14 @@ void Transform::SetPosition(glm::vec3 pPosition) {
 	if (connectedToCylinder && radius > 0) {
 		// bound to the location on the rectangle part of the cylinder
 		while (position.x > M_PI * radius) {
-			position.x -= 2 * M_PI * radius;
+			position.x -= 2.f * (float)M_PI * radius;
 		}
 		while (position.x < -M_PI * radius) {
-			position.x += 4 * M_PI * radius;
+			position.x += 4.f * (float)M_PI * radius;
 		}
 		translationMatrix = glm::translate(glm::mat4(), ToCylinder(position));
 		//rotate accordingly
-		float rotBy = position.x / radius + 90;
+		float rotBy = position.x / radius + (float)M_PI/2.f;
 		rotationMatrix = glm::toMat4(glm::rotate(glm::quat(), rotBy, glm::vec3(0,0,1)))*glm::toMat4(rotation);
 	}
 	else {
@@ -117,6 +130,10 @@ void Transform::Translate(glm::vec3 offset) {
 }
 
 void Transform::Scale(float scaleFactor) {
+	SetScale(scale * scaleFactor);
+}
+
+void Transform::Scale(glm::vec3 scaleFactor) {
 	SetScale(scale * scaleFactor);
 }
 
@@ -170,7 +187,7 @@ glm::vec3 Transform::FromCylinder(glm::vec3 point) {
 	float r = sqrt(point.x*point.x + point.y*point.y);
 	float theta = atan2(point.y, point.x);
 
-	point.x = theta * radius - M_PI * radius;
+	point.x = theta * radius - (float)M_PI * radius;
 	point.y = radius - r;
 
 	return point;

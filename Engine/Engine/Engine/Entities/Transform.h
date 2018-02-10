@@ -24,6 +24,9 @@ public:
 	glm::quat GetLocalRotation();
 
 	glm::vec3 GetGlobalPosition();
+	glm::vec3 Transform::GetGlobalScale();
+
+	glm::vec3 GetCylinderPosition();
 
 	glm::vec3 GetForward();
 	glm::vec3 GetRight();
@@ -40,6 +43,7 @@ public:
 	// Operators for basic data
 	void Translate(glm::vec3 offset);
 	void Scale(float scaleFactor);
+	void Scale(glm::vec3 scaleFactor);
 	void Rotate(glm::vec3 axis, float radians);
 
 	// Getters for output data
