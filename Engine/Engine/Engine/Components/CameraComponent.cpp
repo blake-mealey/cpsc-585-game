@@ -73,6 +73,22 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const {
 	return projectionMatrix;
 }
 
+float CameraComponent::GetCameraHorizontalAngle() {
+	return cameraAngle;
+}
+
+void CameraComponent::SetCameraHorizontalAngle(float _cameraAngle) {
+	cameraAngle = _cameraAngle;
+}
+
+float CameraComponent::GetCameraVerticalAngle() {
+	return cameraLift;
+}
+
+void CameraComponent::SetCameraVerticalAngle(float _cameraLift) {
+	cameraLift = _cameraLift;
+}
+
 void CameraComponent::UpdateViewMatrix() {
 	viewMatrix = glm::lookAt(GetPosition(), GetTarget(), upVector);
 }

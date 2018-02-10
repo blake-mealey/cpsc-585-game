@@ -30,6 +30,12 @@ public:
 
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix() const;
+
+	float GetCameraHorizontalAngle();
+	void SetCameraHorizontalAngle(float _cameraAngle);
+
+	float GetCameraVerticalAngle();
+	void SetCameraVerticalAngle(float _cameraLift);
 private:
 	float fieldOfView;		// In degrees
 	glm::vec3 position;
@@ -43,4 +49,7 @@ private:
 
 	glm::mat4 viewMatrix;
 	glm::mat4 projectionMatrix;
+
+	float cameraAngle = -3.14 / 2;
+	float cameraLift = 3.14 / 4;
 };

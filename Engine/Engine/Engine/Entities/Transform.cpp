@@ -13,7 +13,16 @@ const glm::vec3 Transform::UP = glm::vec3(0, 1, 0);
 
 float Transform::radius = 0;
 
-Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f, 1.f, 1.f), glm::quat(), false) {}
+Transform::Transform() : Transform(nullptr, glm::vec3(), glm::vec3(1.f), glm::quat(), false) {}
+
+Transform::Transform(physx::PxTransform t) : Transform(nullptr, FromPx(t.p), glm::vec3(1.f), FromPx(t.q), false) {}
+
+Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::vec3 pEulerRotation, bool connected) : parent(pParent) {
+	connectedToCylinder = connected;
+	SetPosition(pPosition);
+	SetScale(pScale);
+	SetRotationEulerAngles(pEulerRotation);
+}
 
 Transform::Transform(Transform *pParent, glm::vec3 pPosition, glm::vec3 pScale, glm::quat pRotation, bool connected) : parent(pParent) {
 	connectedToCylinder = connected;
@@ -54,7 +63,7 @@ glm::vec3 Transform::GetGlobalPosition() {
 }
 
 glm::vec3 Transform::GetGlobalScale() {
-	float globalScale;
+	glm::vec3 globalScale;
 	Transform* transform = this;
 	do {
 		globalScale = transform->GetLocalScale() * globalScale;
@@ -187,8 +196,44 @@ glm::vec3 Transform::FromCylinder(glm::vec3 point) {
 	float r = sqrt(point.x*point.x + point.y*point.y);
 	float theta = atan2(point.y, point.x);
 
-	point.x = theta * radius - (float)M_PI * radius;
+	point.x = theta * radius - M_PI * radius;
 	point.y = radius - r;
 
 	return point;
+}
+
+glm::vec4 Transform::FromPx(physx::PxVec4 v) {
+	return glm::vec4(v.x, v.y, v.z, v.w);
+}
+
+glm::vec3 Transform::FromPx(physx::PxVec3 v) {
+	return glm::vec3(v.x, v.y, v.z);
+}
+
+glm::vec2 Transform::FromPx(physx::PxVec2 v) {
+	return glm::vec2(v.x, v.y);
+}
+
+glm::quat Transform::FromPx(physx::PxQuat q) {
+	return glm::quat(q.w, q.x, q.y, q.z);
+}
+
+physx::PxVec4 Transform::ToPx(glm::vec4 v) {
+    return physx::PxVec4(v.x, v.y, v.z, v.w);
+}
+
+physx::PxVec3 Transform::ToPx(glm::vec3 v) {
+    return physx::PxVec3(v.x, v.y, v.z);
+}
+
+physx::PxVec2 Transform::ToPx(glm::vec2 v) {
+    return physx::PxVec2(v.x, v.y);
+}
+
+physx::PxQuat Transform::ToPx(glm::quat q) {
+    return physx::PxQuat(q.x, q.y, q.z, q.w);
+}
+
+physx::PxTransform Transform::ToPx(Transform t) {
+    return physx::PxTransform(ToPx(t.GetGlobalPosition()), ToPx(t.GetLocalRotation()));
 }
