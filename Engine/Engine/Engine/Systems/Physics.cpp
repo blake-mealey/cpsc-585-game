@@ -109,7 +109,7 @@ void Physics::Initialize() {
     PxSceneDesc sceneDesc(pxPhysics->getTolerancesScale());
     sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 
-    PxU32 numWorkers = 1;
+    const PxU32 numWorkers = 1;
     pxDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
     sceneDesc.cpuDispatcher = pxDispatcher;
     sceneDesc.filterShader = VehicleFilterShader;
@@ -125,9 +125,9 @@ void Physics::Initialize() {
     pxMaterial = pxPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
     pxCooking = PxCreateCooking(PX_PHYSICS_VERSION, *pxFoundation, PxCookingParams(PxTolerancesScale()));
+}
 
-    /////////////////////////////////////////////
-
+void Physics::InitializeVehicles() {
     PxInitVehicleSDK(*pxPhysics);
     PxVehicleSetBasisVectors(PxVec3(0, 1, 0), PxVec3(0, 0, 1));
     PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
@@ -143,18 +143,16 @@ void Physics::Initialize() {
     pxFrictionPairs = createFrictionPairs(pxMaterial);
 
     //Create a plane to drive on.
-    PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+    const PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
     pxGroundPlane = createDrivablePlane(groundPlaneSimFilterData, pxMaterial, pxPhysics);
     pxScene->addActor(*pxGroundPlane);
-
 
     for (Component* component : vehicleComponents) {
         VehicleComponent* vehicle = static_cast<VehicleComponent*>(component);
 
         //Create a vehicle that will drive on the plane.
-        VehicleDesc vehicleDesc = InitVehicleDesc(*vehicle);
-        vehicle->pxVehicle = createVehicle4W(vehicleDesc, pxPhysics, pxCooking);
-        
+        vehicle->pxVehicle = createVehicle4W(*vehicle, pxMaterial, pxPhysics, pxCooking);
+
         //PxTransform startTransform(PxVec3(0, (vehicleDesc.chassisSize.y*0.5f + vehicleDesc.wheelRadius + 1.0f), 0), PxQuat(PxIdentity));
         vehicle->pxVehicle->getRigidDynamicActor()->setGlobalPose(Transform::ToPx(component->GetEntity()->transform));
         pxScene->addActor(*vehicle->pxVehicle->getRigidDynamicActor());
@@ -165,27 +163,6 @@ void Physics::Initialize() {
         vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
         vehicle->pxVehicle->mDriveDynData.setUseAutoGears(true);
     }
-}
-
-VehicleDesc Physics::InitVehicleDesc(VehicleComponent vehicle) const {
-    VehicleDesc vehicleDesc;
-
-    vehicleDesc.chassisMass = vehicle.GetChassisMass();
-    vehicleDesc.chassisDims = Transform::ToPx(vehicle.GetChassisSize());
-    vehicleDesc.chassisMOI = Transform::ToPx(vehicle.GetChassisMomentOfInertia());
-    vehicleDesc.chassisCMOffset = Transform::ToPx(vehicle.GetChassisCenterOfMassOffset());
-    vehicleDesc.chassisMaterial = pxMaterial;
-    vehicleDesc.chassisSimFilterData = PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);      // ?????????
-
-    vehicleDesc.wheelMass = vehicle.GetWheelMass();
-    vehicleDesc.wheelRadius = vehicle.GetWheelRadius();
-    vehicleDesc.wheelWidth = vehicle.GetWheelWidth();
-    vehicleDesc.wheelMOI = vehicle.GetWheelMomentOfIntertia();
-    vehicleDesc.numWheels = vehicle.GetWheelCount();
-    vehicleDesc.wheelMaterial = pxMaterial;
-    vehicleDesc.chassisSimFilterData = PxFilterData(COLLISION_FLAG_WHEEL, COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
-
-    return vehicleDesc;
 }
 
 void Physics::Update(Time currentTime, Time deltaTime) {

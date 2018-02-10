@@ -15,6 +15,7 @@ public:
     ~Physics();
 
     void Initialize();
+    void InitializeVehicles();
 
 	void Update(Time currentTime, Time deltaTime) override;
 
@@ -24,9 +25,6 @@ private:
 	Physics(const Physics&) = delete;
 	Physics& operator= (const Physics&) = delete;
 
-    VehicleDesc InitVehicleDesc(VehicleComponent vehicle) const;
-
-    //PxVehicleDrive4WRawInputData gVehicleInputData;
     static const PxVehiclePadSmoothingData gPadSmoothingData;
     static const PxVehicleKeySmoothingData gKeySmoothingData;
     static const PxF32 gSteerVsForwardSpeedData[2 * 8];
@@ -53,5 +51,4 @@ private:
     physx::PxVehicleDrivableSurfaceToTireFrictionPairs* pxFrictionPairs = NULL;
 
     physx::PxRigidStatic* pxGroundPlane = NULL;
-    //physx::PxVehicleDrive4W* gVehicle4W = NULL;
 };
