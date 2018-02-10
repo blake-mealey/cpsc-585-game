@@ -16,6 +16,8 @@ public:
 
     ComponentType GetType();
     void HandleEvent(Event *event);
+    
+    bool inAir;
     physx::PxVehicleDrive4W* pxVehicle = nullptr;
 	physx::PxVehicleDrive4WRawInputData pxVehicleInputData;
     bool inputTypeDigital;
@@ -24,10 +26,30 @@ public:
 
 	void UpdateWheelTransforms();
 
-private:
+    float GetChassisMass() const;
+    glm::vec3 GetChassisSize() const;
+    glm::vec3 GetChassisMomentOfInertia() const;
+    glm::vec3 GetChassisCenterOfMassOffset() const;
 
+    float GetWheelMass() const;
+    float GetWheelRadius() const;
+    float GetWheelWidth() const;
+    float GetWheelMomentOfIntertia() const;
+    size_t GetWheelCount() const;
+
+private:
+    std::string wheelMeshPath;
+    std::string wheelTexturePath;
+    std::string wheelMaterialPath;
+    std::vector<MeshComponent*> wheelMeshes;
+
+    float chassisMass;
+    glm::vec3 chassisSize;
+
+    float wheelMass;
+    float wheelRadius;
+    float wheelWidth;
 	size_t wheelCount;
-	std::vector<MeshComponent*> wheelMeshes;
 
 	void Initialize();
 };

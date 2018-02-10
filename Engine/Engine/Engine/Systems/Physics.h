@@ -6,6 +6,8 @@
 #include "Physics/VehicleSceneQuery.h"
 #include "Physics/VehicleCreate.h"
 
+class VehicleComponent;
+
 class Physics : public System {
 public:
 	// Access the singleton instance
@@ -22,7 +24,7 @@ private:
 	Physics(const Physics&) = delete;
 	Physics& operator= (const Physics&) = delete;
 
-    VehicleDesc initVehicleDesc();
+    VehicleDesc InitVehicleDesc(VehicleComponent vehicle) const;
 
     //PxVehicleDrive4WRawInputData gVehicleInputData;
     static const PxVehiclePadSmoothingData gPadSmoothingData;
@@ -30,28 +32,26 @@ private:
     static const PxF32 gSteerVsForwardSpeedData[2 * 8];
     static const PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable;
 
-    physx::PxDefaultAllocator gAllocator;
-    physx::PxDefaultErrorCallback gErrorCallback;
+    physx::PxDefaultAllocator pxAllocator;
+    physx::PxDefaultErrorCallback pxErrorCallback;
 
-    physx::PxFoundation* gFoundation = NULL;
-    physx::PxPhysics* gPhysics = NULL;
+    physx::PxFoundation* pxFoundation = NULL;
+    physx::PxPhysics* pxPhysics = NULL;
     
-    physx::PxDefaultCpuDispatcher* gDispatcher = NULL;
-    physx::PxScene* gScene = NULL;
+    physx::PxDefaultCpuDispatcher* pxDispatcher = NULL;
+    physx::PxScene* pxScene = NULL;
 
-    physx::PxCooking* gCooking = NULL;
+    physx::PxCooking* pxCooking = NULL;
 
-    physx::PxMaterial* gMaterial = NULL;
+    physx::PxMaterial* pxMaterial = NULL;
 
-    physx::PxPvd* gPvd = NULL;
+    physx::PxPvd* pxPvd = NULL;
 
-    VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
-    physx::PxBatchQuery* gBatchQuery = NULL;
+    VehicleSceneQueryData* pxVehicleSceneQueryData = NULL;
+    physx::PxBatchQuery* pxBatchQuery = NULL;
 
-    physx::PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+    physx::PxVehicleDrivableSurfaceToTireFrictionPairs* pxFrictionPairs = NULL;
 
-    physx::PxRigidStatic* gGroundPlane = NULL;
+    physx::PxRigidStatic* pxGroundPlane = NULL;
     //physx::PxVehicleDrive4W* gVehicle4W = NULL;
-
-    bool gIsVehicleInAir = true;
 };

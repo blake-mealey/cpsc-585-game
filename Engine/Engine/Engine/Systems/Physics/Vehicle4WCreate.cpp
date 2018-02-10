@@ -40,8 +40,8 @@ namespace fourwheel
 
 void computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets)
 {
-	//chassisDims.z is the distance from the rear of the chassis to the front of the chassis.
-	//The front has z = 0.5*chassisDims.z and the rear has z = -0.5*chassisDims.z.
+	//chassisSize.z is the distance from the rear of the chassis to the front of the chassis.
+	//The front has z = 0.5*chassisSize.z and the rear has z = -0.5*chassisSize.z.
 	//Compute a position for the front wheel and the rear wheel along the z-axis.
 	//Compute the separation between each wheel along the z-axis.
 	const PxF32 numLeftWheels = numWheels/2.0f;
