@@ -13,21 +13,22 @@
       }
     ]
   },
-	{
-		"Prefab":  "Vehicle.json",
-    "Position": [0, 10, 0],
+  	{
+		"Prefab":  "FireTruck.json",
+		"Position": [-20, 10, 0],
 		"Tag": "Vehicle"
 	},
 	{
-		"Prefab":  "Vehicle.json",
-		"Position": [5, 10, 0],
-		"Tag": "Vehicle"
-	},
-	{
-		"Prefab":  "Vehicle.json",
+		"Prefab":  "IceCream.json",
 		"Position": [-5, 10, 0],
 		"Tag": "Vehicle"
 	},
+	{
+		"Prefab":  "Sewage.json",
+		"Position": [0, 10, 0],
+		"Tag": "Vehicle"
+	},
+
   "Sun.json",
   {
     "Tag": "Camera",

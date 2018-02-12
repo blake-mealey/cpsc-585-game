@@ -1,0 +1,24 @@
+{
+	"Components": [
+		{
+			"Type": "Mesh",
+			"Mesh": "firefighter.obj",
+			"Texture": "FireTruck.png",
+			"Material": "Basic.json",
+			"Rotate": [0, 180, 0],
+			"Position": [0, -2, 0]
+		},
+		{
+			"Type": "Vehicle",
+            "WheelMesh": "Boulder.obj",
+            "WheelTexture": "DiamondPlate.jpg",
+            "WheelMaterial": "Basic.json",
+            "ChassisMass": 1500,
+            "ChassisSize": [2.5, 2, 5],
+            "WheelMass": 20,
+            "WheelRadius": 0.5,
+            "WheelWidth": 0.4,
+            "WheelCount": 4
+		}
+	]
+}

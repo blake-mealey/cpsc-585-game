@@ -2,8 +2,8 @@
 	"Components": [
 		{
 			"Type": "Mesh",
-			"Mesh": "ice_cream_truck.obj",
-			"Texture": "IceCream.png",
+			"Mesh": "hearse.obj",
+			"Texture": "Hearse.png",
 			"Material": "Basic.json",
 			"Rotate": [0, 180, 0],
 			"Position": [0, -2, 0]

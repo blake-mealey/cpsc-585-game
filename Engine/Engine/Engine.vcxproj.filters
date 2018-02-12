@@ -11,6 +11,12 @@
     <None Include="Content\Prefabs\Entities\Sun.json" />
     <None Include="Content\Scenes\PhysicsDemo.json" />
     <None Include="Content\Prefabs\Entities\Vehicle.json" />
+    <None Include="Content\Prefabs\Entities\FireTruck.json" />
+    <None Include="Content\Prefabs\Entities\Flatbed.json" />
+    <None Include="Content\Prefabs\Entities\Hearse.json" />
+    <None Include="Content\Prefabs\Entities\IceCream.json" />
+    <None Include="Content\Prefabs\Entities\Sewage.json" />
+    <None Include="Content\Prefabs\Entities\Taxi.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
