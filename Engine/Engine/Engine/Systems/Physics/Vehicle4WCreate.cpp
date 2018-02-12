@@ -30,9 +30,10 @@
 #include "VehicleCreate.h"
 #include "VehicleTireFriction.h"
 #include "VehicleSceneQuery.h"
+#include "../../Components/VehicleComponent.h"
+#include "VehicleFilterShader.h"
 
 
-	
 using namespace physx;
 
 namespace fourwheel
@@ -40,8 +41,8 @@ namespace fourwheel
 
 void computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets)
 {
-	//chassisDims.z is the distance from the rear of the chassis to the front of the chassis.
-	//The front has z = 0.5*chassisDims.z and the rear has z = -0.5*chassisDims.z.
+	//chassisSize.z is the distance from the rear of the chassis to the front of the chassis.
+	//The front has z = 0.5*chassisSize.z and the rear has z = -0.5*chassisSize.z.
 	//Compute a position for the front wheel and the rear wheel along the z-axis.
 	//Compute the separation between each wheel along the z-axis.
 	const PxF32 numLeftWheels = numWheels/2.0f;
@@ -194,19 +195,19 @@ void setupWheelsSimulationData
 
 } //namespace fourwheel
 
-PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking)
+PxVehicleDrive4W* createVehicle4W(const VehicleComponent& vehicle, PxMaterial *material, PxPhysics* physics, PxCooking* cooking)
 {
-	const PxVec3 chassisDims = vehicle4WDesc.chassisDims;
-	const PxF32 wheelWidth = vehicle4WDesc.wheelWidth;
-	const PxF32 wheelRadius = vehicle4WDesc.wheelRadius;
-	const PxU32 numWheels = vehicle4WDesc.numWheels;
+	const PxVec3 chassisDims = Transform::ToPx(vehicle.GetChassisSize());
+    const PxF32 wheelWidth = vehicle.GetWheelWidth();
+	const PxF32 wheelRadius = vehicle.GetWheelRadius();
+	const PxU32 numWheels = vehicle.GetWheelCount();
 
-	const PxFilterData& chassisSimFilterData = vehicle4WDesc.chassisSimFilterData;
-	const PxFilterData& wheelSimFilterData = vehicle4WDesc.wheelSimFilterData;
+	const PxFilterData& chassisSimFilterData = PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
+	const PxFilterData& wheelSimFilterData = PxFilterData(COLLISION_FLAG_WHEEL, COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
 
 	//Construct a physx actor with shapes for the chassis and wheels.
 	//Set the rigid body mass, moment of inertia, and center of mass offset.
-	PxRigidDynamic* veh4WActor = NULL;
+	PxRigidDynamic* veh4WActor = nullptr;
 	{
 		//Construct a convex mesh for a cylindrical wheel.
 		PxConvexMesh* wheelMesh = createWheelMesh(wheelWidth, wheelRadius, *physics, *cooking);
@@ -218,25 +219,25 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 		for(PxU32 i = PxVehicleDrive4WWheelOrder::eFRONT_LEFT; i <= PxVehicleDrive4WWheelOrder::eREAR_RIGHT; i++)
 		{
 			wheelConvexMeshes[i] = wheelMesh;
-			wheelMaterials[i] = vehicle4WDesc.wheelMaterial;
+			wheelMaterials[i] = material;
 		}
 		//Set the meshes and materials for the non-driven wheels
 		for(PxU32 i = PxVehicleDrive4WWheelOrder::eREAR_RIGHT + 1; i < numWheels; i++)
 		{
 			wheelConvexMeshes[i] = wheelMesh;
-			wheelMaterials[i] = vehicle4WDesc.wheelMaterial;
+			wheelMaterials[i] = material;
 		}
 
 		//Chassis just has a single convex shape for simplicity.
 		PxConvexMesh* chassisConvexMesh = createChassisMesh(chassisDims, *physics, *cooking);
 		PxConvexMesh* chassisConvexMeshes[1] = {chassisConvexMesh};
-		PxMaterial* chassisMaterials[1] = {vehicle4WDesc.chassisMaterial};
+		PxMaterial* chassisMaterials[1] = { material };
 
 		//Rigid body data.
 		PxVehicleChassisData rigidBodyData;
-		rigidBodyData.mMOI = vehicle4WDesc.chassisMOI;
-		rigidBodyData.mMass = vehicle4WDesc.chassisMass;
-		rigidBodyData.mCMOffset = vehicle4WDesc.chassisCMOffset;
+		rigidBodyData.mMOI = Transform::ToPx(vehicle.GetChassisMomentOfInertia());
+		rigidBodyData.mMass = vehicle.GetChassisMass();
+		rigidBodyData.mCMOffset = Transform::ToPx(vehicle.GetChassisCenterOfMassOffset());
 
 		veh4WActor = createVehicleActor
 			(rigidBodyData,
@@ -256,9 +257,9 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 
 		//Set up the simulation data for all wheels.
 		fourwheel::setupWheelsSimulationData
-			(vehicle4WDesc.wheelMass, vehicle4WDesc.wheelMOI, wheelRadius, wheelWidth, 
+			(vehicle.GetWheelMass(), vehicle.GetWheelMomentOfIntertia(), wheelRadius, wheelWidth, 
 			 numWheels, wheelCenterActorOffsets,
-			 vehicle4WDesc.chassisCMOffset, vehicle4WDesc.chassisMass,
+			 Transform::ToPx(vehicle.GetChassisCenterOfMassOffset()), vehicle.GetChassisMass(),
 			 wheelsSimData);
 	}
 
@@ -306,7 +307,7 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 	vehDrive4W->setup(physics, veh4WActor, *wheelsSimData, driveSimData, numWheels - 4);
 
 	//Configure the userdata
-	configureUserData(vehDrive4W, vehicle4WDesc.actorUserData, vehicle4WDesc.shapeUserDatas);
+	configureUserData(vehDrive4W, nullptr, nullptr);
 
 	//Free the sim data because we don't need that any more.
 	wheelsSimData->free();

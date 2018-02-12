@@ -19,12 +19,13 @@ CameraComponent::CameraComponent(nlohmann::json data) : fieldOfView(DEFAULT_FIEL
 	position = ContentManager::JsonToVec3(data["Position"], glm::vec3(0.f, 0.f, 1.f));
 	target = ContentManager::JsonToVec3(data["Target"]);
 	upVector = ContentManager::JsonToVec3(data["UpVector"], glm::vec3(0.f, 1.f, 0.f));
+    distanceFromCenter = ContentManager::GetFromJson<float>(data["CenterDistance"], 15.f);
 
 	UpdateViewMatrix();
 }
 
 CameraComponent::CameraComponent(glm::vec3 _position, glm::vec3 _target, glm::vec3 _upVector) :
-	position(_position), target(_target), upVector(_upVector), fieldOfView(DEFAULT_FIELD_OF_VIEW) {
+	position(_position), target(_target), upVector(_upVector), fieldOfView(DEFAULT_FIELD_OF_VIEW), distanceFromCenter(15.f) {
 	
 	UpdateViewMatrix();
 }
@@ -79,6 +80,7 @@ float CameraComponent::GetCameraHorizontalAngle() {
 
 void CameraComponent::SetCameraHorizontalAngle(float _cameraAngle) {
 	cameraAngle = _cameraAngle;
+    UpdatePositionFromAngles();
 }
 
 float CameraComponent::GetCameraVerticalAngle() {
@@ -87,6 +89,14 @@ float CameraComponent::GetCameraVerticalAngle() {
 
 void CameraComponent::SetCameraVerticalAngle(float _cameraLift) {
 	cameraLift = _cameraLift;
+    UpdatePositionFromAngles();
+}
+
+void CameraComponent::UpdatePositionFromAngles() {
+    SetPosition(distanceFromCenter * glm::vec3(
+        cos(GetCameraHorizontalAngle()) * sin(GetCameraVerticalAngle()),
+        cos(GetCameraVerticalAngle()),
+        sin(GetCameraHorizontalAngle()) * sin(GetCameraVerticalAngle())));
 }
 
 void CameraComponent::UpdateViewMatrix() {

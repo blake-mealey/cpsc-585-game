@@ -46,8 +46,8 @@ void Game::Initialize() {
 	cameras = EntityManager::FindEntities("Camera");
 
 	for (Entity* camera : cameras) {
-		glm::vec3 pos = 20.0f * glm::vec3(cos(-3.14 / 2) * sin(3.14 / 4), cos(3.14 / 4), sin(-3.14 / 2) * sin(3.14 / 4));
-		static_cast<CameraComponent*>(camera->components[0])->SetPosition(pos);
+        static_cast<CameraComponent*>(camera->components[0])->SetCameraHorizontalAngle(-3.14 / 2);
+        static_cast<CameraComponent*>(camera->components[0])->SetCameraVerticalAngle(3.14 / 4);
 	}
 
 	// Load the scene and get some entities
@@ -107,7 +107,7 @@ void Game::Update(Time currentTime, Time deltaTime) {
 			Entity* car = cars[i];
 
 			//camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), boulder->transform.GetGlobalPosition(), 0.05f));
-			camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), car->transform.GetGlobalPosition(), 0.05f));
+			camera->transform.SetPosition(glm::mix(camera->transform.GetGlobalPosition(), car->transform.GetGlobalPosition(), 0.04f));
 			//static_cast<CameraComponent*>(camera->components[0])->SetTarget(boulder->transform.GetGlobalPosition());
 			static_cast<CameraComponent*>(camera->components[0])->SetTarget(car->transform.GetGlobalPosition() + glm::vec3(0.0f, 1.0f, 0.0f));
 		}

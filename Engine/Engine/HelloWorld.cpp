@@ -20,13 +20,16 @@ int main() {
 	// Initialize input
 	InputManager &inputManager = InputManager::Instance();
 
-    // Initialize game (MUST come before Physics)
+    // Initialize physics (MUST come before Game)
+    Physics &physicsManager = Physics::Instance();
+    physicsManager.Initialize();
+
+    // Initialize game (MUST come before InitializeVehicles)
     Game &gameManager = Game::Instance();
     gameManager.Initialize();
-	
-	// Initialize physics
-	Physics &physicsManager = Physics::Instance();
-    physicsManager.Initialize();
+
+    // Initialize vehicles
+    physicsManager.InitializeVehicles();
 
 	// Add systems in desired order
 	systems.push_back(&inputManager);

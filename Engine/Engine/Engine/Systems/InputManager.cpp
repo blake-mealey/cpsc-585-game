@@ -58,7 +58,10 @@ void InputManager::HandleMouse() {
 
 void InputManager::HandleKeyboard() {
 	//Keyboard Inputs
-	if (Keyboard::KeyPressed(GLFW_KEY_W)) {
+	vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
+	VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
+	
+	if (Keyboard::KeyPressed(GLFW_KEY_ESCAPE)) {
 		cout << "W Key Pressed" << endl;
 		if (StateManager::GetState() == GameState_Playing) {
 			StateManager::SetState(GameState_Paused);
@@ -68,10 +71,70 @@ void InputManager::HandleKeyboard() {
 	}
 	if (Keyboard::KeyDown(GLFW_KEY_W)) {
 		cout << "W Key Held" << endl;
+		vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
+		vehicle->pxVehicleInputData.setAnalogAccel((float)2);
 	}
 	if (Keyboard::KeyReleased(GLFW_KEY_W)) {
 		cout << "W Key Released" << endl;
+		vehicle->pxVehicleInputData.setAnalogAccel(0.0f);
 	}
+	if (Keyboard::KeyDown(GLFW_KEY_S)) {
+		cout << "S Key Held" << endl;
+		vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
+		vehicle->pxVehicleInputData.setAnalogAccel((float)1);
+	}
+	if (Keyboard::KeyReleased(GLFW_KEY_S)) {
+		cout << "S Key Released" << endl;
+		vehicle->pxVehicleInputData.setAnalogAccel(0.0f);
+	}
+	if (Keyboard::KeyDown(GLFW_KEY_A)) {
+		cout << "A Key Held" << endl;
+		vehicle->pxVehicleInputData.setAnalogSteer(2.f);
+	}
+	if (Keyboard::KeyReleased(GLFW_KEY_A)) {
+		cout << "A Key Released" << endl;
+		vehicle->pxVehicleInputData.setAnalogSteer(0);
+	}
+	if (Keyboard::KeyDown(GLFW_KEY_D)) {
+		cout << "D Key Held" << endl;
+		vehicle->pxVehicleInputData.setAnalogSteer(-2.f);
+	}
+	if (Keyboard::KeyReleased(GLFW_KEY_D)) {
+		cout << "D Key Released" << endl;
+		vehicle->pxVehicleInputData.setAnalogSteer(0);
+	}
+
+	Entity *camera = EntityManager::FindEntities("Camera")[0];
+	CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
+	if (Keyboard::KeyDown(GLFW_KEY_RIGHT)) {
+		float x = dt.GetTimeSeconds() * 1.f;
+		cameraC->SetCameraHorizontalAngle(cameraC->GetCameraHorizontalAngle() + x);
+		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
+		cameraC->SetPosition(pos);
+	}
+	if (Keyboard::KeyDown(GLFW_KEY_LEFT)) {
+		float x = dt.GetTimeSeconds() * -1.f;
+		cameraC->SetCameraHorizontalAngle(cameraC->GetCameraHorizontalAngle() + x);
+		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
+		cameraC->SetPosition(pos);
+	}
+	if (Keyboard::KeyDown(GLFW_KEY_UP)) {
+		std::cout << cameraC->GetCameraVerticalAngle() << std::endl;
+		float x = dt.GetTimeSeconds() * 1.f;
+		cameraC->SetCameraVerticalAngle(std::max(cameraC->GetCameraVerticalAngle() - x, .1f));
+		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
+		cameraC->SetPosition(pos);
+	}
+	if (Keyboard::KeyDown(GLFW_KEY_DOWN)) {
+		std::cout << cameraC->GetCameraVerticalAngle() << std::endl;
+		float x = dt.GetTimeSeconds() * 1.f;
+		cameraC->SetCameraVerticalAngle(std::min(cameraC->GetCameraVerticalAngle() + x,(float)M_PI-0.1f));
+		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
+		cameraC->SetPosition(pos);
+	}
+
+
+
 }
 
 void InputManager::HandleController() {
@@ -89,9 +152,11 @@ void InputManager::HandleController() {
 
 			//Manage Trigger States
 			//Left Trigger
-			if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+			if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD 
+				&& (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed L-TRIGGER" << endl;
-			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD 
+				&& (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held L-TRIGGER" << endl;
 				leftVibrate = 30000 * (*controller)->GetState().Gamepad.bLeftTrigger / 255;
 
@@ -176,8 +241,6 @@ void InputManager::HandleController() {
 				CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRX / 30000.f;
 				cameraC->SetCameraHorizontalAngle(cameraC->GetCameraHorizontalAngle() + x);
-				glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
-				cameraC->SetPosition(pos);
 				
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRX >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRX <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRX < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {
@@ -194,9 +257,7 @@ void InputManager::HandleController() {
 				Entity *camera = EntityManager::FindEntities("Camera")[controllerNum];
 				CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
 				float x = dt.GetTimeSeconds() * 3.f * (*controller)->GetState().Gamepad.sThumbRY / 30000.f;
-				cameraC->SetCameraVerticalAngle(cameraC->GetCameraVerticalAngle() + x);
-				glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
-				cameraC->SetPosition(pos);
+				cameraC->SetCameraVerticalAngle(std::min(std::max(cameraC->GetCameraVerticalAngle() + x,0.1f),static_cast<float>(M_PI) -0.1f));
 
 
 			} else if (((*controller)->GetPreviousState().Gamepad.sThumbRY >= XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE || (*controller)->GetPreviousState().Gamepad.sThumbRY <= -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && (((*controller)->GetState().Gamepad.sThumbRY < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) && ((*controller)->GetState().Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))) {

@@ -109,6 +109,72 @@ bool Graphics::Initialize(char* windowTitle) {
 	return true;
 }
 
+//don't use in when debugging
+bool Graphics::InitializeFullScreen(char* windowTitle) {
+	if (!glfwInit()) {
+		std::cout << "Error Initializing GLFW" << std::endl;
+		return false;
+	}
+
+	//Create Window
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	window = glfwCreateWindow(mode->width, mode->height, windowTitle, monitor, NULL);
+	if (window == NULL) {
+		std::cout << "Error Creating Window terminate" << std::endl;
+		return false;
+	}
+
+	//GLFW Setup
+	glfwMakeContextCurrent(window);
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	glfwSwapInterval(1);	//Swap Buffer Every Frame (Double Buffering)
+
+							// Input callbacks
+	glfwSetCursorPosCallback(window, Mouse::MousePositionCallback);
+	glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
+	glfwSetKeyCallback(window, Keyboard::KeyboardCallback);
+	//glfwSetJoystickCallback(Controller::ControllerCallback);
+
+	// Window callbacks
+	glfwSetWindowSizeCallback(window, Graphics::WindowSizeCallback);
+
+	int xPos = (mode->width - SCREEN_WIDTH) / 2;
+	int yPos = (mode->height - SCREEN_HEIGHT) / 2;
+	glfwSetWindowPos(window, xPos, yPos);
+
+	//GL Setup
+	//Viewport
+	glfwGetWindowSize(window, &width, &height); //check resize
+	windowWidth = width;
+	windowHeight = height;
+
+	//Alpha Blending
+	/*glEnable(GL_ALPHA_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
+
+	// Z-Buffer
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	// Sets the sky color
+	glClearColor(SKY_COLOR.r, SKY_COLOR.g, SKY_COLOR.b, 1.0f);
+
+	glewExperimental = GL_TRUE;		// TODO: Determine whether this is necessary or not
+	glewInit();
+	GenerateIds();
+
+	skyboxCube = ContentManager::GetMesh("Cube.obj");
+
+	return true;
+}
+
 void Graphics::Update(Time currentTime, Time deltaTime) {
 	glfwPollEvents();			// Should this be here or in InputManager?
 

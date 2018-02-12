@@ -167,7 +167,7 @@ Component* ContentManager::LoadComponent(nlohmann::json data) {
         else if (type == "PointLight") component = new PointLightComponent(data);
         else if (type == "DirectionLight") component = new DirectionLightComponent(data);
         else if (type == "SpotLight") component = new SpotLightComponent(data);
-        else if (type == "Vehicle") component = new VehicleComponent();
+        else if (type == "Vehicle") component = new VehicleComponent(data);
         else {
             std::cout << "Unsupported component type: " << type << std::endl;
             supportedType = false;

@@ -29,13 +29,13 @@ MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : t
 	material = ContentManager::GetMaterial(materialPath);
 }
 
-MeshComponent::MeshComponent(const std::string meshPath, const std::string materialPath, const std::string texturePath) : transform(Transform()) {
+MeshComponent::MeshComponent(const std::string meshPath, const std::string materialPath, const std::string texturePath) : uvScale(glm::vec2(1.f)), transform(Transform()) {
 	mesh = ContentManager::GetMesh(meshPath);
     material = ContentManager::GetMaterial(materialPath);
     texture = ContentManager::GetTexture(texturePath);
 }
 
-MeshComponent::MeshComponent(std::string meshPath, Material *_material) : material(_material), texture(nullptr) {
+MeshComponent::MeshComponent(std::string meshPath, Material *_material) : material(_material), uvScale(glm::vec2(1.f)), texture(nullptr) {
 	mesh = ContentManager::GetMesh(meshPath);
 }
 
