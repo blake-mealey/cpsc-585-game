@@ -4,6 +4,8 @@
 
 class RigidbodyComponent : public Component {
 public:
+    RigidbodyComponent();
+
 	ComponentType GetType();
 	void HandleEvent(Event *event);
 private:

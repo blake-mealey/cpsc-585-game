@@ -10,12 +10,12 @@
 
 #include <iostream>
 #include "Physics/VehicleSceneQuery.h"
-#include "Physics/VehicleFilterShader.h"
 #include "Physics/VehicleTireFriction.h"
 #include "Physics/VehicleCreate.h"
 #include "Game.h"
 #include "../Components/VehicleComponent.h"
 #include "StateManager.h"
+#include "Physics/CollisionFilterShader.h"
 using namespace std;
 
 using namespace physx;
@@ -48,6 +48,10 @@ Physics::~Physics() {
     pxPvd->release();
     transport->release();
     pxFoundation->release();
+}
+
+PxPhysics* Physics::GetApi() const {
+    return pxPhysics;
 }
 
 const PxVehiclePadSmoothingData Physics::gPadSmoothingData =
@@ -112,7 +116,7 @@ void Physics::Initialize() {
     const PxU32 numWorkers = 1;
     pxDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
     sceneDesc.cpuDispatcher = pxDispatcher;
-    sceneDesc.filterShader = VehicleFilterShader;
+    sceneDesc.filterShader = CollisionGroups::FilterShader;
 
     pxScene = pxPhysics->createScene(sceneDesc);
     PxPvdSceneClient* pvdClient = pxScene->getScenePvdClient();
@@ -143,7 +147,7 @@ void Physics::InitializeVehicles() {
     pxFrictionPairs = createFrictionPairs(pxMaterial);
 
     //Create a plane to drive on.
-    const PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+    const PxFilterData groundPlaneSimFilterData = CollisionGroups::GetFilterData("Ground");
     pxGroundPlane = createDrivablePlane(groundPlaneSimFilterData, pxMaterial, pxPhysics);
     pxScene->addActor(*pxGroundPlane);
 

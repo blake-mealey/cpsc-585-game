@@ -18,6 +18,7 @@
 #include "../../Components/DirectionLightComponent.h"
 #include "../../Components/SpotLightComponent.h"
 #include "../../Components/VehicleComponent.h"
+#include "../Physics/CollisionFilterShader.h"
 
 std::map<std::string, Mesh*> ContentManager::meshes;
 std::map<std::string, Texture*> ContentManager::textures;
@@ -37,6 +38,8 @@ const std::string ContentManager::SKYBOX_FACE_NAMES[6] = {"right", "left", "top"
 const std::string ContentManager::PREFAB_DIR_PATH = CONTENT_DIR_PATH + "Prefabs/";
 const std::string ContentManager::ENTITY_PREFAB_DIR_PATH = PREFAB_DIR_PATH + "Entities/";
 const std::string ContentManager::COMPONENT_PREFAB_DIR_PATH = PREFAB_DIR_PATH + "Components/";
+
+const std::string ContentManager::COLLISION_GROUPS_DIR_PATH = CONTENT_DIR_PATH + "CollisionGroups/";
 
 const std::string ContentManager::SHADERS_DIR_PATH = "./Engine/Shaders/";
 
@@ -253,6 +256,14 @@ glm::vec2 ContentManager::JsonToVec2(nlohmann::json data, glm::vec2 defaultValue
 
 glm::vec2 ContentManager::JsonToVec2(nlohmann::json data) {
     return JsonToVec2(data, glm::vec2());
+}
+
+void ContentManager::LoadCollisionGroups(std::string filePath) {
+    nlohmann::json data = LoadJson(COLLISION_GROUPS_DIR_PATH + filePath);
+
+    for (auto group : data) {
+        CollisionGroups::AddCollisionGroup(group["Name"], group["CollidesWith"]);
+    }
 }
 
 void ContentManager::LoadSkybox(std::string directoryPath) {

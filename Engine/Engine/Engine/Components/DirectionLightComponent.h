@@ -16,6 +16,8 @@ public:
 	bool IsShadowCaster() const;
 	void SetShadowCaster(bool _castsShadows);
 
+    void SetDirection(glm::vec3 _direction);
+
 	ComponentType GetType() override;
 	void HandleEvent(Event* event) override;
 private:

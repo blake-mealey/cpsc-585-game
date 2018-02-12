@@ -30,7 +30,6 @@
 #include <new>
 #include "VehicleCreate.h"
 #include "VehicleSceneQuery.h"
-#include "VehicleFilterShader.h"
 #include "VehicleTireFriction.h"
 #include "PxPhysicsAPI.h"
 

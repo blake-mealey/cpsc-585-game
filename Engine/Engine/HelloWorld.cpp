@@ -5,6 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <vector>
 #include "Engine/Systems/Game.h"
+#include "Engine/Systems/Content/ContentManager.h"
+#include "Engine/Systems/Physics/CollisionFilterShader.h"
 #pragma comment(lib, "opengl32.lib")
 
 using namespace std;
@@ -23,6 +25,10 @@ int main() {
     // Initialize physics (MUST come before Game)
     Physics &physicsManager = Physics::Instance();
     physicsManager.Initialize();
+
+    // Load and initialize collision groups (MUST come before Game)
+    ContentManager::LoadCollisionGroups("Vehicles.json");
+    CollisionGroups::InitializeMasks();     // MUST come after all collision groups have been loaded
 
     // Initialize game (MUST come before InitializeVehicles)
     Game &gameManager = Game::Instance();

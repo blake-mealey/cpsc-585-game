@@ -26,6 +26,8 @@ public:
 	static const std::string ENTITY_PREFAB_DIR_PATH;
 	static const std::string COMPONENT_PREFAB_DIR_PATH;
 
+	static const std::string COLLISION_GROUPS_DIR_PATH;
+
 	static const std::string SHADERS_DIR_PATH;
 
 	static Mesh* GetMesh(std::string filePath);
@@ -43,6 +45,8 @@ public:
 	static glm::vec3 JsonToVec3(nlohmann::json data);
 	static glm::vec2 JsonToVec2(nlohmann::json data, glm::vec2 defaultValue);
 	static glm::vec2 JsonToVec2(nlohmann::json data);
+
+    static void LoadCollisionGroups(std::string filePath);
 
     static void LoadSkybox(std::string directoryPath);
     static GLuint GetSkybox();

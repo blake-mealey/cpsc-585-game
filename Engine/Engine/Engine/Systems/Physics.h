@@ -14,6 +14,8 @@ public:
 	static Physics& Instance();
     ~Physics();
 
+    PxPhysics* GetApi() const;
+
     void Initialize();
     void InitializeVehicles();
 
