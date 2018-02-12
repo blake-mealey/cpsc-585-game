@@ -162,7 +162,6 @@
     <None Include="Content\Prefabs\Entities\Taxi.json" />
     <None Include="Content\Prefabs\Entities\Sewage.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />
-    <None Include="Content\Prefabs\Entities\Vehicle.json" />
     <None Include="Content\Scenes\GraphicsDemo.json" />
     <None Include="Content\Scenes\PhysicsDemo.json" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />

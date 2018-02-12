@@ -37,10 +37,11 @@ public:
     float GetWheelMomentOfIntertia() const;
     size_t GetWheelCount() const;
 
+	float GetFrontAxisOffset() const;
+	float GetRearAxisOffset() const;
+
 private:
-    std::string wheelMeshPath;
-    std::string wheelTexturePath;
-    std::string wheelMaterialPath;
+	MeshComponent* wheelMeshPrefab;
     std::vector<MeshComponent*> wheelMeshes;
 
     float chassisMass;
@@ -50,6 +51,9 @@ private:
     float wheelRadius;
     float wheelWidth;
 	size_t wheelCount;
+
+	float frontAxisOffset;
+	float rearAxisOffset;
 
 	void Initialize();
 };

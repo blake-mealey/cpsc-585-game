@@ -24,6 +24,13 @@ MeshComponent::MeshComponent(nlohmann::json data) {
 	transform = Transform(nullptr, pos, scale, rotRad, false);
 }
 
+MeshComponent::MeshComponent(MeshComponent* component) {
+	mesh = component->GetMesh();
+	material = component->GetMaterial();
+	texture = component->GetTexture();
+	uvScale = component->GetUvScale();
+}
+
 MeshComponent::MeshComponent(std::string meshPath, std::string materialPath) : texture(nullptr) {
 	mesh = ContentManager::GetMesh(meshPath);
 	material = ContentManager::GetMaterial(materialPath);
