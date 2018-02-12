@@ -11,7 +11,6 @@
 #include "Physics\VehicleWheelQueryResult.h"
 #include "Physics\SnippetUtils.h"
 #include "Physics\VehicleConcurrency.h"
-#include "Physics\VehicleFilterShader.h"
 #include "Physics\VehicleSceneQuery.h"
 #include "Physics\VehicleTireFriction.h"
 
@@ -20,6 +19,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "StateManager.h"
+#include "../Components/DirectionLightComponent.h"
 using namespace std;
 
 const unsigned int Game::MAX_VEHICLE_COUNT = 8;
@@ -101,6 +101,9 @@ void Game::Update(Time currentTime, Time deltaTime) {
 		//camera->transform.SetPosition(10.f * glm::vec3(
 			//sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
 			//cos(gameTime.GetTimeMilliSeconds() / 1000)));
+
+        //glm::vec3 sunPosition = glm::vec3(cos(glm::radians(45.f) + gameTime.GetTimeSeconds() / 10), sin(glm::radians(45.f) + gameTime.GetTimeSeconds() / 10), 0);
+        //static_cast<DirectionLightComponent*>(EntityManager::FindEntities("Sun")[0]->components[0])->SetDirection(-sunPosition);
 		
 		for (int i = 0; i < cars.size(); i++) {
 			Entity* camera = cameras[i];

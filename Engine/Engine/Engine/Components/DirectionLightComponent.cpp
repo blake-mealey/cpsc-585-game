@@ -30,6 +30,10 @@ void DirectionLightComponent::SetShadowCaster(bool _castsShadows) {
 	castsShadows = _castsShadows;
 }
 
+void DirectionLightComponent::SetDirection(glm::vec3 _direction) {
+    direction = glm::normalize(_direction);
+}
+
 ComponentType DirectionLightComponent::GetType() {
 	return ComponentType_DirectionLight;
 }

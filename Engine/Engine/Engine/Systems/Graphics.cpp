@@ -318,15 +318,29 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     glUseProgram(skyboxProgram->GetId());
 
     // Load the skybox texture to the GPU
-    glActiveTexture(GL_TEXTURE2);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ContentManager::GetSkybox());
-	glUniform1i(skyboxProgram->GetUniformLocation(UniformName::Skybox), 2);
+	glUniform1i(skyboxProgram->GetUniformLocation(UniformName::Skybox), 0);
 
 	// Load the color adjustment to the GPU
-	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 3.f,2.f,2.f);
+	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 2.f,1.5f,1.5f);
 
     // Load the skybox geometry into the GPU
     LoadVertices(skyboxCube->vertices, skyboxCube->vertexCount);
+
+    if (shadowCaster != nullptr) {
+        Texture *sun = ContentManager::GetTexture("SunStrip.png");
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, sun->textureId);
+        glUniform1i(skyboxProgram->GetUniformLocation("sun"), 1);
+
+        glUniform1f(skyboxProgram->GetUniformLocation("sunSizeRadians"), glm::radians(10.f));
+
+        const glm::vec3 dir = shadowCaster->GetDirection();
+        glUniform3f(skyboxProgram->GetUniformLocation("sunDirection"), dir.x, dir.y, dir.z);
+    }
+
+    glUniform1f(skyboxProgram->GetUniformLocation("time"), currentTime.GetTimeSeconds());
 
     for (Camera camera : cameras) {
         // Setup the viewport for each camera (split-screen)

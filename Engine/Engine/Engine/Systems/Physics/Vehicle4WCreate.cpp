@@ -31,7 +31,7 @@
 #include "VehicleTireFriction.h"
 #include "VehicleSceneQuery.h"
 #include "../../Components/VehicleComponent.h"
-#include "VehicleFilterShader.h"
+#include "CollisionFilterShader.h"
 
 
 using namespace physx;
@@ -202,8 +202,8 @@ PxVehicleDrive4W* createVehicle4W(const VehicleComponent& vehicle, PxMaterial *m
 	const PxF32 wheelRadius = vehicle.GetWheelRadius();
 	const PxU32 numWheels = vehicle.GetWheelCount();
 
-	const PxFilterData& chassisSimFilterData = PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
-	const PxFilterData& wheelSimFilterData = PxFilterData(COLLISION_FLAG_WHEEL, COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
+    const PxFilterData& chassisSimFilterData = CollisionGroups::GetFilterData("Chassis");
+    const PxFilterData& wheelSimFilterData = CollisionGroups::GetFilterData("Wheels");
 
 	//Construct a physx actor with shapes for the chassis and wheels.
 	//Set the rigid body mass, moment of inertia, and center of mass offset.

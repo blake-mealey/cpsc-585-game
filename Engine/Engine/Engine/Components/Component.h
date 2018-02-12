@@ -9,7 +9,6 @@ enum ComponentType {
 	ComponentType_PointLight,
 	ComponentType_DirectionLight,
 	ComponentType_SpotLight,
-	ComponentType_Collider,
 	ComponentType_Rigidbody,
     ComponentType_Vehicle
 };

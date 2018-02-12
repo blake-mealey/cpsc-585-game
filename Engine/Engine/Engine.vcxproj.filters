@@ -17,10 +17,10 @@
     <None Include="Content\Prefabs\Entities\IceCream.json" />
     <None Include="Content\Prefabs\Entities\Sewage.json" />
     <None Include="Content\Prefabs\Entities\Taxi.json" />
+    <None Include="Content\CollisionGroups\Vehicles.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />
-    <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Components\Component.cpp" />
     <ClCompile Include="Engine\Components\DirectionLightComponent.cpp" />
     <ClCompile Include="Engine\Components\MeshComponent.cpp" />
@@ -46,14 +46,14 @@
     <ClCompile Include="HelloWorld.cpp" />
     <ClCompile Include="Engine\Systems\Physics\Vehicle4WCreate.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleCreate.cpp" />
-    <ClCompile Include="Engine\Systems\Physics\VehicleFilterShader.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleTireFriction.cpp" />
     <ClCompile Include="Engine\Components\VehicleComponent.cpp" />
+    <ClCompile Include="Engine\Systems\Physics\CollisionFilterShader.cpp" />
+    <ClCompile Include="Engine\Components\Collider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
-    <ClInclude Include="Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Components\Component.h" />
     <ClInclude Include="Engine\Components\DirectionLightComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
@@ -85,10 +85,11 @@
     <ClInclude Include="Engine\Systems\Time.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleConcurrency.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleCreate.h" />
-    <ClInclude Include="Engine\Systems\Physics\VehicleFilterShader.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleSceneQuery.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleTireFriction.h" />
     <ClInclude Include="Engine\Systems\Physics\VehicleWheelQueryResult.h" />
     <ClInclude Include="Engine\Components\VehicleComponent.h" />
+    <ClInclude Include="Engine\Systems\Physics\CollisionFilterShader.h" />
+    <ClInclude Include="Engine\Components\Collider.h" />
   </ItemGroup>
 </Project>
