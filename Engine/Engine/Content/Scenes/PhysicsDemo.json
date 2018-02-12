@@ -14,18 +14,8 @@
     ]
   },
   	{
-		"Prefab":  "FireTruck.json",
+		"Prefab":  "Flatbed.json",
 		"Position": [-20, 10, 0],
-		"Tag": "Vehicle"
-	},
-	{
-		"Prefab":  "IceCream.json",
-		"Position": [-5, 10, 0],
-		"Tag": "Vehicle"
-	},
-	{
-		"Prefab":  "Sewage.json",
-		"Position": [0, 10, 0],
 		"Tag": "Vehicle"
 	},
 
