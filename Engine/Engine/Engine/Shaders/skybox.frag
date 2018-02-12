@@ -48,4 +48,6 @@ void main() {
 		vec4 sunColor = texture(sun, sunPos);
 		fragmentColor = (sunColor*(2 - pow(sunPos.x,1.5)) * sunColor.w) + (fragmentColor * (1 - sunColor.w));
 	}
+
+	//fragmentColor = vec4(fragmentColor.rgb * 0.09, fragmentColor.a);
 }

@@ -21,6 +21,8 @@ const std::string Graphics::SHADOW_MAP_VERTEX_SHADER = "shadowMap.vert";
 const std::string Graphics::SHADOW_MAP_FRAGMENT_SHADER = "shadowMap.frag";
 const std::string Graphics::SKYBOX_VERTEX_SHADER = "skybox.vert";
 const std::string Graphics::SKYBOX_FRAGMENT_SHADER = "skybox.frag";
+const std::string Graphics::SCREEN_VERTEX_SHADER = "screen.vert";
+const std::string Graphics::SCREEN_FRAGMENT_SHADER = "screen.frag";
 
 // Initial Screen Dimensions
 const size_t Graphics::SCREEN_WIDTH = 1024;
@@ -252,6 +254,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
 	// Render to the default framebuffer and bind the geometry VAO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
     glBindVertexArray(vaoIds[VAOs::Geometry]);
 
     // Clear the buffer and enable back-face culling
@@ -310,6 +313,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // -------------------------------------------------------------------------------------------------------------- //
 
     // Render to the default framebuffer and bind the skybox VAO
+//    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindVertexArray(vaoIds[VAOs::Skybox]);
 
@@ -354,6 +358,41 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
         glDrawArrays(GL_TRIANGLES, 0, skyboxCube->vertexCount);
     }
 
+    // -------------------------------------------------------------------------------------------------------------- //
+    // POST-PROCESSING (GLOW)
+    // -------------------------------------------------------------------------------------------------------------- //
+
+
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    // RENDER TO SCREEN
+    // -------------------------------------------------------------------------------------------------------------- //
+
+    const glm::vec2 verts[4] = {
+        glm::vec2(-1, -1),
+        glm::vec2(1, -1),
+        glm::vec2(-1, 1),
+        glm::vec2(1, 1)
+    };
+
+    // Render to the default framebuffer and bind the screen VAO
+    /*glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindVertexArray(vaoIds[VAOs::Screen]);
+
+    // Clear the colour and depth buffers
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Use the skybox shader program
+    ShaderProgram *screenProgram = shaders[Shaders::Screen];
+    glUseProgram(screenProgram->GetId());
+
+    // Load the screen texture to the framebuffer
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
+    glUniform1i(screenProgram->GetUniformLocation("screen"), 0);
+
+    LoadUvs(verts, 4);
+    //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);*/
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
@@ -422,6 +461,19 @@ GLFWwindow* Graphics::GetWindow() const {
 void Graphics::SetWindowDimensions(size_t width, size_t height) {
 	windowWidth = width;
 	windowHeight = height;
+
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth, windowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::GlowMap]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth, windowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rboIds[RBOs::Depth]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
 	UpdateViewports(EntityManager::GetComponents(ComponentType_Camera));
 }
 
@@ -516,11 +568,15 @@ void Graphics::LoadNormals(const glm::vec3* normals, const size_t vertexCount) {
 }
 
 void Graphics::DestroyIds() {
-	for (int i = 0; i < Shaders::Count; i++) {
-		glDeleteProgram(shaders[i]->GetId());
-	}
 	glDeleteVertexArrays(VAOs::Count, vaoIds);
 	glDeleteBuffers(VBOs::Count, vboIds);
+    glDeleteBuffers(SSBOs::Count, ssboIds);
+    glDeleteFramebuffers(FBOs::Count, fboIds);
+    glDeleteRenderbuffers(RBOs::Count, rboIds);
+    glDeleteTextures(Textures::Count, textureIds);
+    for (int i = 0; i < Shaders::Count; i++) {
+        glDeleteProgram(shaders[i]->GetId());
+    }
 }
 
 void Graphics::GenerateIds() {
@@ -531,14 +587,20 @@ void Graphics::GenerateIds() {
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, ssboIds[i]);
 	}
 	glGenFramebuffers(FBOs::Count, fboIds);
-	glGenTextures(Textures::Count, textureIds);
-	shaders[Shaders::Geometry] = LoadShaderProgram(GEOMETRY_VERTEX_SHADER, GEOMETRY_FRAGMENT_SHADER);
+	glGenRenderbuffers(RBOs::Count, rboIds);
+    glGenTextures(Textures::Count, textureIds);
+	
+    shaders[Shaders::Geometry] = LoadShaderProgram(GEOMETRY_VERTEX_SHADER, GEOMETRY_FRAGMENT_SHADER);
 	shaders[Shaders::ShadowMap] = LoadShaderProgram(SHADOW_MAP_VERTEX_SHADER, SHADOW_MAP_FRAGMENT_SHADER);
 	shaders[Shaders::Skybox] = LoadShaderProgram(SKYBOX_VERTEX_SHADER, SKYBOX_FRAGMENT_SHADER);
+	shaders[Shaders::Screen] = LoadShaderProgram(SCREEN_VERTEX_SHADER, SCREEN_FRAGMENT_SHADER);
 
 	InitializeGeometryVao();
 	InitializeShadowMapVao();
 	InitializeSkyboxVao();
+    InitializeScreenVao();
+
+    InitializeGeometryFramebuffer();
 	InitializeShadowMapFramebuffer();
 }
 
@@ -586,6 +648,57 @@ void Graphics::InitializeSkyboxVao() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
+
+void Graphics::InitializeScreenVao() {
+    glBindVertexArray(vaoIds[VAOs::Screen]);
+
+    glBindVertexArray(vaoIds[VAOs::Geometry]);
+
+    // Vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[VBOs::UVs]);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Graphics::InitializeGeometryFramebuffer() {
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
+
+    GLenum fboBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, fboBuffers);
+
+    // Normal colour buffer
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureIds[Textures::Geometry], 0);
+    
+    // Highlights colour buffer
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::GlowMap]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, textureIds[Textures::GlowMap], 0);
+
+    // Depth buffer
+    glBindRenderbuffer(GL_RENDERBUFFER, rboIds[RBOs::Depth]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboIds[RBOs::Depth]);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR: Shadow map framebuffer incomplete!" << std::endl;
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Graphics::InitializeShadowMapFramebuffer() {

@@ -103,4 +103,7 @@ void main() {
 			fragmentColor += visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
 		}
 	}
+
+	//fragmentColor = fragmentColor * 0.09;
+
 }
