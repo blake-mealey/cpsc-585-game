@@ -57,7 +57,7 @@ struct Textures {
 };
 
 struct Shaders {
-	enum { Geometry=0, ShadowMap, Skybox, Screen, Blur, Copy, Compositor, Count };
+	enum { Geometry=0, ShadowMap, Skybox, Screen, Blur, Copy, Count };
 };
 
 class Graphics : public System {
@@ -78,8 +78,6 @@ public:
     static const std::string BLUR_FRAGMENT_SHADER;
     static const std::string COPY_VERTEX_SHADER;
     static const std::string COPY_FRAGMENT_SHADER;
-    static const std::string COMPOSITOR_VERTEX_SHADER;
-    static const std::string COMPOSITOR_FRAGMENT_SHADER;
 
 	static const size_t MAX_CAMERAS;
 
