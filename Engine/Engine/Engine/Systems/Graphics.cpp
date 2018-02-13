@@ -253,9 +253,9 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	// -------------------------------------------------------------------------------------------------------------- //
 
 	// Render to the default framebuffer and bind the geometry VAO
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
-//    glBindVertexArray(vaoIds[VAOs::Geometry]);
+    glBindVertexArray(vaoIds[VAOs::Geometry]);
 
     // Clear the buffer and enable back-face culling
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -313,8 +313,8 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // -------------------------------------------------------------------------------------------------------------- //
 
     // Render to the default framebuffer and bind the skybox VAO
-    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
 //    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
     glBindVertexArray(vaoIds[VAOs::Skybox]);
 
     // Use the skybox shader program
