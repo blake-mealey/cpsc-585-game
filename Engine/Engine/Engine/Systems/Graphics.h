@@ -19,7 +19,7 @@
 #include "../Components/DirectionLightComponent.h"
 #include "Content/SpotLight.h"
 
-#define SCREEN_LEVEL_COUNT 4
+#define SCREEN_LEVEL_COUNT 6
 
 class MeshComponent;
 
