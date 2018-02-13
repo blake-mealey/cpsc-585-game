@@ -119,6 +119,7 @@ private:
 	size_t windowHeight;
 	
     Mesh *skyboxCube;
+    Texture *sunTexture;
 
 	GLuint vboIds[VBOs::Count];		// Screen and UV coordinates
 	GLuint vaoIds[VAOs::Count];
@@ -133,9 +134,6 @@ private:
 
 	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights, std::vector<Component*> _spotLights);
 	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights);
-
-    void LoadTexture(GLuint uniformLocation, GLuint textureId);
-    void LoadTexture(ShaderProgram *program, Texture *texture, std::string uniformName);
 
 	void LoadMesh(Mesh *mesh);
 	void LoadVertices(const glm::vec3 *vertices, const size_t vertexCount);

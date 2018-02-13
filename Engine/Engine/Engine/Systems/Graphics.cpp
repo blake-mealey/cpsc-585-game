@@ -111,6 +111,7 @@ bool Graphics::Initialize(char* windowTitle) {
 	GenerateIds();
 
     skyboxCube = ContentManager::GetMesh("Cube.obj");
+    sunTexture = ContentManager::GetTexture("SunStrip.png");
 
 	return true;
 }
@@ -244,7 +245,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 			// Load the depth model view projection matrix into the GPU
 			const glm::mat4 depthModelMatrix = model->transform.GetTransformationMatrix();
 			const glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-			glUniformMatrix4fv(shadowProgram->GetUniformLocation(UniformName::DepthModelViewProjectionMatrix), 1, GL_FALSE, &depthModelViewProjectionMatrix[0][0]);
+            shadowProgram->LoadUniform(UniformName::DepthModelViewProjectionMatrix, depthModelViewProjectionMatrix);
 
 			// Render the model
 			glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
@@ -272,11 +273,11 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	if (shadowCaster != nullptr) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ShadowMap]);
-		glUniform1i(geometryProgram->GetUniformLocation(UniformName::ShadowMap), 1);
+        geometryProgram->LoadUniform(UniformName::ShadowMap, 1);
 	}
 
 	// Load our lights into the GPU
-	glUniform3f(geometryProgram->GetUniformLocation(UniformName::AmbientColor), AMBIENT_COLOR.r, AMBIENT_COLOR.g, AMBIENT_COLOR.b);
+    geometryProgram->LoadUniform(UniformName::AmbientColor, AMBIENT_COLOR);
 	LoadLights(pointLights, directionLights, spotLights);
 
 	// Draw the scene
@@ -292,8 +293,8 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 			// Load the depth bias model view projection matrix into the GPU
 			const glm::mat4 depthModelMatrix = model->transform.GetTransformationMatrix();
 			const glm::mat4 depthModelViewProjectionMatrix = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-			glm::mat4 depthBiasMVP = BIAS_MATRIX*depthModelViewProjectionMatrix;
-			glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::DepthBiasModelViewProjectionMatrix), 1, GL_FALSE, &depthBiasMVP[0][0]);
+		    const glm::mat4 depthBiasMVP = BIAS_MATRIX*depthModelViewProjectionMatrix;
+            geometryProgram->LoadUniform(UniformName::DepthBiasModelViewProjectionMatrix, depthBiasMVP);
 		}
 
 		for (Camera camera : cameras) {
@@ -301,9 +302,9 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 			glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
 
 			// Load the model view projection matrix into the GPU
-			glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * model->transform.GetTransformationMatrix();
-			glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::ViewMatrix), 1, GL_FALSE, &camera.viewMatrix[0][0]);
-			glUniformMatrix4fv(geometryProgram->GetUniformLocation(UniformName::ModelViewProjectionMatrix), 1, GL_FALSE, &modelViewProjectionMatrix[0][0]);
+			const glm::mat4 modelViewProjectionMatrix = camera.projectionMatrix * camera.viewMatrix * model->transform.GetTransformationMatrix();
+            geometryProgram->LoadUniform(UniformName::ViewMatrix, camera.viewMatrix);
+            geometryProgram->LoadUniform(UniformName::ModelViewProjectionMatrix, modelViewProjectionMatrix);
 
 			// Render the model
 			glDrawArrays(GL_TRIANGLES, 0, model->GetMesh()->vertexCount);
@@ -326,35 +327,32 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // Load the skybox texture to the GPU
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ContentManager::GetSkybox());
-	glUniform1i(skyboxProgram->GetUniformLocation(UniformName::Skybox), 0);
+    skyboxProgram->LoadUniform(UniformName::SkyboxTexture, 0);
 
 	// Load the color adjustment to the GPU
-	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 1.5f,1.2f,1.2f);
+    skyboxProgram->LoadUniform(UniformName::SkyboxColor, glm::vec3(1.5f, 1.2f, 1.2f));
 
     // Load the skybox geometry into the GPU
     LoadVertices(skyboxCube->vertices, skyboxCube->vertexCount);
 
+    // Load the sun data into the GPU
     if (shadowCaster != nullptr) {
-        Texture *sun = ContentManager::GetTexture("SunStrip.png");
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, sun->textureId);
-        glUniform1i(skyboxProgram->GetUniformLocation("sun"), 1);
-
-        glUniform1f(skyboxProgram->GetUniformLocation("sunSizeRadians"), glm::radians(10.f));
-
-        const glm::vec3 dir = shadowCaster->GetDirection();
-        glUniform3f(skyboxProgram->GetUniformLocation("sunDirection"), dir.x, dir.y, dir.z);
+        glBindTexture(GL_TEXTURE_2D, sunTexture->textureId);
+        skyboxProgram->LoadUniform(UniformName::SunTexture, 1);
+        skyboxProgram->LoadUniform(UniformName::SunSizeRadians, glm::radians(10.f));
+        skyboxProgram->LoadUniform(UniformName::SunDirection, shadowCaster->GetDirection());
     }
 
-    glUniform1f(skyboxProgram->GetUniformLocation("time"), currentTime.GetTimeSeconds());
+    skyboxProgram->LoadUniform(UniformName::Time, currentTime.GetTimeSeconds());
 
     for (Camera camera : cameras) {
         // Setup the viewport for each camera (split-screen)
         glViewport(camera.viewportPosition.x, camera.viewportPosition.y, camera.viewportSize.x, camera.viewportSize.y);
 
         // Load the view projection matrix into the GPU
-        glm::mat4 viewProjectionMatrix = camera.projectionMatrix * glm::mat4(glm::mat3(camera.viewMatrix));
-        glUniformMatrix4fv(skyboxProgram->GetUniformLocation(UniformName::ViewProjectionMatrix), 1, GL_FALSE, &viewProjectionMatrix[0][0]);
+        const glm::mat4 viewProjectionMatrix = camera.projectionMatrix * glm::mat4(glm::mat3(camera.viewMatrix));
+        skyboxProgram->LoadUniform(UniformName::ViewProjectionMatrix, viewProjectionMatrix);
 
         // Render the skybox
         glDrawArrays(GL_TRIANGLES, 0, skyboxCube->vertexCount);
@@ -384,7 +382,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // Load the glow buffer into the GPU
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ScreenGlow]);
-    glUniform1i(copyProgram->GetUniformLocation("screen"), 0);
+    copyProgram->LoadUniform(UniformName::ScreenTexture, 0);
 
     // Copy the glow buffer to each of the level buffers
     for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
@@ -401,7 +399,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     
     // Use the first texture location
     glActiveTexture(GL_TEXTURE0);
-    glUniform1i(blurProgram->GetUniformLocation("image"), 0);
+    blurProgram->LoadUniform(UniformName::ImageTexture, 0);
 
     // Blur each of the level buffers
     for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
@@ -419,13 +417,13 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
         
         // Blur on the x-axis
         glBindTexture(GL_TEXTURE_2D, buffer);
-        glUniform2f(blurProgram->GetUniformLocation("offset"), xOffset, 0.f);
+        blurProgram->LoadUniform(UniformName::BlurOffset, glm::vec2(xOffset, 0.f));
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurBuffer, 0);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         // Blur on the y-axis
         glBindTexture(GL_TEXTURE_2D, blurBuffer);
-        glUniform2f(blurProgram->GetUniformLocation("offset"), 0.f, yOffset);
+        blurProgram->LoadUniform(UniformName::BlurOffset, glm::vec2(0.f, yOffset));
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffer, 0);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
@@ -448,7 +446,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // Send the screen to the GPU
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
-    glUniform1i(screenProgram->GetUniformLocation("screen"), 0);
+    screenProgram->LoadUniform(UniformName::ScreenTexture, 0);
 
     // Render it
     glViewport(0, 0, windowWidth, windowHeight);
@@ -478,28 +476,32 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	if (!model->enabled) return;
 
 	// Load the model matrix into the GPU
-	glm::mat4 modelMatrix = model->transform.GetTransformationMatrix();
-	glUniformMatrix4fv(shaderProgram->GetUniformLocation(UniformName::ModelMatrix), 1, GL_FALSE, &modelMatrix[0][0]);
+	const glm::mat4 modelMatrix = model->transform.GetTransformationMatrix();
+    shaderProgram->LoadUniform(UniformName::ModelMatrix, modelMatrix);
 
 	// Get the mesh's material
 	Material *mat = model->GetMaterial();
 
 	// Load the material data into the GPU
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
-	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularColor), mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
-	glUniform1f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularity), mat->specularity);
-    glUniform1f(shaderProgram->GetUniformLocation("materialEmissiveness"), mat->emissiveness);
+    shaderProgram->LoadUniform(UniformName::MaterialDiffuseColor, mat->diffuseColor);
+    shaderProgram->LoadUniform(UniformName::MaterialSpecularColor, mat->specularColor);
+    shaderProgram->LoadUniform(UniformName::MaterialSpecularity, mat->specularity);
+    shaderProgram->LoadUniform(UniformName::MaterialEmissiveness, mat->emissiveness);
 
 	// Load the mesh into the GPU
 	LoadMesh(model->GetMesh());
 
 	// Load the texture into the GPU
 	if (model->GetTexture() != nullptr) {
-		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 1);
-		LoadTexture(shaderProgram, model->GetTexture(), UniformName::DiffuseTexture);
-		glUniform2f(shaderProgram->GetUniformLocation(UniformName::UvScale), model->GetUvScale().x, model->GetUvScale().y);
+        shaderProgram->LoadUniform(UniformName::DiffuseTextureEnabled, true);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, model->GetTexture()->textureId);
+        shaderProgram->LoadUniform(UniformName::DiffuseTexture, 0);
+
+        shaderProgram->LoadUniform(UniformName::UvScale, model->GetUvScale());
 	} else {
-		glUniform1ui(shaderProgram->GetUniformLocation(UniformName::DiffuseTextureEnabled), 0);
+        shaderProgram->LoadUniform(UniformName::DiffuseTextureEnabled, false);
 	}
 }
 
@@ -618,16 +620,6 @@ void Graphics::LoadLights(std::vector<PointLight> pointLights, std::vector<Direc
 	glBufferData(GL_SHADER_STORAGE_BUFFER, spotLights.size() * sizeof(SpotLight), spotLights.data(), GL_DYNAMIC_COPY);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-}
-
-void Graphics::LoadTexture(GLuint uniformLocation, GLuint textureId) {
-    glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glUniform1i(uniformLocation, 0);
-}
-
-void Graphics::LoadTexture(ShaderProgram *program, Texture *texture, std::string uniformName) {
-    LoadTexture(program->GetUniformLocation(uniformName.c_str()), texture->textureId);
 }
 
 void Graphics::LoadMesh(Mesh* mesh) {
