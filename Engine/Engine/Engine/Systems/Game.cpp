@@ -102,8 +102,9 @@ void Game::Update(Time currentTime, Time deltaTime) {
 			//sin(gameTime.GetTimeMilliSeconds() / 1000), 0.5,
 			//cos(gameTime.GetTimeMilliSeconds() / 1000)));
 
-        //glm::vec3 sunPosition = glm::vec3(cos(glm::radians(45.f) + gameTime.GetTimeSeconds() / 10), sin(glm::radians(45.f) + gameTime.GetTimeSeconds() / 10), 0);
-        //static_cast<DirectionLightComponent*>(EntityManager::FindEntities("Sun")[0]->components[0])->SetDirection(-sunPosition);
+		float t = glm::radians(45.5) + gameTime.GetTimeSeconds() / 10;
+        glm::vec3 sunPosition = glm::vec3(cos(t), 0.5f, sin(t));
+        static_cast<DirectionLightComponent*>(EntityManager::FindEntities("Sun")[0]->components[0])->SetDirection(-sunPosition);
 		
 		for (int i = 0; i < cars.size(); i++) {
 			Entity* camera = cameras[i];

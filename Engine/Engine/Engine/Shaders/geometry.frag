@@ -44,6 +44,7 @@ in vec2 fragmentUv;
 in vec4 shadowCoord;
 
 out vec3 fragmentColor;
+out vec3 glowColor;
 
 vec3 getColorFromLight(vec3 diffuseColor, vec3 lightDirection_camera, vec3 lightColor) {
 	vec3 n = normalize(surfaceNormal_camera);
@@ -103,4 +104,7 @@ void main() {
 			fragmentColor += visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
 		}
 	}
+
+	glowColor = fragmentColor * 0.5;
+
 }

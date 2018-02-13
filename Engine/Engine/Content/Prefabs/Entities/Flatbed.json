@@ -1,24 +1,31 @@
 {
-	"Components": [
-		{
-			"Type": "Mesh",
-			"Mesh": "flatbed_chassis.obj",
-			"Texture": "Flatbed.png",
-			"Material": "Basic.json",
-			"Rotate": [0, 180, 0],
-			"Position": [0, -2, 0]
-		},
-		{
-			"Type": "Vehicle",
-            "WheelMesh": "flatbed_wheel.obj",
-            "WheelTexture": "DiamondPlate.jpg",
-            "WheelMaterial": "Basic.json",
-            "ChassisMass": 1500,
-            "ChassisSize": [3, 1.75, 9.25],
-            "WheelMass": 20,
-            "WheelRadius": 0.6,
-            "WheelWidth": 0.6,
-            "WheelCount": 4
-		}
-	]
+  "Tag": "Vehicle",
+  "Components": [
+    {
+      "Type": "Mesh",
+      "Mesh": "flatbed_chassis.obj",
+      "Texture": "Flatbed.png",
+      "Material": "Basic.json",
+      "Rotate": [ 0, 180, 0 ],
+      "Position": [ 0, -2, 0 ]
+    },
+    {
+      "Type": "Vehicle",
+      "WheelMesh": {
+        "Type": "Mesh",
+        "Mesh": "flatbed_wheel.obj",
+        "Texture": "DiamondPlate.jpg",
+        "Material": "Basic.json",
+        "UvScale": [ 0.5, 0.5 ]
+      },
+      "ChassisMass": 1000,
+      "ChassisSize": [ 2.9, 1.75, 7.4 ],
+      "WheelMass": 20,
+      "WheelRadius": 0.6,
+      "WheelWidth": 0.6,
+      "WheelCount": 4,
+      "FrontAxisOffset": 0.9,
+      "RearAxisOffset": 1.5
+    }
+  ]
 }

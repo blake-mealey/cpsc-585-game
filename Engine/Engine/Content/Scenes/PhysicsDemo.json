@@ -13,12 +13,22 @@
       }
     ]
   },
-  	{
-		"Prefab":  "Flatbed.json",
-		"Position": [-20, 10, 0],
-		"Tag": "Vehicle"
-	},
-
+  {
+    "Prefab": "Flatbed.json",
+    "Position": [ 0, 10, 0 ]
+  },
+  {
+    "Prefab": "Flatbed.json",
+    "Position": [ 0, 10, -10 ]
+  },
+  {
+    "Prefab": "Flatbed.json",
+    "Position": [ 0, 10, 10 ]
+  },
+  {
+    "Prefab": "Flatbed.json",
+    "Position": [ 2.9, 10, 0 ]
+  },
   "Sun.json",
   {
     "Tag": "Camera",

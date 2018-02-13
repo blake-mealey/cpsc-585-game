@@ -11,9 +11,11 @@ VehicleComponent::VehicleComponent() : VehicleComponent(4, false) { }
 VehicleComponent::VehicleComponent(nlohmann::json data) {
 	inputTypeDigital = ContentManager::GetFromJson<bool>(data["DigitalInput"], false);
 
-    wheelMeshPath = ContentManager::GetFromJson<std::string>(data["WheelMesh"], "Boulder.obj");
-    wheelTexturePath = ContentManager::GetFromJson<std::string>(data["WheelTexture"], "Boulder.jpg");
-    wheelMaterialPath = ContentManager::GetFromJson<std::string>(data["WheelMaterial"], "Basic.json");
+	if (!data["WheelMesh"].is_null()) {
+		wheelMeshPrefab = static_cast<MeshComponent*>(ContentManager::LoadComponent(data["WheelMesh"]));
+	} else {
+		wheelMeshPrefab = new MeshComponent("Boulder.obj", "Basic.json", "Boulder.jpg");
+	}
 
     chassisMass = ContentManager::GetFromJson<float>(data["ChassisMass"], 1500.f);
     chassisSize = ContentManager::JsonToVec3(data["ChassisSize"], glm::vec3(2.5f, 2.f, 5.f));
@@ -23,19 +25,25 @@ VehicleComponent::VehicleComponent(nlohmann::json data) {
     wheelWidth = ContentManager::GetFromJson<float>(data["WheelWidth"], 0.4f);
     wheelCount = ContentManager::GetFromJson<size_t>(data["WheelCount"], 4);
 
+	frontAxisOffset = ContentManager::GetFromJson<float>(data["FrontAxisOffset"], 0.3f * chassisSize.z);
+	rearAxisOffset = ContentManager::GetFromJson<float>(data["RearAxisOffset"], 0.3f * chassisSize.z);
+
 	Initialize();
 }
 
 VehicleComponent::VehicleComponent(size_t _wheelCount, bool _inputTypeDigital) :
-        inputTypeDigital(_inputTypeDigital), wheelMeshPath("Boulder.obj"), wheelTexturePath("Boulder.jpg"), wheelMaterialPath("Basic.json"),
-        chassisMass(1500.f), chassisSize(glm::vec3(2.5f, 2.f, 5.f)), wheelMass(20.f), wheelRadius(0.5f), wheelWidth(0.4f), wheelCount(_wheelCount) {
+        inputTypeDigital(_inputTypeDigital), chassisMass(1500.f), chassisSize(glm::vec3(2.5f, 2.f, 5.f)),
+		wheelMass(20.f), wheelRadius(0.5f), wheelWidth(0.4f), wheelCount(_wheelCount),
+		frontAxisOffset(0.3f), rearAxisOffset(0.3f) {
 	
+	wheelMeshPrefab = new MeshComponent("Boulder.obj", "Basic.json", "Boulder.jpg");
+
     Initialize();
 }
 
 void VehicleComponent::Initialize() {
 	for (size_t i = 0; i < wheelCount; ++i) {
-		MeshComponent* wheel = new MeshComponent(wheelMeshPath, wheelMaterialPath, wheelTexturePath);
+		MeshComponent* wheel = new MeshComponent(wheelMeshPrefab);
 		wheel->transform.SetScale(glm::vec3(0.5f));
 		wheelMeshes.push_back(wheel);
 	}
@@ -48,8 +56,8 @@ void VehicleComponent::UpdateWheelTransforms() {
 		MeshComponent* wheel = wheelMeshes[i];
 		PxTransform pose = shapes[i]->getLocalPose();
 		wheel->transform.SetPosition(Transform::FromPx(pose.p));
-		wheel->transform.SetRotation(Transform::FromPx(pose.q));
-		//wheel->transform.Rotate(Transform::UP, glm::radians(90.f));
+		wheel->transform.SetRotationAxisAngles(Transform::UP, glm::radians(i % 2 == 0 ? 180.f : 0.f));
+		wheel->transform.Rotate(Transform::FromPx(pose.q));
 	}
 	delete[] shapes;
 }
@@ -90,6 +98,14 @@ float VehicleComponent::GetWheelMomentOfIntertia() const {
 
 size_t VehicleComponent::GetWheelCount() const {
     return wheelCount;
+}
+
+float VehicleComponent::GetFrontAxisOffset() const {
+	return frontAxisOffset;
+}
+
+float VehicleComponent::GetRearAxisOffset() const {
+	return rearAxisOffset;
 }
 
 ComponentType VehicleComponent::GetType() {

@@ -21,6 +21,7 @@ public:
 	MeshComponent(std::string meshPath, std::string materialPath);
 	MeshComponent(std::string meshPath, Material *_material);
 	MeshComponent(std::string meshPath, std::string materialPath, std::string texturePath);
+	MeshComponent(MeshComponent* component);
 
 	void MakeCylinder(Mesh* mesh);
 

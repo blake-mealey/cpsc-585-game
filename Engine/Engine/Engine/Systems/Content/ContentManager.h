@@ -58,14 +58,14 @@ public:
 	// static Texture*? GetTexture(std::string filePath);
 	// static GameData*? GetDataFile(std::string filePath);
 
+	static Component* LoadComponent(nlohmann::json data);
+	static Entity* LoadEntity(nlohmann::json data);
+
 private:
 	static std::map<std::string, Mesh*> meshes;
 	static std::map<std::string, Texture*> textures;
 	static std::map<std::string, Material*> materials;
     static GLuint skyboxCubemap;
-
-	static Component* LoadComponent(nlohmann::json data);
-	static Entity* LoadEntity(nlohmann::json data);
 };
 
 // TODO: For some reason I can't compile when this is in ContentManager.cpp?

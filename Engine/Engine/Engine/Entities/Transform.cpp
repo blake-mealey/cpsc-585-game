@@ -150,6 +150,10 @@ void Transform::Rotate(glm::vec3 axis, float radians) {
 	SetRotation(glm::rotate(rotation, glm::degrees(radians), axis));
 }
 
+void Transform::Rotate(glm::quat quaternion) {
+	SetRotation(quaternion * rotation);
+}
+
 glm::mat4 Transform::GetTranslationMatrix() {
 	return translationMatrix;
 }

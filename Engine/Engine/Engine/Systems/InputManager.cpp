@@ -183,7 +183,7 @@ void InputManager::HandleController() {
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[controllerNum]);
 				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
-				vehicle->pxVehicleInputData.setAnalogAccel((float)(*controller)->GetState().Gamepad.bRightTrigger / 255.0f);
+				vehicle->pxVehicleInputData.setAnalogAccel(1.6f * (float)(*controller)->GetState().Gamepad.bRightTrigger / 255.0f);
 				
 				//Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 				//float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;
