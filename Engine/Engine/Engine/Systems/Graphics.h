@@ -31,7 +31,7 @@ struct Camera {
 };
 
 struct VAOs {
-	enum { Geometry=0, ShadowMap, Skybox, Screen, Count };
+	enum { Geometry=0, ShadowMap, Skybox, Count };
 };
 
 struct VBOs {
@@ -43,19 +43,15 @@ struct SSBOs {
 };
 
 struct FBOs {
-	enum { ShadowMap=0, Screen, Count };
-};
-
-struct RBOs {
-    enum { Depth=0, Count };
+	enum { ShadowMap=0, Count };
 };
 
 struct Textures {
-	enum { ShadowMap=0, Screen, ScreenGlow, Count };
+	enum { ShadowMap=0, Count };
 };
 
 struct Shaders {
-	enum { Geometry=0, ShadowMap, Skybox, Screen, Count };
+	enum { Geometry=0, ShadowMap, Skybox, Count };
 };
 
 class Graphics : public System {
@@ -70,8 +66,6 @@ public:
 	static const std::string SHADOW_MAP_FRAGMENT_SHADER;
     static const std::string SKYBOX_VERTEX_SHADER;
     static const std::string SKYBOX_FRAGMENT_SHADER;
-    static const std::string SCREEN_VERTEX_SHADER;
-    static const std::string SCREEN_FRAGMENT_SHADER;
 
 	static const size_t MAX_CAMERAS;
 
@@ -103,8 +97,6 @@ private:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator= (const Graphics&) = delete;
 
-    ~Graphics();
-
 	void LoadModel(ShaderProgram* shaderProgram, MeshComponent* model);
 
 	void LoadCameras(std::vector<Component*> cameraComponents);
@@ -120,7 +112,6 @@ private:
 	GLuint vaoIds[VAOs::Count];
 	GLuint ssboIds[SSBOs::Count];
 	GLuint fboIds[FBOs::Count];
-	GLuint rboIds[RBOs::Count];
 	GLuint textureIds[Textures::Count];
 	ShaderProgram* shaders[Shaders::Count];
 
@@ -135,15 +126,13 @@ private:
 	void LoadUvs(const glm::vec2 *uvs, const size_t vertexCount);
 	void LoadNormals(const glm::vec3 *normals, const size_t vertexCount);
 
-	void DestroyIds() const;
+	void DestroyIds();
 	void GenerateIds();
 
 	void InitializeGeometryVao();
 	void InitializeShadowMapVao();
 	void InitializeSkyboxVao();
-	void InitializeScreenVao();
 
-	void InitializeScreenFramebuffer();
 	void InitializeShadowMapFramebuffer();
 	ShaderProgram* LoadShaderProgram(std::string vertexShaderFile, std::string fragmentShaderFile) const;
 };
