@@ -43,7 +43,7 @@ struct SSBOs {
 };
 
 struct FBOs {
-	enum { Geometry=0, ShadowMap, Count };
+	enum { Screen=0, ShadowMap, Count };
 };
 
 struct RBOs {
@@ -51,7 +51,7 @@ struct RBOs {
 };
 
 struct Textures {
-	enum { Geometry=0, GlowMap, ShadowMap, Count };
+	enum { Screen=0, ScreenGlow, ShadowMap, Count };
 };
 
 struct Shaders {
@@ -114,7 +114,7 @@ private:
 	
     Mesh *skyboxCube;
 
-	GLuint vboIds[VBOs::Count];		// Geometry and UV coordinates
+	GLuint vboIds[VBOs::Count];		// Screen and UV coordinates
 	GLuint vaoIds[VAOs::Count];
 	GLuint ssboIds[SSBOs::Count];
 	GLuint fboIds[FBOs::Count];

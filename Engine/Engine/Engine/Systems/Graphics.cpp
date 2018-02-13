@@ -254,7 +254,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
 	// Render to the default framebuffer and bind the geometry VAO
 //	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Screen]);
     glBindVertexArray(vaoIds[VAOs::Geometry]);
 
     // Clear the buffer and enable back-face culling
@@ -314,7 +314,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
     // Render to the default framebuffer and bind the skybox VAO
 //    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Screen]);
     glBindVertexArray(vaoIds[VAOs::Skybox]);
 
     // Use the skybox shader program
@@ -388,7 +388,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
     // Load the screen texture to the framebuffer
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
     glUniform1i(screenProgram->GetUniformLocation("screen"), 0);
 
     glViewport(0, 0, windowWidth, windowHeight);
@@ -463,10 +463,10 @@ void Graphics::SetWindowDimensions(size_t width, size_t height) {
 	windowWidth = width;
 	windowHeight = height;
 
-    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth, windowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::GlowMap]);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ScreenGlow]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth, windowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glBindRenderbuffer(GL_RENDERBUFFER, rboIds[RBOs::Depth]);
@@ -664,28 +664,28 @@ void Graphics::InitializeScreenVao() {
 }
 
 void Graphics::InitializeGeometryFramebuffer() {
-    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Screen]);
 
     GLenum fboBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, fboBuffers);
 
     // Normal colour buffer
-    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureIds[Textures::Geometry], 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureIds[Textures::Screen], 0);
     
     // Highlights colour buffer
-    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::GlowMap]);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ScreenGlow]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, textureIds[Textures::GlowMap], 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, textureIds[Textures::ScreenGlow], 0);
 
     // Depth buffer
     glBindRenderbuffer(GL_RENDERBUFFER, rboIds[RBOs::Depth]);
