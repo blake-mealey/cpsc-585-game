@@ -10,7 +10,7 @@
 #pragma comment(lib, "opengl32.lib")
 
 using namespace std;
-
+//
 int main() {
 	vector<System*> systems;
 	// Initialize systems
