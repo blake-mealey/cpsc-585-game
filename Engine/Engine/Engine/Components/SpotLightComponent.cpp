@@ -24,7 +24,7 @@ glm::vec3 SpotLightComponent::GetDirection() const {
 }
 
 SpotLight SpotLightComponent::GetData() const {
-	return SpotLight(color, power, GetEntity()->transform.GetLocalPosition(), angle, direction);
+	return SpotLight(color, power, GetEntity()->transform.GetGlobalPosition(), angle, GetEntity()->transform.GetGlobalDirection(direction));
 }
 
 ComponentType SpotLightComponent::GetType() {

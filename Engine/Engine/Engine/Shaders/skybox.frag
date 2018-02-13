@@ -50,5 +50,6 @@ void main() {
 		fragmentColor = (sunColor*(2 - pow(sunPos.x,1.5)) * sunColor.w) + (fragmentColor * (1 - sunColor.w));
 	}
 
-	glowColor = vec4(fragmentColor.rgb * 0.5, fragmentColor.a);
+	vec3 hsv = rgb2hsv(fragmentColor.rgb);
+	glowColor = vec4(fragmentColor.rgb * 0.25 * hsv.z * hsv.z, fragmentColor.a);
 }

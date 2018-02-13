@@ -19,6 +19,8 @@
 #include "../Components/DirectionLightComponent.h"
 #include "Content/SpotLight.h"
 
+#define SCREEN_LEVEL_COUNT 4
+
 class MeshComponent;
 
 struct Camera {
@@ -43,7 +45,7 @@ struct SSBOs {
 };
 
 struct FBOs {
-	enum { Screen=0, ShadowMap, Count };
+	enum { Screen=0, ShadowMap, GlowEffect, Count };
 };
 
 struct RBOs {
@@ -55,7 +57,7 @@ struct Textures {
 };
 
 struct Shaders {
-	enum { Geometry=0, ShadowMap, Skybox, Screen, Count };
+	enum { Geometry=0, ShadowMap, Skybox, Screen, Blur, Copy, Compositor, Count };
 };
 
 class Graphics : public System {
@@ -72,6 +74,12 @@ public:
     static const std::string SKYBOX_FRAGMENT_SHADER;
     static const std::string SCREEN_VERTEX_SHADER;
     static const std::string SCREEN_FRAGMENT_SHADER;
+    static const std::string BLUR_VERTEX_SHADER;
+    static const std::string BLUR_FRAGMENT_SHADER;
+    static const std::string COPY_VERTEX_SHADER;
+    static const std::string COPY_FRAGMENT_SHADER;
+    static const std::string COMPOSITOR_VERTEX_SHADER;
+    static const std::string COMPOSITOR_FRAGMENT_SHADER;
 
 	static const size_t MAX_CAMERAS;
 
@@ -122,6 +130,9 @@ private:
 	GLuint textureIds[Textures::Count];
 	ShaderProgram* shaders[Shaders::Count];
 
+    GLuint screenLevelIds[SCREEN_LEVEL_COUNT];
+    GLuint screenLevelBlurIds[SCREEN_LEVEL_COUNT];
+
 	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights, std::vector<Component*> _spotLights);
 	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights);
 
@@ -141,7 +152,8 @@ private:
 	void InitializeSkyboxVao();
 	void InitializeScreenVao();
 
-    void InitializeGeometryFramebuffer();
+    void InitializeGlowFramebuffer();
+    void InitializeScreenFramebuffer();
 	void InitializeShadowMapFramebuffer();
 	ShaderProgram* LoadShaderProgram(std::string vertexShaderFile, std::string fragmentShaderFile) const;
 };

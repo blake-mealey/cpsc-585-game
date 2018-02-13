@@ -23,6 +23,12 @@ const std::string Graphics::SKYBOX_VERTEX_SHADER = "skybox.vert";
 const std::string Graphics::SKYBOX_FRAGMENT_SHADER = "skybox.frag";
 const std::string Graphics::SCREEN_VERTEX_SHADER = "screen.vert";
 const std::string Graphics::SCREEN_FRAGMENT_SHADER = "screen.frag";
+const std::string Graphics::BLUR_VERTEX_SHADER = SCREEN_VERTEX_SHADER;
+const std::string Graphics::BLUR_FRAGMENT_SHADER = "blur.frag";
+const std::string Graphics::COPY_VERTEX_SHADER = SCREEN_VERTEX_SHADER;
+const std::string Graphics::COPY_FRAGMENT_SHADER = SCREEN_FRAGMENT_SHADER;
+const std::string Graphics::COMPOSITOR_VERTEX_SHADER = SCREEN_VERTEX_SHADER;
+const std::string Graphics::COMPOSITOR_FRAGMENT_SHADER = "compositor.frag";
 
 // Initial Screen Dimensions
 const size_t Graphics::SCREEN_WIDTH = 1024;
@@ -253,7 +259,6 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	// -------------------------------------------------------------------------------------------------------------- //
 
 	// Render to the default framebuffer and bind the geometry VAO
-//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Screen]);
     glBindVertexArray(vaoIds[VAOs::Geometry]);
 
@@ -313,7 +318,6 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // -------------------------------------------------------------------------------------------------------------- //
 
     // Render to the default framebuffer and bind the skybox VAO
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Screen]);
     glBindVertexArray(vaoIds[VAOs::Skybox]);
 
@@ -327,7 +331,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 	glUniform1i(skyboxProgram->GetUniformLocation(UniformName::Skybox), 0);
 
 	// Load the color adjustment to the GPU
-	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 2.f,1.5f,1.5f);
+	glUniform3f(skyboxProgram->GetUniformLocation(UniformName::SkyboxColor), 1.5f,1.2f,1.2f);
 
     // Load the skybox geometry into the GPU
     LoadVertices(skyboxCube->vertices, skyboxCube->vertexCount);
@@ -362,11 +366,9 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // POST-PROCESSING (GLOW)
     // -------------------------------------------------------------------------------------------------------------- //
 
-
-
-    // -------------------------------------------------------------------------------------------------------------- //
-    // RENDER TO SCREEN
-    // -------------------------------------------------------------------------------------------------------------- //
+    // Render to the glow framebuffer and bind the screen VAO
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::GlowEffect]);
+    glBindVertexArray(vaoIds[VAOs::Screen]);
 
     const glm::vec2 verts[4] = {
         glm::vec2(-1, -1),
@@ -374,6 +376,102 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
         glm::vec2(-1, 1),
         glm::vec2(1, 1)
     };
+    LoadUvs(verts, 4);
+
+
+
+
+    ShaderProgram *copyProgram = shaders[Shaders::Copy];
+    glUseProgram(copyProgram->GetId());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ScreenGlow]);
+    glUniform1i(copyProgram->GetUniformLocation("screen"), 0);
+
+    // Copy the glow buffer to each of the level buffers
+    for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
+        const float factor = 1.f / pow(2, i);
+        glViewport(0, 0, windowWidth * factor, windowHeight * factor);
+        
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenLevelIds[i], 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+
+
+
+
+    ShaderProgram *blurProgram = shaders[Shaders::Blur];
+    glUseProgram(blurProgram->GetId());
+    
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(blurProgram->GetUniformLocation("image"), 0);
+
+    // Blur each of the level buffers
+    for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
+        const GLuint buffer = screenLevelIds[i];
+        const GLuint blurBuffer = screenLevelBlurIds[i];
+        
+        const float factor = 1.f / pow(2, i);
+        glViewport(0, 0, windowWidth * factor, windowHeight * factor);
+
+        const float xOffset = 1.2f / (windowWidth * factor);
+        const float yOffset = 1.2f / (windowHeight * factor);
+        
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        glUniform2f(blurProgram->GetUniformLocation("offset"), xOffset, 0.f);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurBuffer, 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        glBindTexture(GL_TEXTURE_2D, blurBuffer);
+        glUniform2f(blurProgram->GetUniformLocation("offset"), 0.f, yOffset);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffer, 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+
+
+
+
+    // TODO: Replace with GL_ADD?
+    ShaderProgram *compositorProgram = shaders[Shaders::Compositor];
+    glUseProgram(compositorProgram->GetId());
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureIds[Textures::ScreenGlow], 0);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
+    glUniform1i(compositorProgram->GetUniformLocation("base"), 0);
+
+   /* glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, screenLevelIds[0]);
+    glUniform1i(compositorProgram->GetUniformLocation("mod0"), 1);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, screenLevelIds[1]);
+    glUniform1i(compositorProgram->GetUniformLocation("mod1"), 2);
+
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, screenLevelIds[2]);
+    glUniform1i(compositorProgram->GetUniformLocation("mod2"), 3);
+
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, screenLevelIds[3]);
+    glUniform1i(compositorProgram->GetUniformLocation("mod3"), 4);*/
+
+    for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
+        glActiveTexture(GL_TEXTURE1 + i);
+        glBindTexture(GL_TEXTURE_2D, screenLevelIds[i]);
+        glUniform1i(compositorProgram->GetUniformLocation("mod0") + i, 1 + i);
+    }
+    
+    glViewport(0, 0, windowWidth, windowHeight);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    // RENDER TO SCREEN
+    // -------------------------------------------------------------------------------------------------------------- //
+
 
     // Render to the default framebuffer and bind the screen VAO
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -388,11 +486,12 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
     // Load the screen texture to the framebuffer
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
+    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::ScreenGlow]);
+//    glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Screen]);
+//    glBindTexture(GL_TEXTURE_2D, screenLevelIds[2]);
     glUniform1i(screenProgram->GetUniformLocation("screen"), 0);
 
     glViewport(0, 0, windowWidth, windowHeight);
-    LoadUvs(verts, 4);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	//Swap Buffers to Display New Frame
@@ -413,6 +512,7 @@ void Graphics::LoadModel(ShaderProgram *shaderProgram, MeshComponent *model) {
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialDiffuseColor), mat->diffuseColor.r, mat->diffuseColor.g, mat->diffuseColor.b);
 	glUniform3f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularColor), mat->specularColor.r, mat->specularColor.g, mat->specularColor.b);
 	glUniform1f(shaderProgram->GetUniformLocation(UniformName::MaterialSpecularity), mat->specularity);
+    glUniform1f(shaderProgram->GetUniformLocation("materialEmissiveness"), mat->emissiveness);
 
 	// Load the mesh into the GPU
 	LoadMesh(model->GetMesh());
@@ -575,6 +675,8 @@ void Graphics::DestroyIds() {
     glDeleteFramebuffers(FBOs::Count, fboIds);
     glDeleteRenderbuffers(RBOs::Count, rboIds);
     glDeleteTextures(Textures::Count, textureIds);
+    glDeleteTextures(SCREEN_LEVEL_COUNT, screenLevelIds);
+    glDeleteTextures(SCREEN_LEVEL_COUNT, screenLevelBlurIds);
     for (int i = 0; i < Shaders::Count; i++) {
         glDeleteProgram(shaders[i]->GetId());
     }
@@ -590,18 +692,24 @@ void Graphics::GenerateIds() {
 	glGenFramebuffers(FBOs::Count, fboIds);
 	glGenRenderbuffers(RBOs::Count, rboIds);
     glGenTextures(Textures::Count, textureIds);
+    glGenTextures(SCREEN_LEVEL_COUNT, screenLevelIds);
+    glGenTextures(SCREEN_LEVEL_COUNT, screenLevelBlurIds);
 	
     shaders[Shaders::Geometry] = LoadShaderProgram(GEOMETRY_VERTEX_SHADER, GEOMETRY_FRAGMENT_SHADER);
 	shaders[Shaders::ShadowMap] = LoadShaderProgram(SHADOW_MAP_VERTEX_SHADER, SHADOW_MAP_FRAGMENT_SHADER);
 	shaders[Shaders::Skybox] = LoadShaderProgram(SKYBOX_VERTEX_SHADER, SKYBOX_FRAGMENT_SHADER);
 	shaders[Shaders::Screen] = LoadShaderProgram(SCREEN_VERTEX_SHADER, SCREEN_FRAGMENT_SHADER);
+	shaders[Shaders::Blur] = LoadShaderProgram(BLUR_VERTEX_SHADER, BLUR_FRAGMENT_SHADER);
+	shaders[Shaders::Copy] = LoadShaderProgram(COPY_VERTEX_SHADER, COPY_FRAGMENT_SHADER);
+	shaders[Shaders::Compositor] = LoadShaderProgram(COMPOSITOR_VERTEX_SHADER, COMPOSITOR_FRAGMENT_SHADER);
 
 	InitializeGeometryVao();
 	InitializeShadowMapVao();
 	InitializeSkyboxVao();
     InitializeScreenVao();
 
-    InitializeGeometryFramebuffer();
+    InitializeGlowFramebuffer();
+    InitializeScreenFramebuffer();
 	InitializeShadowMapFramebuffer();
 }
 
@@ -663,7 +771,40 @@ void Graphics::InitializeScreenVao() {
     glBindVertexArray(0);
 }
 
-void Graphics::InitializeGeometryFramebuffer() {
+void Graphics::InitializeGlowFramebuffer() {
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::GlowEffect]);
+
+    GLenum fboBuffers[] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, fboBuffers);
+
+    for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
+        const float factor = 1.f / pow(2, i);
+        
+        glBindTexture(GL_TEXTURE_2D, screenLevelIds[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH * factor, SCREEN_HEIGHT * factor, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, screenLevelBlurIds[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH * factor, SCREEN_HEIGHT * factor, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, screenLevelIds[i], 0);
+    }
+
+//    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+//        std::cout << "ERROR: Glow framebuffer incomplete!" << std::endl;
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Graphics::InitializeScreenFramebuffer() {
     glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Screen]);
 
     GLenum fboBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -693,7 +834,7 @@ void Graphics::InitializeGeometryFramebuffer() {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboIds[RBOs::Depth]);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR: Shadow map framebuffer incomplete!" << std::endl;
+        std::cout << "ERROR: Screen framebuffer incomplete!" << std::endl;
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
