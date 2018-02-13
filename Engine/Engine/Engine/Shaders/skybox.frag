@@ -12,6 +12,7 @@ uniform samplerCube skybox;
 uniform float time;
 
 out vec4 fragmentColor;
+out vec4 glowColor;
 
 // From: http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
 vec3 rgb2hsv(vec3 c) {
@@ -49,5 +50,5 @@ void main() {
 		fragmentColor = (sunColor*(2 - pow(sunPos.x,1.5)) * sunColor.w) + (fragmentColor * (1 - sunColor.w));
 	}
 
-	//fragmentColor = vec4(fragmentColor.rgb * 0.09, fragmentColor.a);
+	glowColor = vec4(fragmentColor.rgb * 0.5, fragmentColor.a);
 }

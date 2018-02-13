@@ -254,8 +254,8 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
 	// Render to the default framebuffer and bind the geometry VAO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
-    glBindVertexArray(vaoIds[VAOs::Geometry]);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
+//    glBindVertexArray(vaoIds[VAOs::Geometry]);
 
     // Clear the buffer and enable back-face culling
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -313,8 +313,8 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     // -------------------------------------------------------------------------------------------------------------- //
 
     // Render to the default framebuffer and bind the skybox VAO
-//    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboIds[FBOs::Geometry]);
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindVertexArray(vaoIds[VAOs::Skybox]);
 
     // Use the skybox shader program
@@ -376,11 +376,11 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     };
 
     // Render to the default framebuffer and bind the screen VAO
-    /*glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindVertexArray(vaoIds[VAOs::Screen]);
 
     // Clear the colour and depth buffers
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Use the skybox shader program
     ShaderProgram *screenProgram = shaders[Shaders::Screen];
@@ -391,8 +391,9 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     glBindTexture(GL_TEXTURE_2D, textureIds[Textures::Geometry]);
     glUniform1i(screenProgram->GetUniformLocation("screen"), 0);
 
+    glViewport(0, 0, windowWidth, windowHeight);
     LoadUvs(verts, 4);
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);*/
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
@@ -652,8 +653,6 @@ void Graphics::InitializeSkyboxVao() {
 
 void Graphics::InitializeScreenVao() {
     glBindVertexArray(vaoIds[VAOs::Screen]);
-
-    glBindVertexArray(vaoIds[VAOs::Geometry]);
 
     // Vertices
     glEnableVertexAttribArray(0);
