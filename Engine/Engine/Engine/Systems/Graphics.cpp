@@ -361,7 +361,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     }
 
     // -------------------------------------------------------------------------------------------------------------- //
-    // POST-PROCESSING (GLOW)
+    // RENDER POST-PROCESSING EFFECTS (BLOOM)
     // -------------------------------------------------------------------------------------------------------------- //
 
     // Render to the glow framebuffer and bind the screen VAO
@@ -432,7 +432,7 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
 
 
     // -------------------------------------------------------------------------------------------------------------- //
-    // RENDER TO SCREEN
+    // COMPOSITE EFFECTS AND RENDER TO SCREEN
     // -------------------------------------------------------------------------------------------------------------- //
 
     // Render to the default framebuffer
@@ -460,22 +460,15 @@ void Graphics::Update(Time currentTime, Time deltaTime) {
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_ONE, GL_ONE);
 
+    // Render each blur level
     for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
-        // Send the texture to the GPU
         glBindTexture(GL_TEXTURE_2D, screenLevelIds[i]);
-
-        // Render it
-        glViewport(0, 0, windowWidth, windowHeight);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
     // Disable blending and re-enable the depth mask
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-
-
-//    glViewport(0, 0, windowWidth, windowHeight);
-//    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	//Swap Buffers to Display New Frame
 	glfwSwapBuffers(window);
@@ -553,18 +546,16 @@ void Graphics::SetWindowDimensions(size_t width, size_t height) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth, windowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glBindRenderbuffer(GL_RENDERBUFFER, rboIds[RBOs::Depth]);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, windowWidth, windowHeight);
 
     for (size_t i = 0; i < SCREEN_LEVEL_COUNT; ++i) {
         const float factor = 1.f / pow(2, i);
 
         glBindTexture(GL_TEXTURE_2D, screenLevelIds[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth / factor, windowHeight * factor, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth * factor, windowHeight * factor, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
         glBindTexture(GL_TEXTURE_2D, screenLevelBlurIds[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth / factor, windowHeight * factor, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, screenLevelIds[i], 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth * factor, windowHeight * factor, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
