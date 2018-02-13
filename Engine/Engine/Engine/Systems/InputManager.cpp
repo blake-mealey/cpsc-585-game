@@ -107,27 +107,27 @@ void InputManager::HandleKeyboard() {
 	Entity *camera = EntityManager::FindEntities("Camera")[0];
 	CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
 	if (Keyboard::KeyDown(GLFW_KEY_RIGHT)) {
-		float x = dt.GetTimeSeconds() * 1.f;
+		float x = dt.GetTimeSeconds() * 4.f;
 		cameraC->SetCameraHorizontalAngle(cameraC->GetCameraHorizontalAngle() + x);
 		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
 		cameraC->SetPosition(pos);
 	}
 	if (Keyboard::KeyDown(GLFW_KEY_LEFT)) {
-		float x = dt.GetTimeSeconds() * -1.f;
+		float x = dt.GetTimeSeconds() * -4.f;
 		cameraC->SetCameraHorizontalAngle(cameraC->GetCameraHorizontalAngle() + x);
 		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
 		cameraC->SetPosition(pos);
 	}
 	if (Keyboard::KeyDown(GLFW_KEY_UP)) {
 		std::cout << cameraC->GetCameraVerticalAngle() << std::endl;
-		float x = dt.GetTimeSeconds() * 1.f;
-		cameraC->SetCameraVerticalAngle(std::max(cameraC->GetCameraVerticalAngle() - x, .1f));
+		float x = dt.GetTimeSeconds() * -4.f;
+		cameraC->SetCameraVerticalAngle(std::max(cameraC->GetCameraVerticalAngle() + x, .1f));
 		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
 		cameraC->SetPosition(pos);
 	}
 	if (Keyboard::KeyDown(GLFW_KEY_DOWN)) {
 		std::cout << cameraC->GetCameraVerticalAngle() << std::endl;
-		float x = dt.GetTimeSeconds() * 1.f;
+		float x = dt.GetTimeSeconds() * 4.f;
 		cameraC->SetCameraVerticalAngle(std::min(cameraC->GetCameraVerticalAngle() + x,(float)M_PI-0.1f));
 		glm::vec3 pos = 20.0f * glm::vec3(cos(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()), cos(cameraC->GetCameraVerticalAngle()), sin(cameraC->GetCameraHorizontalAngle()) * sin(cameraC->GetCameraVerticalAngle()));
 		cameraC->SetPosition(pos);
