@@ -28,6 +28,7 @@ uniform mat4 viewMatrix;
 uniform vec3 materialDiffuseColor;
 uniform vec3 materialSpecularColor;
 uniform float materialSpecularity;
+uniform float materialEmissiveness;
 
 uniform vec3 ambientColor;
 
@@ -45,6 +46,17 @@ in vec4 shadowCoord;
 
 out vec3 fragmentColor;
 out vec3 glowColor;
+
+// From: http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
+vec3 rgb2hsv(vec3 c) {
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
 
 vec3 getColorFromLight(vec3 diffuseColor, vec3 lightDirection_camera, vec3 lightColor) {
 	vec3 n = normalize(surfaceNormal_camera);
@@ -74,7 +86,7 @@ void main() {
 		+ diffuseTextureEnabled * texture(diffuseTexture, uvScale*vec2(1.f - fragmentUv.x, fragmentUv.y)).rgb;
 	vec3 materialAmbientColor = ambientColor * diffuseColor;
 
-	fragmentColor = materialAmbientColor;
+	fragmentColor = mix(materialAmbientColor, diffuseColor, materialEmissiveness);
 	
 	for (int i = 0; i < pointLights.length(); i++) {
 		PointLight light = pointLights[i];
@@ -82,13 +94,13 @@ void main() {
 		vec3 lightDirection_camera = lightPosition_camera - fragmentPosition_camera;
 		float distanceToLight = length(lightDirection_camera);
 		float attenuation = 1.0 / (1.0 * (1.0/light.power) * (distanceToLight*distanceToLight));
-		fragmentColor += visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
+		fragmentColor += mix(visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color), vec3(0.0), materialEmissiveness);
 	}
 
 	for (int i = 0; i < directionLights.length(); i++) {
 		DirectionLight light = directionLights[i];
 		vec3 lightDirection_camera = (viewMatrix * vec4(-light.direction_world, 0)).xyz;
-		fragmentColor += visibility * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
+		fragmentColor += mix(visibility * getColorFromLight(diffuseColor, lightDirection_camera, light.color), vec3(0.0), materialEmissiveness);
 	}
 
 	for (int i = 0; i < spotLights.length(); i++) {
@@ -101,10 +113,10 @@ void main() {
 		if (lightAngle < light.angle) {
 			float distanceToLight = length(lightDirection_camera);
 			float attenuation = 1.0 / (1.0 * (1.0/light.power) * (distanceToLight*distanceToLight));
-			fragmentColor += visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color);
+			fragmentColor += mix(visibility * attenuation * getColorFromLight(diffuseColor, lightDirection_camera, light.color), vec3(0.0), materialEmissiveness);
 		}
 	}
 
-	glowColor = fragmentColor * 0.5;
-
+	vec3 hsv = rgb2hsv(fragmentColor);
+	glowColor = fragmentColor * (0.1 + materialEmissiveness * 0.5) * hsv.z * hsv.z;
 }

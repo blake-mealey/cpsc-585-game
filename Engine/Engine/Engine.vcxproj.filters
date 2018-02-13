@@ -17,6 +17,10 @@
     <None Include="Content\Prefabs\Entities\Sewage.json" />
     <None Include="Content\Prefabs\Entities\Taxi.json" />
     <None Include="Content\CollisionGroups\Vehicles.json" />
+    <None Include="Content\Materials\RedShiny.json" />
+    <None Include="Content\Materials\BlueShiny.json" />
+    <None Include="Content\Materials\LightSource.json" />
+    <None Include="Content\Prefabs\Entities\HeadLamp.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\CameraComponent.cpp" />

@@ -152,6 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="Content\CollisionGroups\Vehicles.json" />
+    <None Include="Content\Materials\BlueShiny.json" />
+    <None Include="Content\Materials\LightSource.json" />
+    <None Include="Content\Materials\RedShiny.json" />
     <None Include="Content\Prefabs\Components\Camera.json" />
     <None Include="Content\Materials\Basic.json" />
     <None Include="Content\Prefabs\Entities\Boulder.json" />
@@ -159,6 +162,7 @@
     <None Include="Content\Prefabs\Entities\Flatbed.json" />
     <None Include="Content\Prefabs\Entities\Hearse.json" />
     <None Include="Content\Prefabs\Entities\IceCream.json" />
+    <None Include="Content\Prefabs\Entities\HeadLamp.json" />
     <None Include="Content\Prefabs\Entities\Taxi.json" />
     <None Include="Content\Prefabs\Entities\Sewage.json" />
     <None Include="Content\Prefabs\Entities\Sun.json" />

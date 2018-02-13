@@ -125,11 +125,12 @@ Material* ContentManager::GetMaterial(const std::string filePath) {
 	if (material != nullptr) return material;
 
 	nlohmann::json data = LoadJson(MATERIAL_DIR_PATH + filePath);
-	const glm::vec3 diffuseColor = JsonToVec3(data["diffuseColor"]);
-	const glm::vec3 specularColor = JsonToVec3(data["specularColor"]);
-	const float specularity = data["specularity"].get<float>();
+	const glm::vec3 diffuseColor = JsonToVec3(data["DiffuseColor"]);
+	const glm::vec3 specularColor = JsonToVec3(data["SpecularColor"]);
+    const float specularity = GetFromJson<float>(data["Specularity"], 1);
+    const float emissiveness = GetFromJson<float>(data["Emissiveness"], 0);
 
-	return new Material(diffuseColor, specularColor, specularity);
+	return new Material(diffuseColor, specularColor, specularity, emissiveness);
 }
 
 Component* ContentManager::LoadComponentPrefab(std::string filePath) {

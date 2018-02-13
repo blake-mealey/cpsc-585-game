@@ -28,19 +28,16 @@
       "RearAxisOffset": 1.5
     }
   ],
-"Children": [
-		{
-			"Position": [0.0, 1, -1],
-			"Components": [
-				{
-					"Type": "Mesh",
-					"Mesh": "Boulder.obj",
-					"Texture": "Boulder.jpg",
-					"Material": "Basic.json",
-					"UvScale": [0.5, 0.5],
-					"Enabled": true
-				}
-			]
-		}
-	]
+  "Children": [
+	  {
+		  "Prefab": "HeadLamp.json",
+          "Position": [0.9, -0.85, 3.75],
+          "Scale": [0.2, 0.2, 0.2]
+	  },
+	  {
+		  "Prefab": "HeadLamp.json",
+		  "Position": [-0.9, -0.85, 3.75],
+		  "Scale": [0.2, 0.2, 0.2]
+	  }
+  ]
 }

@@ -72,16 +72,20 @@ glm::vec3 Transform::GetGlobalScale() {
 	return globalScale;
 }
 
+glm::vec3 Transform::GetGlobalDirection(glm::vec3 localDirection) {
+    return GetTransformationMatrix() * glm::vec4(localDirection, 0.f);
+}
+
 glm::vec3 Transform::GetForward() {
-	return rotation * FORWARD;
+    return GetGlobalDirection(FORWARD);
 }
 
 glm::vec3 Transform::GetRight() {
-	return rotation * RIGHT;
+	return GetGlobalDirection(RIGHT);
 }
 
 glm::vec3 Transform::GetUp() {
-	return rotation * UP;
+	return GetGlobalDirection(UP);
 }
 
 void Transform::UpdateTransformationMatrix() {

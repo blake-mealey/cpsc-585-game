@@ -4,6 +4,8 @@ in vec2 fragmentUv;
 
 uniform sampler2D screen;
 
+out vec4 fragmentColor;
+
 void main() {
-	gl_FragColor = texture(screen, fragmentUv);
+	fragmentColor = texture(screen, fragmentUv);
 }
