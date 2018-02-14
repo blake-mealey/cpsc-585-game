@@ -1,5 +1,3 @@
-#pragma comment(lib, "opengl32.lib")
-
 #define _USE_MATH_DEFINES
 #include <vector>
 

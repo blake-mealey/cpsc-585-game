@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GL/glew.h>					// Only necessary on Windows
-#pragma comment(lib, "opengl32.lib")	// TODO: Do this in the project properties?
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include <string>
 
 #include "System.h"
