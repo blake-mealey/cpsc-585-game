@@ -1,5 +1,6 @@
 #include "InputManager.h"
 
+#include "Graphics.h"
 #include "../Systems/StateManager.h"
 #include "../Entities/EntityManager.h"
 #include "../Components/CameraComponent.h"
@@ -52,7 +53,6 @@ void InputManager::HandleMouse() {
 		cout << "Right Mouse Button Released" << endl;
 	}
 
-	//Cursor Position
 	//cout << "Mouse Position: " << Mouse::GetCursorPosition().x << ", " << Mouse::GetCursorPosition().y << ", " << Mouse::GetCursorPosition().z << endl;
 }
 

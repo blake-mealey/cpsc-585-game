@@ -1,5 +1,11 @@
 #pragma once
 
+#include "../StateManager.h"
+#include "../../Entities/EntityManager.h"
+#include "../../Components/CameraComponent.h"
+
+#include <algorithm>
+
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
