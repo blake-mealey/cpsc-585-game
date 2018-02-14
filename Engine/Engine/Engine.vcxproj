@@ -70,12 +70,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;%(AdditionalIncludeDirectories);$(IncludePath);$(ProjectDir)Dependencies\glew-1.7.0-win32\glew-1.7.0\include</IncludePath>
+    <LibraryPath>$(ProjectDir)Dependencies\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;$(ProjectDir)Dependencies\glew-1.7.0-win32\glew-1.7.0\lib;$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;$(ProjectDir)Dependencies\glfw-3.2.1\glfw-3.2.1\include;$(ProjectDir)Dependencies\glew-1.7.0-win32\glew-1.7.0\include;$(IncludePath);$(ProjectDir)Dependencies\glew-1.7.0-win32\glew-1.7.0\include</IncludePath>
+    <LibraryPath>$(ProjectDir)Dependencies\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;$(ProjectDir)Dependencies\glew-1.7.0-win32\glew-1.7.0\lib;$(ProjectDir)Dependencies\glew-1.7.0-win32\glew-1.7.0\lib;$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)Dependencies\Assimp\include;$(ProjectDir)Dependencies\PxShared\include;$(ProjectDir)Dependencies\PhysX\Include;$(ProjectDir)Dependencies;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
@@ -99,7 +99,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc14win32;$(ProjectDir)Dependencies\PhysX\Lib\vc14win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;PsFastXml_x86.lib;PsFastXmlDEBUG_x86.lib;PxFoundation_x86.lib;PxFoundationDEBUG_x86.lib;PxPvdSDK_x86.lib;PxPvdSDKDEBUG_x86.lib;PxTask_x86.lib;PxTaskDEBUG_x86.lib;LowLevel.lib;LowLevelAABB.lib;LowLevelAABBDEBUG.lib;LowLevelCloth.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamics.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticles.lib;LowLevelParticlesDEBUG.lib;PhysX3_x86.lib;PhysX3CharacterKinematic_x86.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3Common_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3Cooking_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysX3DEBUG_x86.lib;PhysX3Extensions.lib;PhysX3ExtensionsDEBUG.lib;PhysX3Vehicle.lib;PhysX3VehicleDEBUG.lib;SceneQuery.lib;SceneQueryDEBUG.lib;SimulationController.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;assimp.lib;PsFastXml_x86.lib;PsFastXmlDEBUG_x86.lib;PxFoundation_x86.lib;PxFoundationDEBUG_x86.lib;PxPvdSDK_x86.lib;PxPvdSDKDEBUG_x86.lib;PxTask_x86.lib;PxTaskDEBUG_x86.lib;LowLevel.lib;LowLevelAABB.lib;LowLevelAABBDEBUG.lib;LowLevelCloth.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamics.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticles.lib;LowLevelParticlesDEBUG.lib;PhysX3_x86.lib;PhysX3CharacterKinematic_x86.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3Common_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3Cooking_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysX3DEBUG_x86.lib;PhysX3Extensions.lib;PhysX3ExtensionsDEBUG.lib;PhysX3Vehicle.lib;PhysX3VehicleDEBUG.lib;SceneQuery.lib;SceneQueryDEBUG.lib;SimulationController.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <SubSystem>NotSet</SubSystem>
@@ -131,7 +131,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\Assimp\libs;$(ProjectDir)Dependencies\PxShared\lib\vc15win32;$(ProjectDir)Dependencies\PhysX\Lib\vc15win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PsFastXml_x86.lib;PxFoundation_x86.lib;PxPvdSDK_x86.lib;PxTask_x86.lib;PhysX3Common_x86.lib;PhysX3Cooking_x86.lib;PhysX3Vehicle.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;PsFastXml_x86.lib;PxFoundation_x86.lib;PxPvdSDK_x86.lib;PxTask_x86.lib;PhysX3Common_x86.lib;PhysX3Cooking_x86.lib;PhysX3Vehicle.lib;assimp.lib;opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -169,9 +169,6 @@
     <None Include="Content\Scenes\GraphicsDemo.json" />
     <None Include="Content\Scenes\PhysicsDemo.json" />
     <None Include="Engine\Shaders\fragment_a5.glsl" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Engine\Shaders\vertex_a5.glsl" />
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +181,6 @@
     <ClCompile Include="Engine\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="Engine\Components\SpotLightComponent.cpp" />
     <ClCompile Include="Engine\Components\VehicleComponent.cpp" />
-    <ClCompile Include="Engine\Entities\Actor.cpp" />
     <ClCompile Include="Engine\Entities\Entity.cpp" />
     <ClCompile Include="Engine\Entities\EntityManager.cpp" />
     <ClCompile Include="Engine\Entities\Transform.cpp" />
@@ -217,7 +213,6 @@
     <ClInclude Include="Engine\Components\RigidbodyComponent.h" />
     <ClInclude Include="Engine\Components\SpotLightComponent.h" />
     <ClInclude Include="Engine\Components\VehicleComponent.h" />
-    <ClInclude Include="Engine\Entities\Actor.h" />
     <ClInclude Include="Engine\Entities\Entity.h" />
     <ClInclude Include="Engine\Entities\EntityManager.h" />
     <ClInclude Include="Engine\Entities\Transform.h" />

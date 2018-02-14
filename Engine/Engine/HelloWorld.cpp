@@ -1,20 +1,31 @@
-#include "Engine/Systems/Graphics.h"
-#include "Engine/Systems/Physics.h"
-#include "Engine/Systems/InputManager.h"
+#pragma comment(lib, "opengl32.lib")
 
 #define _USE_MATH_DEFINES
 #include <vector>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#include "Engine/Systems/Graphics.h"
+#include "Engine/Systems/InputManager.h"
 #include "Engine/Systems/Game.h"
-#include "Engine/Systems/Content/ContentManager.h"
+#include "Engine/Systems/Physics.h"
 #include "Engine/Systems/Physics/CollisionFilterShader.h"
-#pragma comment(lib, "opengl32.lib")
+#include "Engine/Systems/Content/ContentManager.h"
 
 using namespace std;
-//
+
 int main() {
+	//Initialize Time Variables
+	Time deltaTime;
+	Time currentTime = 0;
+	Time lastTime = 0;
+	Time gameTime = 0;
+
+	//Declare System Vector
 	vector<System*> systems;
+
 	// Initialize systems
-	
 	// Initialize graphics (MUST come before Game)
 	Graphics &graphicsManager = Graphics::Instance();
 	graphicsManager.Initialize("Car Wars");
@@ -46,12 +57,14 @@ int main() {
 	//Game Loop
 	Time lastFrame(0);
 	while (!glfwWindowShouldClose(graphicsManager.GetWindow())) {
-
 		//Calculate Delta Time
-		Time currentTime = glfwGetTime();
-		const Time deltaTime = currentTime - lastFrame;
-		lastFrame = currentTime;
-
+		currentTime = glfwGetTime();
+		deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+		//Calculate Game Time
+		if (StateManager::IsState(GameState_Playing)) {
+			gameTime += deltaTime;
+		}
 		// Iterate through each system and call their update methods
 		for (System* system : systems) {
 			system->Update(currentTime, deltaTime);
