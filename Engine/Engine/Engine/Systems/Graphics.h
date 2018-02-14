@@ -19,7 +19,7 @@
 #include "../Components/DirectionLightComponent.h"
 #include "Content/SpotLight.h"
 
-#define SCREEN_LEVEL_COUNT 4
+#define SCREEN_LEVEL_COUNT 6
 
 class MeshComponent;
 
@@ -57,7 +57,7 @@ struct Textures {
 };
 
 struct Shaders {
-	enum { Geometry=0, ShadowMap, Skybox, Screen, Blur, Copy, Compositor, Count };
+	enum { Geometry=0, ShadowMap, Skybox, Screen, Blur, Copy, Count };
 };
 
 class Graphics : public System {
@@ -78,8 +78,6 @@ public:
     static const std::string BLUR_FRAGMENT_SHADER;
     static const std::string COPY_VERTEX_SHADER;
     static const std::string COPY_FRAGMENT_SHADER;
-    static const std::string COMPOSITOR_VERTEX_SHADER;
-    static const std::string COMPOSITOR_FRAGMENT_SHADER;
 
 	static const size_t MAX_CAMERAS;
 
@@ -121,6 +119,7 @@ private:
 	size_t windowHeight;
 	
     Mesh *skyboxCube;
+    Texture *sunTexture;
 
 	GLuint vboIds[VBOs::Count];		// Screen and UV coordinates
 	GLuint vaoIds[VAOs::Count];
@@ -135,9 +134,6 @@ private:
 
 	void LoadLights(std::vector<Component*> _pointLights, std::vector<Component*> _directionLights, std::vector<Component*> _spotLights);
 	void LoadLights(std::vector<PointLight> pointLights, std::vector<DirectionLight> directionLights, std::vector<SpotLight> spotLights);
-
-    void LoadTexture(GLuint uniformLocation, GLuint textureId);
-    void LoadTexture(ShaderProgram *program, Texture *texture, std::string uniformName);
 
 	void LoadMesh(Mesh *mesh);
 	void LoadVertices(const glm::vec3 *vertices, const size_t vertexCount);
