@@ -158,13 +158,19 @@ void InputManager::HandleController() {
 			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD 
 				&& (*controller)->GetState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held L-TRIGGER" << endl;
-				leftVibrate = 30000 * (*controller)->GetState().Gamepad.bLeftTrigger / 255;
+				//leftVibrate = 30000 * (*controller)->GetState().Gamepad.bLeftTrigger / 255;
 
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[controllerNum]);
-				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
-				vehicle->pxVehicleInputData.setAnalogAccel((float)(*controller)->GetState().Gamepad.bLeftTrigger / 255.0f);
-
+				
+				if (vehicle->pxVehicle->computeForwardSpeed() > 5.f) {
+					vehicle->pxVehicleInputData.setAnalogBrake((PxReal)1.0f);
+				}
+				else {
+					vehicle->pxVehicleInputData.setAnalogBrake((PxReal)0.0f);
+					vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
+					vehicle->pxVehicleInputData.setAnalogAccel((float)(*controller)->GetState().Gamepad.bLeftTrigger / 255.0f);
+				}
 			} else if ((*controller)->GetPreviousState().Gamepad.bLeftTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bLeftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " released L-TRIGGER" << endl;
 
@@ -178,12 +184,26 @@ void InputManager::HandleController() {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " pressed R-TRIGGER" << endl;
 			} else if ((*controller)->GetPreviousState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD && (*controller)->GetState().Gamepad.bRightTrigger >= XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
 				cout << "Controller: " << (*controller)->GetControllerNumber() << " held R-TRIGGER" << endl;
-				rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
+				//rightVibrate = 30000 * (*controller)->GetState().Gamepad.bRightTrigger / 255;
 
 				vector<Component*> vehicleComponents = EntityManager::GetComponents(ComponentType_Vehicle);
 				VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[controllerNum]);
-				vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
-				vehicle->pxVehicleInputData.setAnalogAccel(1.6f * (float)(*controller)->GetState().Gamepad.bRightTrigger / 255.0f);
+
+
+				cout << vehicle->pxVehicle->computeForwardSpeed() << endl;
+				vehicle->pxVehicleInputData.setAnalogBrake((PxReal)0.0f);
+				int speed = (int)vehicle->pxVehicle->computeForwardSpeed();
+				if (speed < 15){
+					vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
+				}
+				else if (speed < 30) {
+					vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eSECOND);
+				}
+				else if (speed < 45) {
+					vehicle->pxVehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eTHIRD);
+				}
+
+				vehicle->pxVehicleInputData.setAnalogAccel(((float)(*controller)->GetState().Gamepad.bRightTrigger - (float)(*controller)->GetState().Gamepad.bLeftTrigger) / 255.0f);
 				
 				//Entity *boulder = EntityManager::FindEntities("Boulder")[0];
 				//float x = 0.05f * (*controller)->GetState().Gamepad.bRightTrigger;
