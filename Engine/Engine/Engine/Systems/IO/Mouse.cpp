@@ -16,6 +16,7 @@ void Mouse::MousePositionCallback(GLFWwindow* window, double _x, double _y) {
 	glfwGetFramebufferSize(window, &width, &height);
 
 	if (StateManager::GetState() == GameState_Playing) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		glfwSetCursorPos(window, width / 2, height / 2);
 		Entity *camera = EntityManager::FindEntities("Camera")[0];
 		CameraComponent* cameraC = static_cast<CameraComponent*>(camera->components[0]);
@@ -28,6 +29,9 @@ void Mouse::MousePositionCallback(GLFWwindow* window, double _x, double _y) {
 		else if (cameraC->GetCameraVerticalAngle() < (1.0f / 3.0f * 3.14f / 2.0f)) {
 			cameraC->SetCameraVerticalAngle(1.0f / 3.0f * 3.14f / 2.0f);
 		}
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
 	cursorPosition = { _x, height - _y, 0 };

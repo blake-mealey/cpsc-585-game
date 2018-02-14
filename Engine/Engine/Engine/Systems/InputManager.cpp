@@ -62,7 +62,7 @@ void InputManager::HandleKeyboard() {
 	VehicleComponent* vehicle = static_cast<VehicleComponent*>(vehicleComponents[0]);
 	
 	if (Keyboard::KeyPressed(GLFW_KEY_ESCAPE)) {
-		cout << "W Key Pressed" << endl;
+		cout << "Escape Key Pressed" << endl;
 		if (StateManager::GetState() == GameState_Playing) {
 			StateManager::SetState(GameState_Paused);
 		} else if (StateManager::GetState() == GameState_Paused) {
