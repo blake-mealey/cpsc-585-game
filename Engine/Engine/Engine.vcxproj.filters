@@ -44,7 +44,6 @@
     <ClCompile Include="Engine\Systems\Physics.cpp" />
     <ClCompile Include="Engine\Systems\StateManager.cpp" />
     <ClCompile Include="Engine\Systems\Time.cpp" />
-    <ClCompile Include="HelloWorld.cpp" />
     <ClCompile Include="Engine\Systems\Physics\Vehicle4WCreate.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleCreate.cpp" />
     <ClCompile Include="Engine\Systems\Physics\VehicleSceneQuery.cpp" />
@@ -52,6 +51,7 @@
     <ClCompile Include="Engine\Components\VehicleComponent.cpp" />
     <ClCompile Include="Engine\Systems\Physics\CollisionFilterShader.cpp" />
     <ClCompile Include="Engine\Components\Collider.cpp" />
+    <ClCompile Include="HelloWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\CameraComponent.h" />
